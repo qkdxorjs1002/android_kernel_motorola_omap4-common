@@ -404,11 +404,9 @@ static int hdmi_power_on(struct omap_dss_device *dssdev)
 
 	dispc_enable_channel(OMAP_DSS_CHANNEL_DIGIT, dssdev->type, 0);
 
-	p = &dssdev->panel.timings;
+	p = &hdmi.ip_data.cfg.timings;
 
-	DSSDBG("hdmi_power_on x_res= %d y_res = %d\n",
-		dssdev->panel.timings.x_res,
-		dssdev->panel.timings.y_res);
+	DSSDBG("hdmi_power_on x_res= %d y_res = %d\n", p->x_res, p->y_res);
 
 	if (!hdmi.custom_set) {
 		struct fb_videomode vesa_vga = vesa_modes[4];
@@ -481,6 +479,9 @@ static int hdmi_power_on(struct omap_dss_device *dssdev)
 	dispc_enable_gamma_table(0);
 
 	/* tv size */
+	
+	dss_mgr_set_timings(dssdev->manager, p);
+	
 	dispc_set_digit_size(dssdev->panel.timings.x_res,
 			dssdev->panel.timings.y_res);
 
@@ -644,18 +645,38 @@ int omapdss_hdmi_display_set_mode(struct omap_dss_device *dssdev,
 	return r1 ? : r2;
 }
 
-void omapdss_hdmi_display_set_timing(struct omap_dss_device *dssdev)
+void omapdss_hdmi_display_set_timing(struct omap_dss_device *dssdev,
+				 	struct omap_video_timings *timings)
 {
 	struct fb_videomode t;
+	const struct hdmi_config *t;
+
+	cm = hdmi_get_code(timings);
+ 	hdmi.ip_data.cfg.cm = cm;
 
 	omapfb_dss2fb_timings(&dssdev->panel.timings, &t);
+
 	/* also check interlaced timings */
 	if (!hdmi_set_timings(&t, true)) {
 		t.yres *= 2;
 		t.vmode |= FB_VMODE_INTERLACED;
 	}
 
+	t = hdmi_get_timings();
+
+ 	if (t != NULL)
+		hdmi.ip_data.cfg = *t;
+		
+	if (dssdev->state == OMAP_DSS_DISPLAY_ACTIVE) {
+		int r;
+	
+
+	if (r)
+	 	DSSERR("failed to power on device\n");
+
+	} else {
 	omapdss_hdmi_display_set_mode(dssdev, &t);
+	dss_mgr_set_timings(dssdev->manager, &t->timings);
 }
 
 int omapdss_hdmi_display_enable(struct omap_dss_device *dssdev)
