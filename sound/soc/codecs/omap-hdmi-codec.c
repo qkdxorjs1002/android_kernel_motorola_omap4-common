@@ -76,6 +76,8 @@ struct hdmi_codec_data {
 	struct omap_dss_device *dssdev;
 	struct notifier_block notifier;
 	struct hdmi_params params;
+	struct delayed_work delayed_work;
+	struct workqueue_struct *workqueue;
 	int active;
 } hdmi_data;
 
@@ -198,10 +200,8 @@ static int hdmi_audio_set_configuration(struct hdmi_codec_data *priv)
 		return -EINVAL;
 	}
 
-	hdmi_audio_runtime_get();
 	err = hdmi_ti_4xxx_config_audio_acr(&priv->ip_data,
 			priv->params.sample_freq, &n, &cts, pclk);
-	hdmi_audio_runtime_put();
 	if (err < 0)
 		return err;
 
@@ -215,10 +215,8 @@ static int hdmi_audio_set_configuration(struct hdmi_codec_data *priv)
 	audio_dma->mode = HDMI_AUDIO_TRANSF_DMA;
 	audio_dma->fifo_threshold = 0x20; /* in number of samples */
 
-	hdmi_audio_runtime_get();
 	hdmi_ti_4xxx_wp_audio_config_dma(&priv->ip_data, audio_dma);
 	hdmi_ti_4xxx_wp_audio_config_format(&priv->ip_data, audio_format);
-	hdmi_audio_runtime_put();
 
 	/*
 	 * I2S config
@@ -260,6 +258,7 @@ static int hdmi_audio_set_configuration(struct hdmi_codec_data *priv)
 	core_cfg->en_parallel_aud_input = true;
 
 	/* Number of channels */
+	aud_if_cfg->db1_channel_count = priv->params.channels_nr;
 
 	switch (priv->params.channels_nr) {
 	case 2:
@@ -272,13 +271,21 @@ static int hdmi_audio_set_configuration(struct hdmi_codec_data *priv)
 		break;
 	case 6:
 		core_cfg->layout = HDMI_AUDIO_LAYOUT_8CH;
-		channel_alloc = 0xB;
+		channel_alloc = 0x13;
 		audio_format->stereo_channels = HDMI_AUDIO_STEREO_FOURCHANNELS;
 		audio_format->active_chnnls_msk = 0x3f;
 		/* Enable all of the four available serial data channels */
 		core_cfg->i2s_cfg.active_sds = HDMI_AUDIO_I2S_SD0_EN |
 				HDMI_AUDIO_I2S_SD1_EN | HDMI_AUDIO_I2S_SD2_EN |
 				HDMI_AUDIO_I2S_SD3_EN;
+		/*
+		 * Overwrite info frame with channel count = 7 (8-1) and
+		 * CA = 0x13 in order to ensure that sample_present bits
+		 * configuration matches the number of channels (2 channels
+		 * are padded with zeroes) that are sent to fullfil
+		 * multichannel certification tests.
+		 */
+		aud_if_cfg->db1_channel_count = 8;
 		break;
 	case 8:
 		core_cfg->layout = HDMI_AUDIO_LAYOUT_8CH;
@@ -295,10 +302,8 @@ static int hdmi_audio_set_configuration(struct hdmi_codec_data *priv)
 		return -EINVAL;
 	}
 
-	hdmi_audio_runtime_get();
 	hdmi_ti_4xxx_core_audio_config(&priv->ip_data, core_cfg);
 	hdmi_ti_4xxx_wp_audio_config_format(&priv->ip_data, audio_format);
-	hdmi_audio_runtime_put();
 
 	/*
 	 * Configure packet
@@ -312,9 +317,7 @@ static int hdmi_audio_set_configuration(struct hdmi_codec_data *priv)
 	aud_if_cfg->db5_downmix_inh = false;
 	aud_if_cfg->db5_lsv = 0;
 
-	hdmi_audio_runtime_get();
 	hdmi_ti_4xxx_core_audio_infoframe_config(&priv->ip_data, aud_if_cfg);
-	hdmi_audio_runtime_put();
 	return 0;
 
 }
@@ -329,17 +332,18 @@ int hdmi_audio_notifier_callback(struct notifier_block *nb,
 	if (state == OMAP_DSS_DISPLAY_ACTIVE) {
 		hdmi_clk.video_active = 1;
 		/* this happens just after hdmi_power_on */
-		hdmi_audio_runtime_get();
-		if (hdmi_data.active)
-			hdmi_ti_4xxx_audio_enable(&hdmi_data.ip_data, 0);
 		hdmi_audio_set_configuration(&hdmi_data);
 		if (hdmi_data.active) {
 			omap_hwmod_set_slave_idlemode(hdmi_data.oh,
 							HWMOD_IDLEMODE_NO);
-			hdmi_ti_4xxx_audio_enable(&hdmi_data.ip_data, 1);
-
+			hdmi_ti_4xxx_wp_audio_enable(&hdmi_data.ip_data, 1);
+			queue_delayed_work(hdmi_data.workqueue,
+				&hdmi_data.delayed_work,
+				msecs_to_jiffies(1));
 		}
-		hdmi_audio_runtime_put();
+	} else {
+		cancel_delayed_work(&hdmi_data.delayed_work);
+
 	} else if (state == OMAP_DSS_DISPLAY_DISABLED) {
 		/* this happens after hotplug unplug */
 
@@ -368,6 +372,11 @@ int hdmi_audio_notifier_callback(struct notifier_block *nb,
 	mutex_unlock(&hdmi_clk.video_mutex);
 
 	return 0;
+}
+
+static void hdmi_audio_work(struct work_struct *work)
+{
+	hdmi_ti_4xxx_audio_transfer_en(&hdmi_data.ip_data, 1);
 }
 
 int hdmi_audio_match(struct omap_dss_device *dssdev, void *arg)
@@ -410,26 +419,30 @@ static int hdmi_audio_trigger(struct snd_pcm_substream *substream, int cmd,
 		 * switch to no-idle to avoid DSS_L3_ICLK clock
 		 * to be shutdown during audio activity (as per TRM)
 		 */
-		hdmi_audio_runtime_get();
 		omap_hwmod_set_slave_idlemode(priv->oh,
 			HWMOD_IDLEMODE_NO);
-		hdmi_ti_4xxx_audio_enable(&priv->ip_data, 1);
-		hdmi_audio_runtime_put();
+
+
+		hdmi_ti_4xxx_wp_audio_enable(&priv->ip_data, 1);
+		queue_delayed_work(priv->workqueue, &priv->delayed_work,
+				msecs_to_jiffies(1));
+
 		priv->active = 1;
 		break;
 	case SNDRV_PCM_TRIGGER_STOP:
 	case SNDRV_PCM_TRIGGER_SUSPEND:
 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
+		cancel_delayed_work(&hdmi_data.delayed_work);
 		priv->active = 0;
-		hdmi_audio_runtime_get();
-		hdmi_ti_4xxx_audio_enable(&priv->ip_data, 0);
+
+		hdmi_ti_4xxx_audio_transfer_en(&priv->ip_data, 0);
+		hdmi_ti_4xxx_wp_audio_enable(&priv->ip_data, 0);
 		/*
 		 * switch back to smart-idle & wakeup capable
 		 * after audio activity stops
 		 */
 		omap_hwmod_set_slave_idlemode(priv->oh,
 			HWMOD_IDLEMODE_SMART_WKUP);
-		hdmi_audio_runtime_put();
 		break;
 	default:
 		err = -EINVAL;
@@ -522,6 +535,10 @@ static int hdmi_probe(struct snd_soc_codec *codec)
 	hdmi_data.notifier.notifier_call = hdmi_audio_notifier_callback;
 	blocking_notifier_chain_register(&hdmi_data.dssdev->state_notifiers,
 			&hdmi_data.notifier);
+
+	hdmi_data.workqueue = create_singlethread_workqueue("hdmi-codec");
+
+	INIT_DELAYED_WORK(&hdmi_data.delayed_work, hdmi_audio_work);
 
 	return 0;
 
