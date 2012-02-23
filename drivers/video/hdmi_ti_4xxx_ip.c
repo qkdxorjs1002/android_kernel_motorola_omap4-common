@@ -29,11 +29,11 @@
 #include <linux/delay.h>
 #include <linux/string.h>
 #include <linux/omapfb.h>
-
-#ifdef CONFIG_OMAP_HDMI_AUDIO_WA
+#if defined(CONFIG_OMAP_REMOTE_PROC_IPU) && defined(CONFIG_RPMSG) && defined(CONFIG_OMAP_HDMI_AUDIO_WA)
 #include <linux/rpmsg.h>
 #include <linux/remoteproc.h>
 #include <linux/pm_runtime.h>
+#include <linux/clk.h>
 #endif
 
 #include "hdmi_ti_4xxx_ip.h"
@@ -42,6 +42,38 @@
 static bool hdmiwa_notregistered = true;
 static u32 cts_interval, sample_rate;
 struct omap_chip_id audio_must_use_tclk;
+#endif
+
+#if defined(CONFIG_OMAP_REMOTE_PROC_IPU) && defined(CONFIG_RPMSG)
+static bool hdmi_acrwa_registered;
+struct omap_chip_id audio_must_use_tclk;
+
+  if (omap_chip_is(audio_must_use_tclk)) {
+    if (!hdmi_acrwa_registered) {
+      ret = register_rpmsg_driver(&hdmi_acrwa_driver);
+      if (ret) {
+        pr_err("Error creating hdmi_acrwa driver\n");
+        return ret;
+      }
+
+      hdmi_acrwa_registered = true;
+    }
+  }
+  return ret;
+}
+void hdmi_lib_stop_acr_wa(void)
+{
+  if (omap_chip_is(audio_must_use_tclk)) {
+    if (hdmi_acrwa_registered) {
+      unregister_rpmsg_driver(&hdmi_acrwa_driver);
+      hdmi_acrwa_registered = false;
+    }
+  }
+}
+
+#else
+int hdmi_lib_start_acr_wa(void) { return 0; }
+void hdmi_lib_stop_acr_wa(void) { }
 #endif
 
 #ifdef CONFIG_OMAP_HDMI_AUDIO_WA
@@ -1365,8 +1397,8 @@ int hdmi_ti_4xxx_config_audio_acr(struct hdmi_ip_data *ip_data,
 {
 	u32 r;
 	u32 deep_color = 0;
-#ifdef CONFIG_OMAP_HDMI_AUDIO_WA
-	u32 cts_interval_qtt, cts_interval_res, n_val;
+#if defined(CONFIG_OMAP_REMOTE_PROC_IPU) && defined(CONFIG_RPMSG) && defined(CONFIG_OMAP_HDMI_AUDIO_WA)
+	u32 cts_interval_qtt, cts_interval_res, n_val, cts_interval;
 #endif
 
 	if (n == NULL || cts == NULL)
@@ -1418,7 +1450,7 @@ int hdmi_ti_4xxx_config_audio_acr(struct hdmi_ip_data *ip_data,
 	/* Calculate CTS. See HDMI 1.3a or 1.4a specifications */
 	*cts = pclk * (*n / 128) * deep_color / (sample_freq / 10);
 
-#ifdef CONFIG_OMAP_HDMI_AUDIO_WA
+#if defined(CONFIG_OMAP_REMOTE_PROC_IPU) && defined(CONFIG_RPMSG) && defined(CONFIG_OMAP_HDMI_AUDIO_WA)
 	if (omap_chip_is(audio_must_use_tclk)) {
 		n_val = *n;
 		if (pclk && deep_color) {
@@ -1428,10 +1460,10 @@ int hdmi_ti_4xxx_config_audio_acr(struct hdmi_ip_data *ip_data,
 				((pclk * deep_color) / 100);
 			cts_interval = (cts_interval_res*n_val)/
 				((pclk * deep_color) / 100);
-			cts_interval += (cts_interval_qtt*n_val);
+		        cts_interval += cts_interval_qtt * n_val;
 		} else
 			cts_interval = 0;
-		pr_debug("hdmi payload sent:%d\n", cts_interval);
+			pr_debug("hdmi payload sent:%d\n", cts_interval);
 	}
 #endif
 	return 0;
@@ -1678,9 +1710,10 @@ EXPORT_SYMBOL(hdmi_ti_4xx_check_aksv_data);
 
 static int __init hdmi_ti_4xxx_init(void)
 {
-#ifdef CONFIG_OMAP_HDMI_AUDIO_WA
+#if defined(CONFIG_OMAP_REMOTE_PROC_IPU) && defined(CONFIG_RPMSG) && defined(CONFIG_OMAP_HDMI_AUDIO_WA)
 	audio_must_use_tclk.oc = CHIP_IS_OMAP4430ES2 |
 		CHIP_IS_OMAP4430ES2_1 | CHIP_IS_OMAP4430ES2_2;
+	hdmi_acrwa_registered = false;
 #endif
 	return 0;
 }
