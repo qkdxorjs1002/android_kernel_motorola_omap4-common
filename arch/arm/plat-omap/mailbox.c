@@ -41,10 +41,7 @@ struct pm_qos_request_list mbox_qos_request;
 
 #ifdef CONFIG_OMAP_IPU_DEEPIDLE
 #define SET_MPU_CORE_CONSTRAINT 1600
-#else 
-#define SET_MPU_CORE_CONSTRAINT 400
 #endif
-#define CLEAR_MPU_CORE_CONSTRAINT -1
 
 static unsigned int mbox_kfifo_size = CONFIG_OMAP_MBOX_KFIFO_SIZE;
 module_param(mbox_kfifo_size, uint, S_IRUGO);
@@ -260,8 +257,10 @@ static int omap_mbox_startup(struct omap_mbox *mbox)
 
 	mutex_lock(&mbox_configured_lock);
 	if (!mbox_configured++) {
-		pm_qos_update_request(&mbox_qos_request,
-					SET_MPU_CORE_CONSTRAINT);
+    if (mbox->pm_constraint)
+      pm_qos_update_request(&mbox_qos_request,
+          mbox->pm_constraint);
+
 		if (likely(mbox->ops->startup)) {
 			ret = mbox->ops->startup(mbox);
 			if (unlikely(ret))
@@ -307,8 +306,9 @@ fail_alloc_txq:
 	mbox->use_count--;
 fail_startup:
 	if (!--mbox_configured)
-		pm_qos_update_request(&mbox_qos_request,
-					 CLEAR_MPU_CORE_CONSTRAINT);
+    if (mbox->pm_constraint)
+      pm_qos_update_request(&mbox_qos_request,
+          PM_QOS_DEFAULT_VALUE); 
 	mutex_unlock(&mbox_configured_lock);
 	return ret;
 }
@@ -328,8 +328,9 @@ static void omap_mbox_fini(struct omap_mbox *mbox)
 	if (likely(mbox->ops->shutdown)) {
 		if (!--mbox_configured) {
 			mbox->ops->shutdown(mbox);
-			pm_qos_update_request(&mbox_qos_request,
-						CLEAR_MPU_CORE_CONSTRAINT);
+      if (mbox->pm_constraint)
+        pm_qos_update_request(&mbox_qos_request,
+            PM_QOS_DEFAULT_VALUE); 
 		}
 	}
 
