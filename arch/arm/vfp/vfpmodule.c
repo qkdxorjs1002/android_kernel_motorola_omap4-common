@@ -452,6 +452,7 @@ static int vfp_pm_suspend(void)
 		fmxr(FPEXC, fmrx(FPEXC) & ~FPEXC_EN);
 #ifndef CONFIG_SMP
 	} else if (vfp_current_hw_state[ti->cpu]) {
+#ifndef CONFIG_SMP
 		fmxr(FPEXC, fpexc | FPEXC_EN);
 		vfp_save_state(vfp_current_hw_state[ti->cpu], fpexc);
 		fmxr(FPEXC, fpexc);
