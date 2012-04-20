@@ -60,6 +60,7 @@
 #include <plat/vram.h>
 #include <plat/omap-pm.h>
 #include <linux/wakelock.h>
+#include <linux/omap4_duty_cycle_governor.h>
 #include "board-blaze.h"
 #include "omap_ram_console.h"
 #include "mux.h"
@@ -176,6 +177,86 @@ static struct matrix_keymap_data sdp4430_keymap_data = {
 	.keymap			= sdp4430_keymap,
 	.keymap_size		= ARRAY_SIZE(sdp4430_keymap),
 };
+
+#ifdef CONFIG_OMAP4_DUTY_CYCLE
+
+static struct pcb_section omap4_duty_governor_pcb_sections[] = {
+	{
+		.pcb_temp_level			= 65,
+		.max_opp			= 1200000,
+		.duty_cycle_enabled		= false,
+		.tduty_params = {
+			.nitro_rate		= 0,
+			.cooling_rate		= 0,
+			.nitro_interval		= 0,
+			.nitro_percentage	= 0,
+		},
+	},
+	{
+		.pcb_temp_level			= 70,
+		.max_opp			= 1200000,
+		.duty_cycle_enabled		= true,
+		.tduty_params = {
+			.nitro_rate		= 1200000,
+			.cooling_rate		= 1008000,
+			.nitro_interval		= 20000,
+			.nitro_percentage	= 37,
+		},
+	},
+	{
+		.pcb_temp_level			= 75,
+		.max_opp			= 1200000,
+		.duty_cycle_enabled		= true,
+		.tduty_params = {
+			.nitro_rate		= 1200000,
+			.cooling_rate		= 1008000,
+			.nitro_interval		= 20000,
+			.nitro_percentage	= 24,
+		},
+	},
+	{
+		.pcb_temp_level			= 80,
+		.max_opp			= 1200000,
+		.duty_cycle_enabled		= true,
+		.tduty_params = {
+			.nitro_rate		= 1200000,
+			.cooling_rate		= 1008000,
+			.nitro_interval		= 20000,
+			.nitro_percentage	= 19,
+		},
+	},
+	{
+		.pcb_temp_level			= 90,
+		.max_opp			= 1200000,
+		.duty_cycle_enabled		= true,
+		.tduty_params = {
+			.nitro_rate		= 1200000,
+			.cooling_rate		= 1008000,
+			.nitro_interval		= 20000,
+			.nitro_percentage	= 14,
+		},
+	},
+	{
+		.pcb_temp_level			= 110,
+		.max_opp			= 1008000,
+		.duty_cycle_enabled		= true,
+		.tduty_params = {
+			.nitro_rate		= 1008000,
+			.cooling_rate		= 800000,
+			.nitro_interval		= 20000,
+			.nitro_percentage	= 1,
+		},
+	},
+};
+
+void init_duty_governor(void)
+{
+	omap4_duty_pcb_section_reg(omap4_duty_governor_pcb_sections,
+		ARRAY_SIZE(omap4_duty_governor_pcb_sections));
+}
+#else
+void init_duty_governor(void){}
+#endif /*CONFIG_OMAP4_DUTY_CYCLE*/
 
 void keypad_pad_wkup(int enable)
 {
@@ -1438,6 +1519,7 @@ static void __init omap_4430sdp_init(void)
 	blaze_panel_init();
 	blaze_keypad_init();
 
+	init_duty_governor();
 	if (cpu_is_omap446x()) {
 		/* Vsel0 = gpio, vsel1 = gnd */
 		status = omap_tps6236x_board_setup(true, TPS62361_GPIO, -1,
