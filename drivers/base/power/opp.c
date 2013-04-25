@@ -112,7 +112,7 @@ static DEFINE_MUTEX(dev_opp_list_lock);
 #ifndef CONFIG_LIVE_OC
 static
 #endif
-struct device_opp *find_device_opp(struct device *dev)
+static struct device_opp *find_device_opp(struct device *dev)
 {
 	struct device_opp *tmp_dev_opp, *dev_opp = ERR_PTR(-ENODEV);
 
@@ -648,3 +648,4 @@ void opp_free_cpufreq_table(struct device *dev,
 	*table = NULL;
 }
 #endif		/* CONFIG_CPU_FREQ */
+
