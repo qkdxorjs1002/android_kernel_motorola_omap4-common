@@ -156,6 +156,10 @@ struct omap_volt_data {
 	u32	volt_dynamic_nominal;
 	u32	volt_margin;
 	u32	sr_efuse_offs;
+#ifdef CONFIG_OMAP_SMARTREFLEX_CUSTOM_SENSOR
+	u32  sr_nsensor;
+	u32  sr_psensor;
+#endif 
 	u8	sr_errminlimit;
 	u8	vp_errgain;
 	int	abb_type;
@@ -186,7 +190,7 @@ struct omap_volt_data {
 #define OMAP4_VP_IVA_VLIMITTO_VDDMIN	830000
 #define OMAP4_VP_IVA_VLIMITTO_VDDMAX	1260000
 #define OMAP4_VP_CORE_VLIMITTO_VDDMIN	830000
-#define OMAP4_VP_CORE_VLIMITTO_VDDMAX	1200000
+#define OMAP4_VP_CORE_VLIMITTO_VDDMAX	1250000 /* Increased voltage limit for SGX */
 
 #define OMAP4_VP_CONFIG_ERROROFFSET	0x00
 #define OMAP4_VP_VSTEPMIN_VSTEPMIN	0x01
