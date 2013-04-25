@@ -693,4 +693,25 @@ source "drivers/misc/radio_ctrl/Kconfig"
 source "drivers/misc/ts27010mux/Kconfig"
 source "drivers/misc/gc-core/Kconfig"
 
+config LIVE_OC
+        bool "Support for Live OC"
+        default y
+        help
+          Say Y here to enable Live OC
+
+config OMAP_TEMP_CONTROL
+	bool "Enable support for Temp Control"
+	depends on OMAP_DIE_TEMP_SENSOR
+	default y
+	help
+	  Enable support for Temp Control
+
+config TOUCH_WAKE
+	bool "Support for Touch Wake"
+	default y
+	help
+	  Say Y here to enable Touch Wake
+
+
+
 endif # MISC_DEVICES
