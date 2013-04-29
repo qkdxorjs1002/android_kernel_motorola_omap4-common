@@ -71,9 +71,9 @@ UTS_TRUNCATE="cut -b -$UTS_LEN"
   
   echo \#define UTS_MACHINE \"$ARCH\"
 
-  echo \#define UTS_VERSION \"`echo $UTS_VERSION | $UTS_TRUNCATE`\"
+  echo \#define UTS_VERSION \"`echo 3.0.8-jbx-kernel-bse`\"
 
-  echo \#define LINUX_COMPILE_BY \"`echo jbx-kernel-bse`\"
+  echo \#define LINUX_COMPILE_BY \"`echo dwiz-server`\"
   echo \#define LINUX_COMPILE_HOST \"`echo dtrail`\"
 
   echo \#define LINUX_COMPILER \"`$CC -v 2>&1 | tail -n 1`\"
