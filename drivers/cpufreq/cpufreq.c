@@ -945,7 +945,11 @@ static int cpufreq_add_dev(struct sys_device *sys_dev)
     /* Set min speed at boot to 300Mhz */
 
   if (policy->min < 300000)
-    policy->min = 300000;	
+	pr_info("[dtrail] cpufreq policy min set to 300 mhz at boot");	
+    policy->min = 300000;
+	if (policy->max > 1200000)
+		pr_info("[dtrail] cpufreq policy max set to 1200 mhz at boot");	
+	   policy->max = 1200000;
 
 	policy->user_policy.min = policy->min;
 	policy->user_policy.max = policy->max;
