@@ -942,7 +942,7 @@ static int cpufreq_add_dev(struct sys_device *sys_dev)
 		goto err_unlock_policy;
 	}
 
-    /* Set min speed at boot to 300Mhz */
+    /* Set min speed at boot to 300Mhz 
 
   if (policy->min < 300000)
 	pr_info("[dtrail] cpufreq policy min set to 300 mhz at boot");	
@@ -951,7 +951,7 @@ static int cpufreq_add_dev(struct sys_device *sys_dev)
 	if (policy->max > 1200000)
 		pr_info("[dtrail] cpufreq policy max set to 1200 mhz at boot");	
 	   policy->max = 1200000;
-#endif
+#endif */
 	policy->user_policy.min = policy->min;
 	policy->user_policy.max = policy->max;
 
@@ -1653,10 +1653,7 @@ static int __cpufreq_set_policy(struct cpufreq_policy *data,
 			CPUFREQ_NOTIFY, policy);
 
 	// Set min speed to 100mhz
-#ifdef CONFIG_OMAP_OCFREQ_12
- if (policy->min > 150000)
-    policy->min = 150000;
-#else
+#ifndef CONFIG_OMAP_OCFREQ_12
  if (policy->min > 100000)
     policy->min = 100000;
 #endif
@@ -1730,10 +1727,6 @@ int cpufreq_update_policy(unsigned int cpu)
 
 	pr_debug("updating policy for CPU %u\n", cpu);
 	memcpy(&policy, data, sizeof(struct cpufreq_policy));
-
-// Temporary workaround for user policy CPU settings
-
-
 	policy.min = data->user_policy.min;
 	policy.max = data->user_policy.max;
 	policy.policy = data->user_policy.policy;
