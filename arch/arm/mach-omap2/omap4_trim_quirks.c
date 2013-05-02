@@ -79,8 +79,12 @@ int omap4_ldo_trim_configure(void)
 	}
 
 	/* Required for DPLL_MPU to lock at 2.4 GHz */
+#ifdef CONFIG_OMAP_OCFREQ_12
+		omap_ctrl_writel(0x29, OMAP4_CTRL_MODULE_CORE_DPLL_NWELL_TRIM_0);
+#else
      if (dpll_trim_override) /* Override factory-set trim for MPU DPLL (for freqs > 1.2GHz) */
 		omap_ctrl_writel(0x29, OMAP4_CTRL_MODULE_CORE_DPLL_NWELL_TRIM_0);
+#endif
 
 	return 0;
 }
