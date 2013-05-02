@@ -49,7 +49,7 @@
 #define OMAP4430_VDD_MPU_OPPTURBO_UV		1325000			/* 800 */
 #define OMAP4430_VDD_MPU_OPPNITRO_UV		1388000			/* 1000 */
 #define OMAP4430_VDD_MPU_OPPNITROSB_UV		1398000			/* 1200 */
-#define OMAP4430_VDD_MPU_OPPNITROSBA_UV		1410000			/* 1350 */
+#define OMAP4430_VDD_MPU_OPPNITROSBA_UV		1408000			/* 1400 */
 #else
 #define OMAP4430_VDD_MPU_OPP25_UV		 985000			/* 100 */
 #define OMAP4430_VDD_MPU_OPP50_UV		1005000			/* 200 */
@@ -240,7 +240,7 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 	/* MPU OPP4 - OPP-NTSB */
 	OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1200000000, OMAP4430_VDD_MPU_OPPNITROSB_UV),
 	/* MPU OPP4 - OPP-NTSB1 */
-	OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1350000000, OMAP4430_VDD_MPU_OPPNITROSBA_UV),
+	OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1400000000, OMAP4430_VDD_MPU_OPPNITROSBA_UV),
 #else
 	/* MPU OPP1 - OPP25 */
  	OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 100000000, OMAP4430_VDD_MPU_OPP25_UV),
@@ -272,7 +272,7 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 	/* IVA OPP2 - OPP100 */
 	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", true, 266100000, OMAP4430_VDD_IVA_OPP100_UV),
 	/* IVA OPP3 - OPP-Turbo */
-	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", false, 332000000, OMAP4430_VDD_IVA_OPPTURBO_UV),
+	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", true, 332000000, OMAP4430_VDD_IVA_OPPTURBO_UV),
 	/* SGX OPP1 - OPP50 */
 	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 153600000, OMAP4430_VDD_CORE_OPP50_UV),
 	/* SGX OPP2 - OPP100 */
@@ -292,7 +292,7 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 	/* DSP OPP2 - OPP100 */
 	OPP_INITIALIZER("dsp", "dpll_iva_m4x2_ck", "iva", true, 465500000, OMAP4430_VDD_IVA_OPP100_UV),
 	/* DSP OPP3 - OPPTB */
-	OPP_INITIALIZER("dsp", "dpll_iva_m4x2_ck", "iva", false, 496000000, OMAP4430_VDD_IVA_OPPTURBO_UV),
+	OPP_INITIALIZER("dsp", "dpll_iva_m4x2_ck", "iva", true, 496000000, OMAP4430_VDD_IVA_OPPTURBO_UV),
 	/* HSI OPP1 - OPP50 */
 	OPP_INITIALIZER("hsi", "hsi_fck", "core", true, 96000000, OMAP4430_VDD_CORE_OPP50_UV),
 	/* HSI OPP2 - OPP100 */
@@ -431,11 +431,11 @@ static struct omap_opp_def __initdata omap446x_opp_def_list[] = {
 	 * above this OPP frequency, even though OMAP is capable, should be
 	 * enabled by board file which is sure of the chip power capability
 	 */
-	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", false, 332000000, OMAP4460_VDD_IVA_OPPTURBO_UV),
+	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", true, 332000000, OMAP4460_VDD_IVA_OPPTURBO_UV),
 	/* IVA OPP4 - OPP-Nitro */
-	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", false, 430000000, OMAP4460_VDD_IVA_OPPNITRO_UV),
+	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", true, 430000000, OMAP4460_VDD_IVA_OPPNITRO_UV),
 	/* IVA OPP5 - OPP-Nitro SpeedBin*/
-	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", false, 500000000, OMAP4460_VDD_IVA_OPPNITRO_UV),
+	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", true, 500000000, OMAP4460_VDD_IVA_OPPNITRO_UV),
 
 	/* SGX OPP1 - OPP50 */
 	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 153600000, OMAP4460_VDD_CORE_OPP50_UV),
@@ -454,7 +454,7 @@ static struct omap_opp_def __initdata omap446x_opp_def_list[] = {
 	/* DSP OPP2 - OPP100 */
 	OPP_INITIALIZER("dsp", "dpll_iva_m4x2_ck", "iva", true, 465500000, OMAP4460_VDD_IVA_OPP100_UV),
 	/* DSP OPP3 - OPPTB */
-	OPP_INITIALIZER("dsp", "dpll_iva_m4x2_ck", "iva", false, 496000000, OMAP4460_VDD_IVA_OPPTURBO_UV),
+	OPP_INITIALIZER("dsp", "dpll_iva_m4x2_ck", "iva", true, 496000000, OMAP4460_VDD_IVA_OPPTURBO_UV),
 	/* HSI OPP1 - OPP50 */
 	OPP_INITIALIZER("hsi", "hsi_fck", "core", true, 96000000, OMAP4460_VDD_CORE_OPP50_UV),
 	/* HSI OPP2 - OPP100 */
@@ -514,15 +514,14 @@ int __init omap4_opp_init(void)
 	}
 
 	if (!r) {
+#ifdef CONFIG_OMAP_OCFREQ_12
+		if (omap4_has_mpu_1_2ghz()) {
+			omap4_mpu_opp_enable(1200000000);
+			omap4_mpu_opp_enable(1400000000);
+	}
+#else
 		if (omap4_has_mpu_1_2ghz())
 			omap4_mpu_opp_enable(1200000000);
-#ifdef CONFIG_OMAP_OCFREQ_12
-			omap4_mpu_opp_enable(1300000000);
-			omap4_mpu_opp_enable(1350000000);
-			omap4_mpu_opp_enable(1400000000);
-			omap4_mpu_opp_enable(1450000000);
-			omap4_mpu_opp_enable(1490000000);
-			omap4_mpu_opp_enable(1500000000);
 #endif
 		if (!trimmed)
 			pr_info("This is DPLL un-trimmed SOM. OPP is limited at 1.2 GHz\n");
