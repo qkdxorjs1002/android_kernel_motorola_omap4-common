@@ -49,7 +49,7 @@
 #define OMAP4430_VDD_MPU_OPPTURBO_UV		1325000			/* 800 */
 #define OMAP4430_VDD_MPU_OPPNITRO_UV		1388000			/* 1000 */
 #define OMAP4430_VDD_MPU_OPPNITROSB_UV		1398000			/* 1200 */
-#define OMAP4430_VDD_MPU_OPPNITROSBA_UV		1408000			/* 1400 */
+#define OMAP4430_VDD_MPU_OPPNITROSBA_UV		1410000			/* 1400 */
 #else
 #define OMAP4430_VDD_MPU_OPP25_UV		 985000			/* 100 */
 #define OMAP4430_VDD_MPU_OPP50_UV		1005000			/* 200 */
@@ -240,7 +240,7 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 	/* MPU OPP4 - OPP-NTSB */
 	OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1200000000, OMAP4430_VDD_MPU_OPPNITROSB_UV),
 	/* MPU OPP4 - OPP-NTSB1 */
-	OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1400000000, OMAP4430_VDD_MPU_OPPNITROSBA_UV),
+	OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1350000000, OMAP4430_VDD_MPU_OPPNITROSBA_UV),
 #else
 	/* MPU OPP1 - OPP25 */
  	OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 100000000, OMAP4430_VDD_MPU_OPP25_UV),
