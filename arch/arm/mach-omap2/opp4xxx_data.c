@@ -517,16 +517,26 @@ int __init omap4_opp_init(void)
 #ifdef CONFIG_OMAP_OCFREQ_12
 		if (omap4_has_mpu_1_2ghz()) {
 			omap4_mpu_opp_enable(1200000000);
+			omap4_mpu_opp_enable(1350000000);
 			omap4_mpu_opp_enable(1400000000);
+			omap4_mpu_opp_enable(1500000000);
 	}
 #else
 		if (omap4_has_mpu_1_2ghz())
 			omap4_mpu_opp_enable(1200000000);
 #endif
+#ifdef CONFIG_OMAP_OCFREQ_12
+			pr_info("This is DPLL un-trimmed SOM. OPP is limited at 1.2 GHz\n");
+#else
 		if (!trimmed)
 			pr_info("This is DPLL un-trimmed SOM. OPP is limited at 1.2 GHz\n");
-		if (omap4_has_mpu_1_5ghz() && trimmed)
+#endif
+		if (omap4_has_mpu_1_5ghz() && trimmed) {
+			omap4_mpu_opp_enable(1200000000);
+			omap4_mpu_opp_enable(1350000000);
+			omap4_mpu_opp_enable(1400000000);
 			omap4_mpu_opp_enable(1500000000);
+}
 	}
 
 #ifdef CONFIG_CUSTOM_VOLTAGE
