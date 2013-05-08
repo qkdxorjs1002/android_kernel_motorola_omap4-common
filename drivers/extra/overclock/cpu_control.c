@@ -401,6 +401,9 @@ static void __exit cpu_control_exit(void){
 		pr_info("cpu_control : Revert cpufreq gov : %s\n", policy->governor->name);
 	}
 
+if (policy->min > policy->user_policy.min)
+	policy->user_policy.min = policy->min;
+
 	policy->min = policy->cpuinfo.min_freq = policy->user_policy.min = freq_table[0].frequency;
 	policy->max = policy->cpuinfo.max_freq = policy->user_policy.max = freq_table[opp_count-1].frequency;
 	pr_info("cpu_control : Goodbye\n");
