@@ -29,7 +29,7 @@ SCHED_FEAT(AFFINE_WAKEUPS, 1)
  * wakeup-preemption), since its likely going to consume data we
  * touched, increases cache locality.
  */
-SCHED_FEAT(NEXT_BUDDY, 0)
+SCHED_FEAT(NEXT_BUDDY, 1)
 
 /*
  * Prefer to schedule the task that ran last (when we did
@@ -47,8 +47,11 @@ SCHED_FEAT(CACHE_HOT_BUDDY, 1)
 /*
  * Use arch dependent cpu power functions
  */
+#ifdef CONFIG_OMAP_OCFREQ_12
 SCHED_FEAT(ARCH_POWER, 1)
-
+#else
+SCHED_FEAT(ARCH_POWER, 0)
+#endif
 SCHED_FEAT(HRTICK, 0)
 SCHED_FEAT(DOUBLE_TICK, 0)
 SCHED_FEAT(LB_BIAS, 1)
