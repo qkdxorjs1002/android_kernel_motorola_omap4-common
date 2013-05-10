@@ -561,7 +561,7 @@ all: vmlinux
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -Os
 else
-KBUILD_CFLAGS	+= -O2
+KBUILD_CFLAGS	+= -O3
 endif
 
 include $(srctree)/arch/$(SRCARCH)/Makefile
@@ -945,15 +945,15 @@ $(vmlinux-dirs): prepare scripts
 	$(Q)$(MAKE) $(build)=$@
 
 # Use the old method for getting the non-SCM version of the kernel version
-pattern = ".*/localversion[^~]*"
-string  = $(shell cat /dev/null \
-	   `find $(objtree) $(srctree) -maxdepth 1 -regex $(pattern) | sort -u`)
-
-localver = $(subst $(space),, $(string) \
-			      $(patsubst "%",%,$(CONFIG_LOCALVERSION)))
-
-KERNEL_VER_NOSCM = $(KERNELVERSION)$(localver)
-
+# pattern = ".*/localversion[^~]*"
+# string  = $(shell cat /dev/null \
+#	   `find $(objtree) $(srctree) -maxdepth 1 -regex $(pattern) | sort -u`)
+#
+#localver = $(subst $(space),, $(string) \
+#			      $(patsubst "%",%,$(CONFIG_LOCALVERSION)))
+#
+#KERNEL_VER_NOSCM = $(KERNELVERSION)$(localver)
+#
 # Store (new) KERNELRELASE string in include/config/kernel.release
 include/config/kernel.release: include/config/auto.conf FORCE
 	$(Q)rm -f $@
