@@ -945,19 +945,19 @@ $(vmlinux-dirs): prepare scripts
 	$(Q)$(MAKE) $(build)=$@
 
 # Use the old method for getting the non-SCM version of the kernel version
-# pattern = ".*/localversion[^~]*"
-# string  = $(shell cat /dev/null \
-#	   `find $(objtree) $(srctree) -maxdepth 1 -regex $(pattern) | sort -u`)
-#
-#localver = $(subst $(space),, $(string) \
-#			      $(patsubst "%",%,$(CONFIG_LOCALVERSION)))
-#
-#KERNEL_VER_NOSCM = $(KERNELVERSION)$(localver)
-#
+pattern = ".*/localversion[^~]*"
+string  = $(shell cat /dev/null \
+	   `find $(objtree) $(srctree) -maxdepth 1 -regex $(pattern) | sort -u`)
+
+localver = $(subst $(space),, $(string) \
+			      $(patsubst "%",%,$(CONFIG_LOCALVERSION)))
+
+KERNEL_VER_NOSCM = $(KERNELVERSION)$(localver)
+
 # Store (new) KERNELRELASE string in include/config/kernel.release
 include/config/kernel.release: include/config/auto.conf FORCE
 	$(Q)rm -f $@
-	$(Q)echo "$(KERNELVERSION)$$($(CONFIG_SHELL) $(srctree)/scripts/setlocalversion $(srctree))" > $@
+	$(Q)echo "$(KERNELVERSION)$(localver)$$($(CONFIG_SHELL) $(srctree)/scripts/setlocalversion $(srctree))" > $@
 
 
 # Things we need to do before we recursively start building the kernel
