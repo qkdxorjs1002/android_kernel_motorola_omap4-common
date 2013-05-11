@@ -507,30 +507,28 @@ int __init omap4_opp_init(void)
 		/* if device is untrimmed override DPLL TRIM register */
 #ifdef CONFIG_OMAP_OCFREQ_12
 			omap_writel(0x29, 0x4a002330);
-#else
-		if (!trimmed)
-			omap_writel(0x29, 0x4a002330);
-#endif
-	}
+}
 
 	if (!r) {
-#ifdef CONFIG_OMAP_OCFREQ_12
-		if (omap4_has_mpu_1_2ghz()) {
+if (omap4_has_mpu_1_2ghz()) {
 			omap4_mpu_opp_enable(1200000000);
 			omap4_mpu_opp_enable(1350000000);
 			omap4_mpu_opp_enable(1400000000);
 			omap4_mpu_opp_enable(1500000000);
 	}
-#else
-		if (omap4_has_mpu_1_2ghz())
-			omap4_mpu_opp_enable(1200000000);
-#endif
-#ifdef CONFIG_OMAP_OCFREQ_12
 			pr_info("This is DPLL un-trimmed SOM. OPP is limited at 1.2 GHz\n");
 #else
 		if (!trimmed)
+			omap_writel(0x29, 0x4a002330);
+}
+
+	if (!r) {
+		if (omap4_has_mpu_1_2ghz())
+			omap4_mpu_opp_enable(1200000000);
+		if (!trimmed)
 			pr_info("This is DPLL un-trimmed SOM. OPP is limited at 1.2 GHz\n");
 #endif
+
 		if (omap4_has_mpu_1_5ghz() && trimmed) {
 			omap4_mpu_opp_enable(1200000000);
 			omap4_mpu_opp_enable(1350000000);
