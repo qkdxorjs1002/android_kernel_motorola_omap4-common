@@ -510,9 +510,9 @@ config OMAP_SMARTREFLEX_CUSTOM_SENSOR
       voltage definitions used for Smartreflex calibration.
 
 config OMAP_OCFREQ_12
-    bool "Enable 1.4GHz MPU frequency slot"
+    bool "Enable 1.2, 1.35GHz and OC MPU frequency slot"
     help
-      Enable the 1.4GHz MPU frequency slot.
+      Enable the 1.2, 1.35GHz and OC MPU frequency slot.
 
 endmenu
 
