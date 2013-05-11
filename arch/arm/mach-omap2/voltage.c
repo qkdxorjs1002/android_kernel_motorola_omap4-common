@@ -42,7 +42,7 @@
 #include "vp.h"
 
 #ifdef CONFIG_PM_FOOTPRINT
-#define MAX_OPP_NUMBER 6
+#define MAX_OPP_NUMBER 10
 struct vdd_info_time {
 	char *name;
 	u8 vpconfig;
