@@ -407,7 +407,7 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 
 	cpufreq_frequency_table_get_attr(freq_table, policy->cpu);
 
-#ifdef CONFIG_OMAP_OCFREQ_12
+#ifndef CONFIG_OMAP_OCFREQ_12
 if (policy->min > 100000)
     policy->min = 100000;
 #endif
@@ -620,7 +620,7 @@ static ssize_t store_gpu_oc(struct cpufreq_policy *policy, const char *buf, size
 	prev_oc = oc_val;
 	if (prev_oc < 0 || prev_oc > 2) {
 		// shouldn't be here
-		pr_info("[imoseyon] gpu_oc error - bailing\n");	
+		pr_info("[dtrail] gpu_oc error - bailing\n");	
 		return size;
 	}
 	
@@ -632,7 +632,7 @@ static ssize_t store_gpu_oc(struct cpufreq_policy *policy, const char *buf, size
         dev = omap_hwmod_name_get_dev("gpu");
         ret1 = opp_disable(dev, gpu_freqs[prev_oc]);
         ret2 = opp_enable(dev, gpu_freqs[oc_val]);
-        pr_info("[imoseyon] gpu top speed changed from %lu to %lu (%d,%d)\n", 
+        pr_info("[dtrail] gpu top speed changed from %lu to %lu (%d,%d)\n", 
 		gpu_freqs[prev_oc], gpu_freqs[oc_val], ret1, ret2);
 	
 	return size;
