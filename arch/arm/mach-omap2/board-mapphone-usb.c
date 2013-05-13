@@ -37,6 +37,7 @@
 #include "cm-regbits-34xx.h"
 #include "clock.h"
 #include "omap2plus-cpufreq.h"
+#include <linux/fastchg.h>
 
 #define MAPPHONE_BP_READY2_AP_GPIO      59
 #define MAPPHONE_IPC_USB_SUSP_GPIO	95
@@ -126,7 +127,11 @@ static int cpcap_usb_connected_probe(struct platform_device *pdev)
 	} else {
 		android_usb_set_connected(1, pdata->accy);
 #if defined(CONFIG_USB_MOT_ANDROID) && defined(CONFIG_USB_MUSB_OTG)
+#ifdef CONFIG_FORCE_FAST_CHARGE
+		cpcap_musb_notifier_call((force_fast_charge != 0) ? USB_EVENT_CHARGER : USB_EVENT_VBUS);
+#else
 		cpcap_musb_notifier_call(USB_EVENT_VBUS);
+#endif
 #endif
 	}
 
