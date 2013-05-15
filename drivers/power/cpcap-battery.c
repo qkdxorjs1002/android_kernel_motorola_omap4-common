@@ -787,7 +787,6 @@ static int cpcap_batt_resume(struct platform_device *pdev)
 
 	return 0;
 }
-
 void cpcap_batt_set_ac_prop(struct cpcap_device *cpcap,
 	struct cpcap_batt_ac_data *ac)
 {
@@ -816,33 +815,6 @@ void cpcap_batt_set_usb_prop_online(struct cpcap_device *cpcap, int online,
 	struct cpcap_platform_data *data = spi->dev.platform_data;
 
 	if (sply != NULL) {
-#ifdef CONFIG_FORCE_FAST_CHARGE
-		if (force_fast_charge != 0) {
-		sply->ac_state.online = ac->online;
-		sply->ac_state.model = ac->model;
-		power_supply_changed(&sply->ac);
-
-		if (data->ac_changed)
-			data->ac_changed(&sply->ac, &sply->ac_state);
-		} else {
-		sply->usb_state.online = online;
-		sply->usb_state.model = model;
-		power_supply_changed(&sply->usb);
-
-		if (data->usb_changed)
-			data->usb_changed(&sply->usb, &sply->usb_state);
-		}
-#else
-	{
-		sply->usb_state.online = online;
-		sply->usb_state.model = model;
-		power_supply_changed(&sply->usb);
-
-		if (data->usb_changed)
-			data->usb_changed(&sply->usb, &sply->usb_state);
-		}
-#endif
-	{
 		sply->usb_state.online = online;
 		sply->usb_state.model = model;
 		power_supply_changed(&sply->usb);

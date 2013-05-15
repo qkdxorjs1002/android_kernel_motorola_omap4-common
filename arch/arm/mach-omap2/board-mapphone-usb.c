@@ -130,7 +130,7 @@ static int cpcap_usb_connected_probe(struct platform_device *pdev)
 	} else {
 		android_usb_set_connected(1, pdata->accy);
 #if defined(CONFIG_USB_MOT_ANDROID) && defined(CONFIG_USB_MUSB_OTG)
-		force_fast_charge !=0;
+
 #ifdef CONFIG_FORCE_FAST_CHARGE
 
 #else
