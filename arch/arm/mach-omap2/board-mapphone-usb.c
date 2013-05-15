@@ -128,17 +128,13 @@ static int cpcap_usb_connected_probe(struct platform_device *pdev)
 		cpcap_musb_notifier_call(USB_EVENT_ID);
 #endif
 	} else {
-		android_usb_set_connected(1, pdata->accy);
-#if defined(CONFIG_USB_MOT_ANDROID) && defined(CONFIG_USB_MUSB_OTG)
-
-
 #ifdef CONFIG_FORCE_FAST_CHARGE
  	pr_info("%s, Forcing USB_EVENT_CHARGER for Fast Charge\n", __func__);
-   	force_fast_charge != 0 ? cpcap_musb_notifier_call(USB_EVENT_ID) : cpcap_musb_notifier_call(USB_EVENT_VBUS);
+   	force_fast_charge != 0 ? cpcap_musb_notifier_call(USB_EVENT_NONE) : cpcap_musb_notifier_call(USB_EVENT_VBUS);
 #else 
+		android_usb_set_connected(1, pdata->accy);
+#if defined(CONFIG_USB_MOT_ANDROID) && defined(CONFIG_USB_MUSB_OTG)
 	cpcap_musb_notifier_call(USB_EVENT_VBUS);
-
-#endif
 #endif
 	}
 
