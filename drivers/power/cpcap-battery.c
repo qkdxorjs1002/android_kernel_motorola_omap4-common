@@ -36,10 +36,6 @@
 #include <linux/miscdevice.h>
 #include <linux/debugfs.h>
 
-#ifdef CONFIG_FORCE_FAST_CHARGE
-#include <linux/fastchg.h>
-#endif
-
 #define CPCAP_BATT_IRQ_BATTDET 0x01
 #define CPCAP_BATT_IRQ_OV      0x02
 #define CPCAP_BATT_IRQ_CC_CAL  0x04
