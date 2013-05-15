@@ -61,9 +61,9 @@ struct cpcap_accy_platform_data {
 static struct device_pid mot_android_pid[MAX_DEVICE_TYPE_NUM] = {
 	{"mtp,usbnet",		0},
 	{"mtp,usbnet,adb",	0},
-	{"ptp",		0},
-	{"ptp,adb",	0},
-	{"rndis",			0},
+	{"ptp",			0},
+	{"ptp,adb",		0},
+	{"rndis",		0},
 	{"rndis,adb",		0},
 	{"cdrom",               0},
 	{"mass_storage",        0},
@@ -73,7 +73,7 @@ static struct device_pid mot_android_pid[MAX_DEVICE_TYPE_NUM] = {
 };
 
 static struct android_usb_platform_data andusb_plat = {
-	.vendor			= "Motorola",
+	.vendor		= "Motorola",
 	.product_name	= "Android",
 	.android_pid	= mot_android_pid,
 	.nluns			= 1,
@@ -134,7 +134,7 @@ static int cpcap_usb_connected_probe(struct platform_device *pdev)
 
 #ifdef CONFIG_FORCE_FAST_CHARGE
  	pr_info("%s, Forcing USB_EVENT_CHARGER for Fast Charge\n", __func__);
-   	cpcap_musb_notifier_call = (force_fast_charge != 0) ? USB_EVENT_ID : USB_EVENT_VBUS;
+   	force_fast_charge != 0 ? cpcap_musb_notifier_call(USB_EVENT_ID) : cpcap_musb_notifier_call(USB_EVENT_VBUS);
 #else 
 	cpcap_musb_notifier_call(USB_EVENT_VBUS);
 
