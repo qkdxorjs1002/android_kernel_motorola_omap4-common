@@ -36,6 +36,10 @@
 #include <linux/miscdevice.h>
 #include <linux/debugfs.h>
 
+#ifdef CONFIG_FORCE_FAST_CHARGE
+#include <linux/fastchg.h>
+#endif
+
 #define CPCAP_BATT_IRQ_BATTDET 0x01
 #define CPCAP_BATT_IRQ_OV      0x02
 #define CPCAP_BATT_IRQ_CC_CAL  0x04
@@ -812,6 +816,33 @@ void cpcap_batt_set_usb_prop_online(struct cpcap_device *cpcap, int online,
 	struct cpcap_platform_data *data = spi->dev.platform_data;
 
 	if (sply != NULL) {
+#ifdef CONFIG_FORCE_FAST_CHARGE
+		if (force_fast_charge != 0) {
+		sply->ac_state.online = ac->online;
+		sply->ac_state.model = ac->model;
+		power_supply_changed(&sply->ac);
+
+		if (data->ac_changed)
+			data->ac_changed(&sply->ac, &sply->ac_state);
+		} else {
+		sply->usb_state.online = online;
+		sply->usb_state.model = model;
+		power_supply_changed(&sply->usb);
+
+		if (data->usb_changed)
+			data->usb_changed(&sply->usb, &sply->usb_state);
+		}
+#else
+	{
+		sply->usb_state.online = online;
+		sply->usb_state.model = model;
+		power_supply_changed(&sply->usb);
+
+		if (data->usb_changed)
+			data->usb_changed(&sply->usb, &sply->usb_state);
+		}
+#endif
+	{
 		sply->usb_state.online = online;
 		sply->usb_state.model = model;
 		power_supply_changed(&sply->usb);
