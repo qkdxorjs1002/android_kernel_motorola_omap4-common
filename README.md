@@ -87,6 +87,7 @@ For releases and support check the XDA-Thread: http://forum.xda-developers.com/s
 
 - Kholk & [mbm] for Kexec Initial Release
 - Hashcode & dhacker29 (STS-Dev-Team) for fixing Kexec, Base Kernel release and all their great work!
+- Ezekeel, Imoseyon - for source code of: Live OC, Custom Coltage, SLQB, GPU OC, Optimized CRC32 Algorithm, Touch Wake, Wheatley, Lazy, Fsync, Gamma Control, more...
 - Bigeyes0x0 for Trickster Mod App and support
 - Biotik / Bionx NX - Catalyst/JBX-CoDevelopment
 - XDA-Developers - great community!
