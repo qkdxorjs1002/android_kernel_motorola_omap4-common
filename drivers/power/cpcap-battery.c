@@ -430,17 +430,15 @@ static void cpcap_batt_ind_chrg_ctrl(struct cpcap_batt_ps *sply)
 			pdata->ind_chrg->force_charge_terminate(1);
 		pr_cpcap_batt(TRANSITION, "overvoltage interrupt chrgterm set");
 		sply->ind_chrg_dsbl_time = (unsigned long)temp;
-
-	}  
 #ifdef CONFIG_BLX
-	else if (get_charginglimit() != MAX_CHARGINGLIMIT && sply->batt_state.batt_capacity_one >= get_charginglimit())
+	} else if (get_charginglimit() != MAX_CHARGINGLIMIT && sply->batt_state.batt_capacity_one >= get_charginglimit())
 		      {
 			pdata->ind_chrg->force_charge_terminate(1);
 			pdata->ind_chrg->force_charge_complete(1);
+		pr_cpcap_batt(TRANSITION, "blx batt capacity 100, chrgcmpl set");
 		sply->ind_chrg_dsbl_time = (unsigned long)temp;
-		}
 #else
-	else if ((sply->batt_state.batt_capacity_one >= 100) &&
+	} else if ((sply->batt_state.batt_capacity_one >= 100) &&
 		   (sply->ac_state.model == CPCAP_BATT_AC_IND)) {
 		if (pdata->ind_chrg->force_charge_complete != NULL)
 			pdata->ind_chrg->force_charge_complete(1);
