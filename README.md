@@ -79,6 +79,9 @@ WIP:
 
 
 
+For releases and support check the XDA-Thread: http://forum.xda-developers.com/showthread.php?t=2223517
+
+
 
 *Credits to 
 
