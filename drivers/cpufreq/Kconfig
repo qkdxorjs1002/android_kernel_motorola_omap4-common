@@ -448,8 +448,6 @@ config CPU_FREQ_GOV_LULZACTIVEW
 	help
 	  'lulzactivew' - A combination of Lulzactive and perfromance by erik96 and biagio7xD
 
-	 If in doubt, say N.
-
 
 menu "x86 CPU frequency scaling drivers"
 depends on X86
