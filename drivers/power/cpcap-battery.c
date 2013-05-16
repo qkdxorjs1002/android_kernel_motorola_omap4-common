@@ -36,6 +36,10 @@
 #include <linux/miscdevice.h>
 #include <linux/debugfs.h>
 
+#ifdef CONFIG_BLX
+#include <linux/blx.h>
+#endif
+
 #define CPCAP_BATT_IRQ_BATTDET 0x01
 #define CPCAP_BATT_IRQ_OV      0x02
 #define CPCAP_BATT_IRQ_CC_CAL  0x04
@@ -420,12 +424,23 @@ static void cpcap_batt_ind_chrg_ctrl(struct cpcap_batt_ps *sply)
 			pdata->ind_chrg->force_charge_terminate(1);
 		pr_cpcap_batt(TRANSITION, "overvoltage interrupt chrgterm set");
 		sply->ind_chrg_dsbl_time = (unsigned long)temp;
+
 	} else if ((sply->batt_state.batt_capacity_one >= 100) &&
 		   (sply->ac_state.model == CPCAP_BATT_AC_IND)) {
 		if (pdata->ind_chrg->force_charge_complete != NULL)
 			pdata->ind_chrg->force_charge_complete(1);
 		pr_cpcap_batt(TRANSITION, "batt capacity 100, chrgcmpl set");
 		sply->ind_chrg_dsbl_time = (unsigned long)temp;
+
+#ifdef CONFIG_BLX
+if (get_charginglimit() != MAX_CHARGINGLIMIT && sply->batt_state.batt_capacity_one >= get_charginglimit())
+		{
+			pdata->ind_chrg->force_charge_complete != NULL;
+	
+			pdata->ind_chrg->force_charge_complete(1);
+		}
+
+#endif
 	} else if (((temp - sply->ind_chrg_dsbl_time) >= INDCHRG_RS_TIME) ||
 		   (sply->batt_state.batt_capacity_one <= INDCHRG_RS_CPCY)) {
 		if (pdata->ind_chrg->force_charge_complete != NULL)
