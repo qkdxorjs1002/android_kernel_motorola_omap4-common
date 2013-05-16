@@ -132,7 +132,7 @@ static int cpcap_usb_connected_probe(struct platform_device *pdev)
 #if defined(CONFIG_USB_MOT_ANDROID) && defined(CONFIG_USB_MUSB_OTG)
 
 #ifdef CONFIG_FORCE_FAST_CHARGE
-
+		cpcap_musb_notifier_call(USB_EVENT_NONE);
 #else
 		cpcap_musb_notifier_call(USB_EVENT_VBUS);
 #endif

@@ -36,6 +36,10 @@
 #include <linux/miscdevice.h>
 #include <linux/debugfs.h>
 
+#ifdef CONFIG_FORCE_FAST_CHARGE
+#include <linux/fastchg.h>
+#endif
+
 #ifdef CONFIG_BLX
 #include <linux/blx.h>
 #endif
@@ -828,7 +832,11 @@ void cpcap_batt_set_usb_prop_online(struct cpcap_device *cpcap, int online,
 	if (sply != NULL) {
 		sply->usb_state.online = online;
 		sply->usb_state.model = model;
+#ifdef CONFIG_FORCE_FAST_CHARGE
+		power_supply_changed(&sply->ac);
+#else
 		power_supply_changed(&sply->usb);
+#endif
 
 		if (data->usb_changed)
 			data->usb_changed(&sply->usb, &sply->usb_state);
