@@ -699,6 +699,12 @@ config LIVE_OC
         help
           Say Y here to enable Live OC
 
+config CUSTOM_VOLTAGE
+	bool "Support for Custom Voltage"
+	default y
+	help
+	  Say Y here to enable Custom Voltage
+
 config OMAP_TEMP_CONTROL
 	bool "Enable support for Temp Control"
 	depends on OMAP_DIE_TEMP_SENSOR
