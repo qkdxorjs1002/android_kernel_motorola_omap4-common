@@ -30,10 +30,6 @@
 #include <linux/live_oc.h>
 #endif
 
-#ifdef CONFIG_CUSTOM_VOLTAGE
-#include <linux/custom_voltage.h>
-#endif
-
 /* Temp variable to allow multiple calls */
 static u8 __initdata omap_table_init;
 
@@ -122,9 +118,6 @@ int __init omap_init_opp_table(struct omap_opp_def *opp_def,
 #ifdef CONFIG_LIVE_OC
 			liveoc_register_oppdevice(dev, opp_def->hwmod_name);
 #endif
-
-#ifdef CONFIG_CUSTOM_VOLTAGE
-			customvoltage_register_oppdevice(dev, opp_def->hwmod_name);
 		}
 next:
 		opp_def++;
