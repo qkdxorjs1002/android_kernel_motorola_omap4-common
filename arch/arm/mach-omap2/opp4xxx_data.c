@@ -126,10 +126,10 @@ struct omap_volt_data omap443x_vdd_iva_volt_data[] = {
 };
 #endif
 
-#define OMAP4430_VDD_CORE_OPP50_UV		 962000
-#define OMAP4430_VDD_CORE_OPP100_UV		1127000
-#define OMAP4430_VDD_CORE_OPP100A_UV		1200000
-#define OMAP4430_VDD_CORE_OPP100B_UV		1250000
+#define OMAP4430_VDD_CORE_OPP50_UV		 950000
+#define OMAP4430_VDD_CORE_OPP100_UV		1050000
+#define OMAP4430_VDD_CORE_OPP100A_UV		1100000
+#define OMAP4430_VDD_CORE_OPP100B_UV		1150000
 
 #ifdef CONFIG_OMAP_SMARTREFLEX_CUSTOM_SENSOR
 struct omap_volt_data omap443x_vdd_core_volt_data[] = {
@@ -275,7 +275,7 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 	/* HSI OPP1 - OPP50 */
 	OPP_INITIALIZER("hsi", "hsi_fck", "core", true, 96000000, OMAP4430_VDD_CORE_OPP50_UV),
 	/* HSI OPP2 - OPP100 */
-	OPP_INITIALIZER("hsi", "hsi_fck", "core", true, 192000000, OMAP4430_VDD_CORE_OPP100_UV),
+	OPP_INITIALIZER("hsi", "hsi_fck", "core", true, 96000000, OMAP4430_VDD_CORE_OPP100_UV),
 	/* ABE OPP1 - OPP50 */
 	OPP_INITIALIZER("aess", "abe_clk", "iva", true, 98304000, OMAP4430_VDD_IVA_OPP50_UV),
 	/* ABE OPP2 - OPP100 */
