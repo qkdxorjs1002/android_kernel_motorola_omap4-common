@@ -125,6 +125,7 @@ int __init omap_init_opp_table(struct omap_opp_def *opp_def,
 
 #ifdef CONFIG_CUSTOM_VOLTAGE
 			customvoltage_register_oppdevice(dev, opp_def->hwmod_name);
+#endif
 		}
 next:
 		opp_def++;
