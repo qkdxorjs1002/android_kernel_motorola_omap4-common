@@ -431,13 +431,11 @@ static void cpcap_batt_ind_chrg_ctrl(struct cpcap_batt_ps *sply)
 		pr_cpcap_batt(TRANSITION, "overvoltage interrupt chrgterm set");
 		sply->ind_chrg_dsbl_time = (unsigned long)temp;
 #ifdef CONFIG_BLX
-	} else if ((get_charginglimit() != MAX_CHARGINGLIMIT && sply->batt_state.batt_capacity_one >= get_charginglimit()) ||
-		   (sply->batt_state.batt_capacity_one >= 100) &&
-		   (sply->ac_state.model == CPCAP_BATT_AC_IND)) {
+	} else if ((get_charginglimit() != MAX_CHARGINGLIMIT && sply->batt_state.batt_capacity_one >= get_charginglimit()) && (sply->ac_state.model == CPCAP_BATT_AC_IND)) {
 		if (pdata->ind_chrg->force_charge_complete != NULL)
 			pdata->ind_chrg->force_charge_complete(1);
 		pr_cpcap_batt(TRANSITION, "batt capacity 100, chrgcmpl set");
-		sply->ind_chrg_dsbl_time = (unsigned long)temp;
+		sply->ind_chrg_dsbl_time = 0;
 #else
 	} else if ((sply->batt_state.batt_capacity_one >= 100) &&
 		   (sply->ac_state.model == CPCAP_BATT_AC_IND)) {
@@ -446,6 +444,15 @@ static void cpcap_batt_ind_chrg_ctrl(struct cpcap_batt_ps *sply)
 		pr_cpcap_batt(TRANSITION, "batt capacity 100, chrgcmpl set");
 		sply->ind_chrg_dsbl_time = (unsigned long)temp;
 #endif
+#ifdef CONFIG_BLX
+	} else if ((get_charginglimit() > sply->batt_state.batt_capacity_one)  && ((temp - sply->ind_chrg_dsbl_time) >= INDCHRG_RS_TIME) ||
+		   (sply->batt_state.batt_capacity_one <= INDCHRG_RS_CPCY)) {
+		if (pdata->ind_chrg->force_charge_complete != NULL)
+			pdata->ind_chrg->force_charge_complete(0);
+		if (pdata->ind_chrg->force_charge_terminate != NULL)
+			pdata->ind_chrg->force_charge_terminate(0);
+		pr_cpcap_batt(TRANSITION, "batt cap low/timer, chrgcmpl clear");
+#else
 	} else if (((temp - sply->ind_chrg_dsbl_time) >= INDCHRG_RS_TIME) ||
 		   (sply->batt_state.batt_capacity_one <= INDCHRG_RS_CPCY)) {
 		if (pdata->ind_chrg->force_charge_complete != NULL)
@@ -453,6 +460,7 @@ static void cpcap_batt_ind_chrg_ctrl(struct cpcap_batt_ps *sply)
 		if (pdata->ind_chrg->force_charge_terminate != NULL)
 			pdata->ind_chrg->force_charge_terminate(0);
 		pr_cpcap_batt(TRANSITION, "batt cap low/timer, chrgcmpl clear");
+#endif
 	}
 }
 
