@@ -232,9 +232,9 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 	/* MPU OPP3 - OPP-NT */
 	OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1000000000, OMAP4430_VDD_MPU_OPPNITRO_UV),
 	/* MPU OPP4 - OPP-NTSB */
-	OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1200000000, OMAP4430_VDD_MPU_OPPNITROSB_UV),
+	OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", false, 1200000000, OMAP4430_VDD_MPU_OPPNITROSB_UV),
 	/* MPU OPP4 - OPP-NTSB1 */
-	OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1350000000, OMAP4430_VDD_MPU_OPPNITROSBA_UV),
+	OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", false, 1350000000, OMAP4430_VDD_MPU_OPPNITROSBA_UV),
 #else
 	/* MPU OPP1 - OPP25 */
  	OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 100000000, OMAP4430_VDD_MPU_OPP25_UV),
