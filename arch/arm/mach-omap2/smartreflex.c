@@ -30,9 +30,8 @@
 #include "pm.h"
 #include "dvfs.h"
 #include "smartreflex.h"
-#ifdef CONFIG_OMAP_OCFREQ_12
 #include "voltage.h" 
-#endif
+
 #define SMARTREFLEX_NAME_LEN	16
 #define NVALUE_NAME_LEN		40
 #define SR_DISABLE_TIMEOUT	200
@@ -69,7 +68,7 @@ static LIST_HEAD(sr_list);
 static struct omap_sr_class_data *sr_class;
 static struct omap_sr_pmic_data *sr_pmic_data;
 static struct dentry		*sr_dbg_dir;
-#ifdef CONFIG_OMAP_OCFREQ_12
+
 static u32 mpumin = OMAP4_VP_MPU_VLIMITTO_VDDMIN;
 static u32 ivamin = OMAP4_VP_IVA_VLIMITTO_VDDMIN;
 static u32 coremin = OMAP4_VP_CORE_VLIMITTO_VDDMIN;
@@ -78,7 +77,6 @@ static u32 coremin = OMAP4_VP_CORE_VLIMITTO_VDDMIN;
 #define LOWCEILING 1000000
 
 
-#endif
 static inline void sr_write_reg(struct omap_sr *sr, unsigned offset, u32 value)
 {
 	__raw_writel(value, (sr->base + offset));
@@ -1060,7 +1058,6 @@ void omap_sr_register_pmic(struct omap_sr_pmic_data *pmic_data)
 
 	sr_pmic_data = pmic_data;
 }
-#ifdef CONFIG_OMAP_OCFREQ_12
 /**
  * Debug FS Entries for tune smartreflex.
  * author: imoseyon@gmail.com
@@ -1189,10 +1186,9 @@ static int omap_sr_autocomp_store(void *data, u64 val)
 
 DEFINE_SIMPLE_ATTRIBUTE(pm_sr_fops, omap_sr_autocomp_show,
 		omap_sr_autocomp_store, "%llu\n");
-#ifdef CONFIG_OMAP_OCFREQ_12
+
 DEFINE_SIMPLE_ATTRIBUTE(pm_sr_fops2, omap_sr_vmin_show,
     omap_sr_vmin_store, "%llu\n"); 
-#endif
 
 static int __init omap_sr_probe(struct platform_device *pdev)
 {
@@ -1303,10 +1299,8 @@ static int __init omap_sr_probe(struct platform_device *pdev)
 
 	(void) debugfs_create_file("autocomp", S_IRUGO | S_IWUSR,
 			sr_info->dbg_dir, (void *)sr_info, &pm_sr_fops);
-#ifdef CONFIG_OMAP_OCFREQ_12
 	(void) debugfs_create_file("vmin", S_IRUGO | S_IWUSR,
 			sr_info->dbg_dir, (void *)sr_info, &pm_sr_fops2);
-#endif
 	(void) debugfs_create_x32("errweight", S_IRUGO, sr_info->dbg_dir,
 			&sr_info->err_weight);
 	(void) debugfs_create_x32("errmaxlimit", S_IRUGO, sr_info->dbg_dir,

@@ -30,11 +30,7 @@
 #define OMAP4_PROD_ID_I684_MASK		0x000C0000
 
 static bool bgap_trim_sw_overide;
-#ifdef CONFIG_OMAP_OCFREQ_12
 static bool dpll_trim_override = true;
-#else
-static bool dpll_trim_override;
-#endif
 static bool ddr_io_trim_override;
 
 /**
