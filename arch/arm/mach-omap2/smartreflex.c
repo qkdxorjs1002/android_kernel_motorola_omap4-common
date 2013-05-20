@@ -1141,7 +1141,7 @@ static int omap_sr_vmin_store(void *data, u64 val)
         sr_start_vddautocomp(sr_info);
   return 0;
 }
-#endif
+
 
 /* PM Debug Fs enteries to enable disable smartreflex. */
 static int omap_sr_autocomp_show(void *data, u64 *val)
