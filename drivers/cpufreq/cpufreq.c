@@ -1637,6 +1637,9 @@ EXPORT_SYMBOL(cpufreq_get_policy);
  */
 static int __cpufreq_set_policy(struct cpufreq_policy *data,
 				struct cpufreq_policy *policy)
+
+#define scaling_max_freq 1000000
+
 {
 	int ret = 0;
 
