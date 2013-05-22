@@ -365,8 +365,7 @@ out:
  * Write out information from cpufreq_driver->policy[cpu]; object must be
  * "unsigned int".
  */
-#define scaling_max_freq 1000000
-
+#define SCALING_MAX_FREQ (1000000)
 #define show_one(file_name, object)			\
 static ssize_t show_##file_name				\
 (struct cpufreq_policy *policy, char *buf)		\
@@ -1638,8 +1637,6 @@ EXPORT_SYMBOL(cpufreq_get_policy);
  */
 static int __cpufreq_set_policy(struct cpufreq_policy *data,
 				struct cpufreq_policy *policy)
-
-#define scaling_max_freq 1000000
 
 {
 	int ret = 0;
