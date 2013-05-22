@@ -1646,11 +1646,10 @@ static int __cpufreq_set_policy(struct cpufreq_policy *data,
 
 	// Set min speed to 100mhz
 
-#ifdef CONFIG_OMAP_OCFREQ_12
  if (policy->min > 100000)
-	pr_info("[dtrail] cpufreq policy min set to 100 mhz for BSE Kernel");	
+	pr_info("[dtrail] cpufreq policy min set to 100 mhz");	
     	policy->min = 100000;
-#endif
+
 	data->min = policy->min;
 	data->max = policy->max;
 
