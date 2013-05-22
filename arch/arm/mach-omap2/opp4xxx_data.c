@@ -20,9 +20,11 @@
  */
 #include <linux/module.h>
 #include <linux/opp.h>
+#include <linux/clk.h> 
 
 #include <plat/cpu.h>
 #include <plat/common.h>
+#include <plat/clock.h> 
 
 #include "control.h"
 #include "omap_opp_data.h"
@@ -80,7 +82,7 @@ struct omap_volt_data omap443x_vdd_mpu_volt_data[] = {
 	VOLT_DATA_DEFINE(OMAP4430_VDD_MPU_OPPTURBO_UV, 0, OMAP44XX_CONTROL_FUSE_MPU_OPPTURBO, 0, 0, 0xf9, 0x16, OMAP_ABB_NOMINAL_OPP),
 	VOLT_DATA_DEFINE(OMAP4430_VDD_MPU_OPPTURBOB_UV, 0, OMAP44XX_CONTROL_FUSE_MPU_OPPTURBOB, 0, 0, 0xf9, 0x16, OMAP_ABB_NOMINAL_OPP),
 	VOLT_DATA_DEFINE(OMAP4430_VDD_MPU_OPPNITRO_UV, 0, OMAP44XX_CONTROL_FUSE_MPU_OPPNITRO, 0, 0, 0xfa, 0x23, OMAP_ABB_NOMINAL_OPP),
-	VOLT_DATA_DEFINE(OMAP4430_VDD_MPU_OPPNITROSB_UV, 0, OMAP44XX_CONTROL_FUSE_MPU_OPPNITROSB, 0, 0, 0xfa, 0x27, OMAP_ABB_FAST_OPP),
+	VOLT_DATA_DEFINE(OMAP4430_VDD_MPU_OPPNITROSB_UV, 10000, 0xfa, 0x27, OMAP_ABB_FAST_OPP),
 	VOLT_DATA_DEFINE(0, 0, 0, 0, 0, 0, 0, 0),
 };
 #endif
@@ -273,11 +275,7 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 	/* DSP OPP2 - OPP100 */
 	OPP_INITIALIZER("dsp", "dpll_iva_m4x2_ck", "iva", true, 465500000, OMAP4430_VDD_IVA_OPP100_UV),
 	/* DSP OPP3 - OPPTB */
-#ifdef CONFIG_OMAP_OCFREQ_12
-	OPP_INITIALIZER("dsp", "dpll_iva_m4x2_ck", "iva", true, 496000000, OMAP4430_VDD_IVA_OPPTURBO_UV),
-#else
 	OPP_INITIALIZER("dsp", "dpll_iva_m4x2_ck", "iva", false, 496000000, OMAP4430_VDD_IVA_OPPTURBO_UV),
-#endif
 	/* HSI OPP1 - OPP50 */
 	OPP_INITIALIZER("hsi", "hsi_fck", "core", true, 96000000, OMAP4430_VDD_CORE_OPP50_UV),
 	/* HSI OPP2 - OPP100 */
@@ -488,6 +486,16 @@ int __init omap4_opp_init(void)
 	if (!cpu_is_omap44xx())
 		return r;
 	if (cpu_is_omap443x())
+		struct clk *dpll_core_ck;
+   	      unsigned long rate = 0;
+
+	   dpll_core_ck = clk_get(NULL, "dpll_core_ck");
+	      if (dpll_core_ck) {
+		      rate = dpll_core_ck->recalc(dpll_core_ck);
+		      clk_put(dpll_core_ck);
+    }
+
+    if (rate > 800000000) 
 		r = omap_init_opp_table(omap443x_opp_def_list,
 			ARRAY_SIZE(omap443x_opp_def_list));
 	else if (cpu_is_omap446x()) {
@@ -502,7 +510,6 @@ int __init omap4_opp_init(void)
 
 	if (!r) {
 		if (omap4_has_mpu_1_2ghz()) {
-			omap4_mpu_opp_enable(1200000000);
 			omap4_mpu_opp_enable(1200000000);
 			omap4_mpu_opp_enable(1350000000);
 
