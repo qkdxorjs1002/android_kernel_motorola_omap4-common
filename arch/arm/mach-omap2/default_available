@@ -1,0 +1,18 @@
+opp.c:		if (!opp_def->hwmod_name) {
+opp.c:		oh = omap_hwmod_lookup(opp_def->hwmod_name);
+opp.c:				opp_def->hwmod_name, i);
+opp.c:		clk = omap_clk_get_by_name(opp_def->clk_name);
+opp.c:			round_rate = clk_round_rate(clk, opp_def->freq);
+opp.c:				opp_def->freq = round_rate;
+opp.c:					__func__, opp_def->clk_name);
+opp.c:				opp_def->clk_name);
+opp.c:		r = opp_add(dev, opp_def->freq, opp_def->u_volt);
+opp.c:			       __func__, opp_def->freq,
+opp.c:			       opp_def->hwmod_name, i, r);
+opp.c:			if (!opp_def->default_available)
+opp.c:				r = opp_disable(dev, opp_def->freq);
+opp.c:					__func__, opp_def->freq,
+opp.c:					opp_def->hwmod_name, i, r);
+opp.c:				opp_def->voltdm_name, opp_def->clk_name);
+opp.c:					__func__, opp_def->hwmod_name, r, i);
+opp.c:			liveoc_register_oppdevice(dev, opp_def->hwmod_name);
