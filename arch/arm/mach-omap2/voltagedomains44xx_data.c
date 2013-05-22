@@ -137,13 +137,13 @@ void __init omap44xx_voltagedomains_init(void)
 	 * for the currently-running IC
 	 */
 	if (cpu_is_omap443x()) {
-		struct setup_time_ramp_params *params =
+	/*	struct setup_time_ramp_params *params =
 			omap4_vc_core.common->setup_time_params;
 
 		if (params) {
 			params->pre_scaler_to_sysclk_cycles =
 				pre_scaler_to_sysclk_cycles_443x;
-		}
+		} */
 		omap4_vdd_mpu_info.volt_data = omap443x_vdd_mpu_volt_data;
 		omap4_vdd_iva_info.volt_data = omap443x_vdd_iva_volt_data;
 		omap4_vdd_core_info.volt_data = omap443x_vdd_core_volt_data;
