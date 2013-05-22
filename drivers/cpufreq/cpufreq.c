@@ -365,6 +365,7 @@ out:
  * Write out information from cpufreq_driver->policy[cpu]; object must be
  * "unsigned int".
  */
+#define scaling_max_freq 1000000
 
 #define show_one(file_name, object)			\
 static ssize_t show_##file_name				\
