@@ -25,10 +25,51 @@
 
 #include "omap_opp_data.h"
 #include "dvfs.h"
+#include "pm.h"
 
 #ifdef CONFIG_LIVE_OC
 #include <linux/live_oc.h>
 #endif
+
+/**
+ * struct omap_opp_def - OMAP OPP Definition
+ * @hwmod_name:	Name of the hwmod for this domain
+ * @freq:	Frequency in hertz corresponding to this OPP
+ * @u_volt:	Nominal voltage in microvolts corresponding to this OPP
+ * @enabled:	True/false - is this OPP enabled/disabled by default
+ *
+ * OMAP SOCs have a standard set of tuples consisting of frequency and voltage
+ * pairs that the device will support per voltage domain. This is called
+ * Operating Points or OPP. The actual definitions of OMAP Operating Points
+ * varies over silicon within the same family of devices. For a specific
+ * domain, you can have a set of {frequency, voltage} pairs and this is denoted
+ * by an array of omap_opp_def. As the kernel boots and more information is
+ * available, a set of these are activated based on the precise nature of
+ * device the kernel boots up on. It is interesting to remember that each IP
+ * which belongs to a voltage domain may define their own set of OPPs on top
+ * of this - but this is handled by the appropriate driver.
+ */
+struct omap_opp_def {
+	char *hwmod_name;
+
+	unsigned long freq;
+	unsigned long u_volt;
+
+	bool default_available;
+};
+
+/*
+ * Initialization wrapper used to define an OPP for OMAP variants.
+ */
+#define OPP_INITIALIZER(_hwmod_name, _enabled, _freq, _uv)	\
+{								\
+	.hwmod_name	= _hwmod_name,				\
+	.default_available	= _enabled,			\
+	.freq		= _freq,				\
+	.u_volt		= _uv,					\
+}
+
+#include "opp4xxx_data.h"
 
 /* Temp variable to allow multiple calls */
 static u8 __initdata omap_table_init;
