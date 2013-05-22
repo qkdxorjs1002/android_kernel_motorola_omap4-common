@@ -467,7 +467,7 @@ static void cpcap_batt_ind_chrg_ctrl(struct cpcap_batt_ps *sply)
 		if (pdata->ind_chrg->force_charge_terminate != NULL)
 			pdata->ind_chrg->force_charge_terminate(0);
 		pr_cpcap_batt(TRANSITION, "batt cap low/timer, chrgcmpl clear");
-#endif
+
 	}
 }
 
