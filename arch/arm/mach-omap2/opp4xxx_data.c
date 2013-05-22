@@ -117,14 +117,14 @@ struct omap_volt_data omap443x_vdd_mpu_volt_data[] = {
 
 #ifdef CONFIG_OMAP_SMARTREFLEX_CUSTOM_SENSOR
 struct omap_volt_data omap443x_vdd_iva_volt_data[] = {
-	VOLT_DATA_DEFINE(OMAP4430_VDD_IVA_OPP50_UV, 0, OMAP44XX_CONTROL_FUSE_IVA_OPP50, 0, 0, 0xf4, 0x0c, OMAP_ABB_NOMINAL_OPP),
+	VOLT_DATA_DEFINE(OMAP4430_VDD_IVA_OPP50_UV, 13000, OMAP44XX_CONTROL_FUSE_IVA_OPP50, 0, 0, 0xf4, 0x0c, OMAP_ABB_NOMINAL_OPP),
 	VOLT_DATA_DEFINE(OMAP4430_VDD_IVA_OPP100_UV, 0, OMAP44XX_CONTROL_FUSE_IVA_OPP100, 0, 0, 0xf9, 0x16, OMAP_ABB_NOMINAL_OPP),
 	VOLT_DATA_DEFINE(OMAP4430_VDD_IVA_OPPTURBO_UV, 0, OMAP44XX_CONTROL_FUSE_IVA_OPPTURBO, 0, 0, 0xfa, 0x23, OMAP_ABB_NOMINAL_OPP),
 	VOLT_DATA_DEFINE(0, 0, 0, 0, 0, 0, 0, 0),
 };
 #else
 struct omap_volt_data omap443x_vdd_iva_volt_data[] = {
-	VOLT_DATA_DEFINE(OMAP4430_VDD_IVA_OPP50_UV, 0, OMAP44XX_CONTROL_FUSE_IVA_OPP50, 0xf4, 0x0c, OMAP_ABB_NOMINAL_OPP),
+	VOLT_DATA_DEFINE(OMAP4430_VDD_IVA_OPP50_UV, 13000, OMAP44XX_CONTROL_FUSE_IVA_OPP50, 0xf4, 0x0c, OMAP_ABB_NOMINAL_OPP),
 	VOLT_DATA_DEFINE(OMAP4430_VDD_IVA_OPP100_UV, 0, OMAP44XX_CONTROL_FUSE_IVA_OPP100, 0xf9, 0x16, OMAP_ABB_NOMINAL_OPP),
 	VOLT_DATA_DEFINE(OMAP4430_VDD_IVA_OPPTURBO_UV, 0, OMAP44XX_CONTROL_FUSE_IVA_OPPTURBO, 0xfa, 0x23, OMAP_ABB_NOMINAL_OPP),
 	VOLT_DATA_DEFINE(0, 0, 0, 0, 0, 0),
@@ -487,11 +487,11 @@ int __init omap4_opp_init(void)
 	else if (cpu_is_omap446x()) {
 		r = omap_init_opp_table(omap446x_opp_def_list,
 			ARRAY_SIZE(omap446x_opp_def_list));
-		trimmed = omap_readl(0x4a002268) & ((1 << 18) | (1 << 19));
+		/* trimmed = omap_readl(0x4a002268) & ((1 << 18) | (1 << 19)); */
 		/* if device is untrimmed override DPLL TRIM register */
 
-		if (!trimmed)
-			omap_writel(0x29, 0x4a002330);
+	/*	if (!trimmed)
+			omap_writel(0x29, 0x4a002330); */
 }
 
 	if (!r) {
@@ -500,8 +500,8 @@ int __init omap4_opp_init(void)
 			omap4_mpu_opp_enable(1350000000);
 
 	}
-		if (!trimmed)
-			pr_info("This is DPLL un-trimmed SOM. OPP is limited at 1.2 GHz\n");
+		/*if (!trimmed)
+			pr_info("This is DPLL un-trimmed SOM. OPP is limited at 1.2 GHz\n"); */
 
 		if (omap4_has_mpu_1_5ghz() && trimmed)
 			omap4_mpu_opp_enable(1500000000);
