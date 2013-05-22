@@ -393,6 +393,7 @@ static long cpcap_batt_ioctl(struct file *file,
 
 static void cpcap_batt_ind_chrg_ctrl(struct cpcap_batt_ps *sply)
 {
+
 	unsigned long long temp;
 	unsigned short cpcap_reg;
 	struct cpcap_platform_data *pdata = sply->cpcap->spi->dev.platform_data;
@@ -409,9 +410,18 @@ static void cpcap_batt_ind_chrg_ctrl(struct cpcap_batt_ps *sply)
 	do_div(temp, NSEC_PER_SEC);
 	pr_cpcap_batt(STATUS, "batt update: time=%lld", temp);
 
+#ifdef CONFIG_BLX
+	if ((get_charginglimit() != MAX_CHARGINGLIMIT && 
+		sply->batt_state.batt_capacity_one >= get_charginglimit()) &&
+	 (sply->ac_state.model == CPCAP_BATT_AC_CABLE) &&
+		(sply->ac_state.model == CPCAP_BATT_AC_SMARTDOCK) &&
+			(sply->ac_state.online)) || (sply->usb_state.online)) 
+#else
 	if ((((sply->ac_state.model == CPCAP_BATT_AC_CABLE) ||
 		(sply->ac_state.model == CPCAP_BATT_AC_SMARTDOCK)) &&
-			(sply->ac_state.online)) || (sply->usb_state.online)) {
+			(sply->ac_state.online)) || (sply->usb_state.online)) 
+#endif
+									{
 		if (pdata->ind_chrg->force_charge_complete != NULL)
 			pdata->ind_chrg->force_charge_complete(1);
 		sply->ind_chrg_dsbl_time = 0;
@@ -431,32 +441,27 @@ static void cpcap_batt_ind_chrg_ctrl(struct cpcap_batt_ps *sply)
 		pr_cpcap_batt(TRANSITION, "overvoltage interrupt chrgterm set");
 		sply->ind_chrg_dsbl_time = (unsigned long)temp;
 #ifdef CONFIG_BLX
-	} else if ((sply->batt_state.batt_capacity_one >= get_charginglimit()) && 
-		   (get_charginglimit() != MAX_CHARGINGLIMIT) && 
+	} else if ((get_charginglimit() != MAX_CHARGINGLIMIT) && 
+		(sply->batt_state.batt_capacity_one >= get_charginglimit()) && 
+		   (sply->ac_state.model == CPCAP_BATT_AC_IND)) || 
+		if ((sply->batt_state.batt_capacity_one >= 100) &&
 		   (sply->ac_state.model == CPCAP_BATT_AC_IND)) {
-		if (pdata->ind_chrg->force_charge_complete != NULL)
-			pdata->ind_chrg->force_charge_complete(1);
-		pr_cpcap_batt(TRANSITION, "batt capacity 100, chrgcmpl set");
-		sply->ind_chrg_dsbl_time = (unsigned long)temp;
 #else
 	} else if ((sply->batt_state.batt_capacity_one >= 100) &&
-		   (sply->ac_state.model == CPCAP_BATT_AC_IND)) {
+		   (sply->ac_state.model == CPCAP_BATT_AC_IND)) { 
+#endif
 		if (pdata->ind_chrg->force_charge_complete != NULL)
 			pdata->ind_chrg->force_charge_complete(1);
 		pr_cpcap_batt(TRANSITION, "batt capacity 100, chrgcmpl set");
 		sply->ind_chrg_dsbl_time = (unsigned long)temp;
-#endif
 #ifdef CONFIG_BLX
-	} else if ((get_charginglimit() > sply->batt_state.batt_capacity_one)  && 
-		   ((temp - sply->ind_chrg_dsbl_time) >= INDCHRG_RS_TIME)) {
-		if (pdata->ind_chrg->force_charge_complete != NULL)
-			pdata->ind_chrg->force_charge_complete(0);
-		if (pdata->ind_chrg->force_charge_terminate != NULL)
-			pdata->ind_chrg->force_charge_terminate(0);
-		pr_cpcap_batt(TRANSITION, "batt cap low/timer, chrgcmpl clear");
+	} else if ((get_charginglimit() == MAX_CHARGINGLIMIT || sply->batt_state.batt_capacity_one > get_charginglimit())  && 
+		   (temp - sply->ind_chrg_dsbl_time >= INDCHRG_RS_TIME)) ||
+		   (sply->batt_state.batt_capacity_one <= INDCHRG_RS_CPCY)
 #else
 	} else if (((temp - sply->ind_chrg_dsbl_time) >= INDCHRG_RS_TIME) ||
 		   (sply->batt_state.batt_capacity_one <= INDCHRG_RS_CPCY)) {
+#endif
 		if (pdata->ind_chrg->force_charge_complete != NULL)
 			pdata->ind_chrg->force_charge_complete(0);
 		if (pdata->ind_chrg->force_charge_terminate != NULL)
@@ -841,21 +846,13 @@ void cpcap_batt_set_usb_prop_online(struct cpcap_device *cpcap, int online,
 	struct cpcap_platform_data *data = spi->dev.platform_data;
 
 	if (sply != NULL) {
-#ifdef CONFIG_FORCE_FAST_CHARGE
-		sply->ac_state.online = ac->online;
-		sply->ac_state.model = ac->model;
-		power_supply_changed(&sply->ac);
 
-	if (data->ac_changed)
-			data->ac_changed(&sply->ac, &sply->ac_state);
-#else
 		sply->usb_state.online = online;
 		sply->usb_state.model = model;
 		power_supply_changed(&sply->usb);
 
 		if (data->usb_changed)
 			data->usb_changed(&sply->usb, &sply->usb_state);
-#endif
 	}
 
 	cpcap_batt_ind_chrg_ctrl(sply);
@@ -869,6 +866,8 @@ void cpcap_batt_set_usb_prop_curr(struct cpcap_device *cpcap, unsigned int curr)
 	struct cpcap_platform_data *data = spi->dev.platform_data;
 
 	if (sply != NULL) {
+#ifdef CONFIG_FORCE_FAST_CHARGE
+#endif
 		sply->usb_state.current_now = curr;
 		power_supply_changed(&sply->usb);
 
