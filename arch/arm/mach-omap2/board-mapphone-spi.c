@@ -36,6 +36,10 @@
 #include <linux/spi/mdm6600_spi_tty.h>
 #include <asm/bootinfo.h>
 
+#ifdef CONFIG_BLX
+#include <linux/blx.h>
+#endif
+
 struct cpcap_spi_init_data mapphone_cpcap_spi_init[CPCAP_REG_SIZE + 1] = {
 	{CPCAP_REG_ASSIGN1,   0x0101},
 	{CPCAP_REG_ASSIGN2,   0x0000},
