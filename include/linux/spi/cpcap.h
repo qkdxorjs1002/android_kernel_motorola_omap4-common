@@ -21,6 +21,10 @@
 #include <linux/ioctl.h>
 #include <linux/rtc.h>
 
+#ifdef CONFIG_BLX
+#include <linux/blx.h>
+#endif
+
 #ifdef __KERNEL__
 #include <linux/workqueue.h>
 #include <linux/completion.h>

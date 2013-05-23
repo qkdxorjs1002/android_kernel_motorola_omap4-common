@@ -434,7 +434,7 @@ if (policy->min > 100000)
 
 	omap_cpufreq_cooling_init();
 
-	policy->cpuinfo.transition_latency = 40 * 1000;
+	policy->cpuinfo.transition_latency = 100 * 1000;
 
 #ifdef CONFIG_CUSTOM_VOLTAGE
 	customvoltage_register_freqmutex(&omap_cpufreq_lock);
