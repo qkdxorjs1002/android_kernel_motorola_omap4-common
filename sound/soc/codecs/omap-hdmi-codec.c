@@ -150,7 +150,7 @@ static int hdmi_audio_set_configuration(struct hdmi_codec_data *priv)
 	u32 pclk = omapdss_hdmi_get_pixel_clock();
 	struct omap_chip_id audio_must_use_mclk;
 
-	audio_must_use_mclk.oc = CHIP_IS_OMAP4430ES2_3 | CHIP_IS_OMAP446X;
+	audio_must_use_mclk.oc = CHIP_IS_OMAP4430ES2_3;
 
 	switch (priv->params.format) {
 	case SNDRV_PCM_FORMAT_S16_LE:
