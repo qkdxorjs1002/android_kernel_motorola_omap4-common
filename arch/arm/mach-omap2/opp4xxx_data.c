@@ -20,11 +20,11 @@
  */
 #include <linux/module.h>
 #include <linux/opp.h>
-#include <linux/clk.h> 
+/* #include <linux/clk.h>  */
 
 #include <plat/cpu.h>
 #include <plat/common.h>
-#include <plat/clock.h> 
+/* #include <plat/clock.h> */
 
 #include "control.h"
 #include "omap_opp_data.h"
@@ -326,21 +326,20 @@ int __init omap4_opp_init(void)
 		/* trimmed = omap_readl(0x4a002268) & ((1 << 18) | (1 << 19)); */
 		/* if device is untrimmed override DPLL TRIM register */
 
-	/*	if (!trimmed)
-			omap_writel(0x29, 0x4a002330); */
+	/*	if (!trimmed) */
+			omap_writel(0x29, 0x4a002330);
 
 
 	if (!r) {
 		if (omap4_has_mpu_1_2ghz()) {
 			omap4_mpu_opp_enable(1200000000);
-			omap4_mpu_opp_enable(1350000000);
 
 	}
 		/*if (!trimmed)
 			pr_info("This is DPLL un-trimmed SOM. OPP is limited at 1.2 GHz\n"); */
 
-		if (omap4_has_mpu_1_5ghz() && trimmed)
-			omap4_mpu_opp_enable(1400000000);
+		if (omap4_has_mpu_1_35ghz())
+			omap4_mpu_opp_enable(1350000000);
 	}
 
 #ifdef CONFIG_CUSTOM_VOLTAGE
