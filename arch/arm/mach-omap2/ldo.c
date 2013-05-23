@@ -23,11 +23,6 @@
 #include "ldo.h"
 #include "control.h"
 
-#define OMAP4460_MPU_OPP_DPLL_TRIM	BIT(18)
-#define OMAP4460_MPU_OPP_DPLL_TURBO_RBB	BIT(20)
-
-/* voltages are not defined in a header... yay duplication! */
-#define OMAP4460_VDD_MPU_OPPTURBO_UV	1317000
 
 /**
  * _is_abb_enabled() - check if abb is enabled
@@ -306,49 +301,7 @@ void __init omap_ldo_abb_init(struct voltagedomain *voltdm)
 		    wait_count_val << __ffs(abb->setup_bits->wait_count_mask),
 		    abb->setup_reg);
 
-	/*
-	 * Determine MPU ABB state at OPP_TURBO on 4460
-	 *
-	 * On 4460 all OPPs have preset states for the MPU's ABB LDO, except
-	 * for OPP_TURBO.  OPP_TURBO may require bypass, FBB or RBB depending
-	 * on a combination of characterisation data blown into eFuse register
-	 * CONTROL_STD_FUSE_OPP_DPLL_1.
-	 *
-	 * Bits 18 & 19 of that register signify DPLL_MPU trim (see
-	 * arch/arm/mach-omap2/omap4-trim-quirks.c).  OPP_TURBO might put MPU's
-	 * ABB LDO into bypass or FBB based on this value.
-	 *
-	 * Bit 20 siginifies if RBB should be enabled.  If set it will always
-	 * override the values from bits 18 & 19.
-	 *
-	 * The table below captures the valid combinations:
-	 *
-	 * Bit 18|Bit 19|Bit 20|ABB type
-	 * 0	  0	 0	bypass
-	 * 0	  1	 0	bypass	(invalid combo)
-	 * 1	  0	 0	FBB	(2.4GHz DPLL_MPU)
-	 * 1	  1	 0	FBB	(3GHz DPLL_MPU)
-	 * 0	  0	 1	RBB
-	 * 0	  1	 1	RBB	(invalid combo)
-	 * 1	  0	 1	RBB	(2.4GHz DPLL_MPU)
-	 * 1	  1	 1	RBB	(3GHz DPLL_MPU)
-	 */
-	if (cpu_is_omap446x() && !strcmp("mpu", voltdm->name)) {
-		/* read eFuse register here */
-		reg = omap_ctrl_readl(OMAP4_CTRL_MODULE_CORE_STD_FUSE_OPP_DPLL_1);
-		trim = reg & OMAP4460_MPU_OPP_DPLL_TRIM;
-		rbb = reg & OMAP4460_MPU_OPP_DPLL_TURBO_RBB;
 
-		volt_data = omap_voltage_get_voltdata(voltdm,
-				OMAP4460_VDD_MPU_OPPTURBO_UV);
-
-		/* OPP_TURBO is FAST_OPP (FBB) by default */
-		if (rbb)
-			volt_data->abb_type = OMAP_ABB_SLOW_OPP;
-		else if (!trim)
-			volt_data->abb_type = OMAP_ABB_NOMINAL_OPP;
-
-	}
 	/* Enable ABB */
 	_abb_set_availability(voltdm, abb, true);
 
