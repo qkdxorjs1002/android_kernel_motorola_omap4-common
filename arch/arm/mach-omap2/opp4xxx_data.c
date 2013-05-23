@@ -328,7 +328,7 @@ int __init omap4_opp_init(void)
 
 	/*	if (!trimmed)
 			omap_writel(0x29, 0x4a002330); */
-}
+
 
 	if (!r) {
 		if (omap4_has_mpu_1_2ghz()) {
