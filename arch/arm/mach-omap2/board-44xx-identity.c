@@ -143,15 +143,6 @@ static ssize_t omap4_soc_rbb_trimmed(struct kobject *kobj,
 	int trimmed = 1;
 	int reg = 0;
 
-	if (cpu_is_omap446x()) {
-		/* read eFuse register here */
-		reg = omap_ctrl_readl(OMAP4_CTRL_MODULE_CORE_STD_FUSE_OPP_DPLL_1);
-		trimmed = reg & (1 << 20);
-		pr_info("%s:RBB is %s set\n", __func__, trimmed ? "" : "not");
-
-		return sprintf(buf, "%s\n", trimmed ? "true" : "false");
-	}
-
 	return sprintf(buf, "%s\n", "Not Available");
 }
 

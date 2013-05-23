@@ -85,8 +85,6 @@ done:
 
 int __init omap_devinit_temp_sensor(void)
 {
-	if (!cpu_is_omap446x())
-		return 0;
 
 	return omap_hwmod_for_each_by_class("thermal_sensor",
 			temp_sensor_dev_init, NULL);

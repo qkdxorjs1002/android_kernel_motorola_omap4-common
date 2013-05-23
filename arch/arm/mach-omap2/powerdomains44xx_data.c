@@ -281,31 +281,6 @@ static struct powerdomain mpu_443x_pwrdm = {
 	},
 };
 
-static struct powerdomain mpu_446x_pwrdm = {
-	.name		  = "mpu_pwrdm",
-	.voltdm		  = { .name = "mpu" },
-	.prcm_offs	  = OMAP4430_PRM_MPU_INST,
-	.prcm_partition	  = OMAP4430_PRM_PARTITION,
-	.omap_chip	  = OMAP_CHIP_INIT(CHIP_IS_OMAP446X),
-	.pwrsts		  = PWRSTS_RET_INA_ON,
-	.pwrsts_logic_ret = PWRSTS_OFF_RET,
-	.banks		  = 2,
-	.pwrsts_mem_ret	= {
-		[0] = PWRSTS_OFF_RET,	/* mpu_l2 */
-		[1] = PWRSTS_RET,	/* mpu_ram */
-	},
-	.pwrsts_mem_on	= {
-		[0] = PWRSTS_ON,	/* mpu_l2 */
-		[1] = PWRSTS_ON,	/* mpu_ram */
-	},
-	.wakeup_lat = {
-		[PWRDM_FUNC_PWRST_OFF] = 1000,
-		[PWRDM_FUNC_PWRST_OSWR] = 600,
-		[PWRDM_FUNC_PWRST_CSWR] = 300,
-		[PWRDM_FUNC_PWRST_ON] = 0,
-	},
-};
-
 /* ivahd_44xx_pwrdm: IVA-HD power domain */
 static struct powerdomain ivahd_44xx_pwrdm = {
 	.name		  = "ivahd_pwrdm",
@@ -458,7 +433,6 @@ static struct powerdomain *powerdomains_omap44xx[] __initdata = {
 	&cpu1_44xx_pwrdm,
 	&emu_44xx_pwrdm,
 	&mpu_443x_pwrdm,
-	&mpu_446x_pwrdm,
 	&ivahd_44xx_pwrdm,
 	&cam_44xx_pwrdm,
 	&l3init_44xx_pwrdm,

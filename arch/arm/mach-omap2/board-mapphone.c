@@ -1339,14 +1339,6 @@ static void __init mapphone_init(void)
 
 	mapphone_hsmmc_init();
 
-	if (cpu_is_omap446x()) {
-		/* Vsel0 = gpio, vsel1 = gnd */
-		status = omap_tps6236x_board_setup(true, TPS62361_GPIO, -1,
-					OMAP_PIN_OFF_OUTPUT_HIGH, -1);
-		if (status)
-			pr_err("TPS62361 initialization failed: %d\n", status);
-	}
-
 	omap_enable_smartreflex_on_init();
 	if (enable_suspend_off)
 		omap_pm_enable_off_mode();
