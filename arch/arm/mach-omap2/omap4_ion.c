@@ -115,14 +115,14 @@ void __init omap_ion_init(void)
         }
 
 	/* carveout addresses */
-	if (system_512m) {
+/*	if (system_512m) {
 		omap4_ducati_heap_addr = PLAT_PHYS_OFFSET + omap_total_ram_size() - omap4_ducati_heap_size;
 		omap4_smc_addr = omap4_ducati_heap_addr - omap4_smc_size;
 		omap4_ion_heap_secure_input_addr = omap4_smc_addr - omap4_ion_heap_secure_input_size;
 		omap4_ion_heap_tiler_mem_addr = omap4_ion_heap_secure_input_addr - omap4_ion_heap_tiler_mem_size;
 		omap4_ion_heap_nonsec_tiler_mem_addr = omap4_ion_heap_tiler_mem_addr -
 					omap4_ion_heap_nonsec_tiler_mem_size;
-	} else {
+	} else { */
 		omap4_smc_addr = PLAT_PHYS_OFFSET + omap_total_ram_size() -
 					omap4_smc_size;
 		omap4_ion_heap_secure_input_addr = omap4_smc_addr -
