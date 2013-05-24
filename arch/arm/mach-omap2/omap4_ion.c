@@ -100,7 +100,7 @@ void __init omap_ion_init(void)
 
 	if (system_512m) {
 		omap4_ion_heap_secure_input_size = 0;
-		omap4_ducati_heap_size = (SZ_1M * 55);
+		omap4_ducati_heap_size = (SZ_1M * 83);
 		omap4_ion_heap_nonsec_tiler_mem_size = 0;
 		omap4_ion_heap_tiler_mem_size = 0;
         } else {
