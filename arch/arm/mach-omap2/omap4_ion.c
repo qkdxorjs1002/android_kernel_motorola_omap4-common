@@ -133,7 +133,7 @@ void __init omap_ion_init(void)
 					omap4_ion_heap_tiler_mem_size;
 		omap4_ion_heap_nonsec_tiler_mem_addr = omap4_ion_heap_tiler_mem_addr -
 					omap4_ion_heap_nonsec_tiler_mem_size;
-	}
+	
 
 	pr_info("omap4_total_ram_size = 0x%x\n" \
 				"omap4_smc_size = 0x%x\n"  \
