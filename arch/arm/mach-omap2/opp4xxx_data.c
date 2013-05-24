@@ -20,11 +20,11 @@
  */
 #include <linux/module.h>
 #include <linux/opp.h>
-#include <linux/clk.h>
+// #include <linux/clk.h>
 
 #include <plat/cpu.h>
 #include <plat/common.h>
-#include <plat/clock.h>
+// #include <plat/clock.h>
 
 #include "control.h"
 #include "omap_opp_data.h"
