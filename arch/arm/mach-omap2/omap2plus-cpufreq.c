@@ -409,7 +409,9 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 
 #ifdef CONFIG_OMAP_OCFREQ_12
 if (policy->min > 100000)
-    policy->min = 100000;
+   	policy->min = 100000;
+if (policy->max > 1000000)
+	policy->max = 1000000;
 #endif
 	policy->min = policy->cpuinfo.min_freq;
 	policy->max = policy->cpuinfo.max_freq;
