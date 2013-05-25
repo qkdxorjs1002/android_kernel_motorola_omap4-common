@@ -80,8 +80,8 @@ static u32 coremax = OMAP4_VP_CORE_VLIMITTO_VDDMAX;
 #define LOWFLOOR 700000
 #define LOWCEILING 1000000
 
-#define HIGHFLOOR 1150000
-#define HIGHCEILING 1410000
+#define HIGHFLOOR 1250000
+#define HIGHCEILING 1450000
 
 
 static inline void sr_write_reg(struct omap_sr *sr, unsigned offset, u32 value)
