@@ -1171,7 +1171,7 @@ static int omap_sr_vmax_store(void *data, u64 val)
 {
         struct omap_sr *sr_info = (struct omap_sr *) data;
         struct omap_vp_instance *vp;
-  u32 val2, sys_clk_rate, timeout, vddmax, highfloor, highceiling, vddmin, srtype;
+  u32 val3, sys_clk_rate, timeout, vddmax, highfloor, highceiling, vddmin, srtype;
   highfloor=HIGHFLOOR;
   highceiling=HIGHCEILING;
 
@@ -1222,10 +1222,10 @@ static int omap_sr_vmax_store(void *data, u64 val)
         sys_clk_rate = sr_info->voltdm->sys_clk.rate / 1000;
         timeout = (sys_clk_rate * sr_info->voltdm->pmic->vp_timeout_us) / 1000;
 
-        val2 = (vddmax << vp->common->vlimitto_vddmax_shift) |
+        val3 = (vddmax << vp->common->vlimitto_vddmax_shift) |
                 (vddmin << vp->common->vlimitto_vddmin_shift) |
                 (timeout <<  vp->common->vlimitto_timeout_shift);
-        sr_info->voltdm->write(val2, vp->vlimitto);
+        sr_info->voltdm->write(val3, vp->vlimitto);
 
         sr_stop_vddautocomp(sr_info);
         sr_start_vddautocomp(sr_info);
