@@ -1061,8 +1061,12 @@ void omap_sr_register_pmic(struct omap_sr_pmic_data *pmic_data)
 /**
  * Debug FS Entries for tune smartreflex.
  * author: imoseyon@gmail.com
+ *
+ * Extended with vmax entry for tune smartreflex max voltage
+ * author: @dtrail1_xda
  */
 static int omap_sr_vmin_show(void *data, u64 *val)
+
 {
   struct omap_sr *sr = (struct omap_sr *) data;
 
@@ -1077,6 +1081,20 @@ static int omap_sr_vmin_show(void *data, u64 *val)
   return 0;
 }
 
+static int omap_sr_vmax_show(void *data, u64 *val)
+{
+  struct omap_sr *sr = (struct omap_sr *) data;
+
+  if (!sr) {
+    pr_warning("%s: omap_sr struct not found\n", __func__);
+    return -EINVAL;
+  }
+
+        if (!(strcmp(sr->voltdm->name, "mpu"))) *val = mpumax;
+        else if (!(strcmp(sr->voltdm->name, "iva"))) *val = ivamax;
+        else if (!(strcmp(sr->voltdm->name, "core"))) *val = coremax;
+  return 0;
+}
 static int omap_sr_vmin_store(void *data, u64 val)
 {
         struct omap_sr *sr_info = (struct omap_sr *) data;
@@ -1142,6 +1160,70 @@ static int omap_sr_vmin_store(void *data, u64 val)
   return 0;
 }
 
+static int omap_sr_vmax_store(void *data, u64 val)
+{
+        struct omap_sr *sr_info = (struct omap_sr *) data;
+        struct omap_vp_instance *vp;
+  u32 val2, sys_clk_rate, timeout, vddmax, highfloor, highceiling, vddmin, srtype;
+  highfloor=HIGHFLOOR;
+  highceiling=HIGHCEILING;
+
+        if (!sr_info) {
+                pr_warning("%s: omap_sr struct not found\n", __func__);
+                return -EINVAL;
+        }
+
+        if (!(strcmp(sr_info->voltdm->name, "mpu"))) srtype=1;
+        else if (!(strcmp(sr_info->voltdm->name, "iva"))) srtype=2;
+        else if (!(strcmp(sr_info->voltdm->name, "core"))) srtype=3;
+  else return -EINVAL;
+
+        if (srtype==1) vddmax=sr_info->voltdm->pmic->uv_to_vsel(OMAP4_VP_MPU_VLIMITTO_VDDMAX);
+        else if (srtype==2) vddmax=sr_info->voltdm->pmic->uv_to_vsel(OMAP4_VP_IVA_VLIMITTO_VDDMAX);
+        else vddmax=sr_info->voltdm->pmic->uv_to_vsel(OMAP4_VP_CORE_VLIMITTO_VDDMAX);
+
+  vp = sr_info->voltdm->vp;
+
+  if (val == 0) {
+    if (srtype==1) {
+    vddmax = sr_info->voltdm->pmic->uv_to_vsel(OMAP4_VP_MPU_VLIMITTO_VDDMAX);
+    mpumax = OMAP4_VP_MPU_VLIMITTO_VDDMAX;
+    } else if (srtype==2) {
+    vddmax = sr_info->voltdm->pmic->uv_to_vsel(OMAP4_VP_IVA_VLIMITTO_VDDMAX);
+    ivamin = OMAP4_VP_IVA_VLIMITTO_VDDMIN;
+    } else {
+    vddmax = sr_info->voltdm->pmic->uv_to_vsel(OMAP4_VP_CORE_VLIMITTO_VDDMAX);
+    coremax = OMAP4_VP_CORE_VLIMITTO_VDDMAX;
+    }
+  } else if (val > highfloor) {
+    vddmax = sr_info->voltdm->pmic->uv_to_vsel(highfloor);
+    if (srtype==1) mpumax = highfloor;
+    else if (srtype==2) ivamax = highfloor;
+    else coremax = highfloor;
+  } else if (val < highceiling) {
+    vddmax = sr_info->voltdm->pmic->uv_to_vsel(highceiling);
+    if (srtype==1) mpumax = highceiling;
+    else if (srtype==2) ivamax = highceiling;
+    else coremax = highceiling;
+  } else {
+    vddmax = sr_info->voltdm->pmic->uv_to_vsel(val);
+    if (srtype==1) mpumax = val;
+    else if (srtype==2) ivamax = val;
+    else coremax = val;
+  }
+
+        sys_clk_rate = sr_info->voltdm->sys_clk.rate / 1000;
+        timeout = (sys_clk_rate * sr_info->voltdm->pmic->vp_timeout_us) / 1000;
+
+        val2 = (vddmax << vp->common->vlimitto_vddmax_shift) |
+                (vddmin << vp->common->vlimitto_vddmin_shift) |
+                (timeout <<  vp->common->vlimitto_timeout_shift);
+        sr_info->voltdm->write(val2, vp->vlimitto);
+
+        sr_stop_vddautocomp(sr_info);
+        sr_start_vddautocomp(sr_info);
+  return 0;
+}
 
 /* PM Debug Fs enteries to enable disable smartreflex. */
 static int omap_sr_autocomp_show(void *data, u64 *val)
@@ -1189,6 +1271,8 @@ DEFINE_SIMPLE_ATTRIBUTE(pm_sr_fops, omap_sr_autocomp_show,
 
 DEFINE_SIMPLE_ATTRIBUTE(pm_sr_fops2, omap_sr_vmin_show,
     omap_sr_vmin_store, "%llu\n"); 
+DEFINE_SIMPLE_ATTRIBUTE(pm_sr_fops3, omap_sr_vmax_show,
+    omap_sr_vmax_store, "%llu\n"); 
 
 static int __init omap_sr_probe(struct platform_device *pdev)
 {
@@ -1301,6 +1385,8 @@ static int __init omap_sr_probe(struct platform_device *pdev)
 			sr_info->dbg_dir, (void *)sr_info, &pm_sr_fops);
 	(void) debugfs_create_file("vmin", S_IRUGO | S_IWUSR,
 			sr_info->dbg_dir, (void *)sr_info, &pm_sr_fops2);
+	(void) debugfs_create_file("vmax", S_IRUGO | S_IWUSR,
+			sr_info->dbg_dir, (void *)sr_info, &pm_sr_fops3);
 	(void) debugfs_create_x32("errweight", S_IRUGO, sr_info->dbg_dir,
 			&sr_info->err_weight);
 	(void) debugfs_create_x32("errmaxlimit", S_IRUGO, sr_info->dbg_dir,
