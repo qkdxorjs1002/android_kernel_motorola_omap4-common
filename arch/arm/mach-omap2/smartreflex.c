@@ -1088,7 +1088,7 @@ static int omap_sr_vmin_show(void *data, u64 *val)
   return 0;
 }
 
-static int omap_sr_vmax_show(void *data, u64 *val)
+/*static int omap_sr_vmax_show(void *data, u64 *val)
 {
   struct omap_sr *sr = (struct omap_sr *) data;
 
@@ -1102,6 +1102,7 @@ static int omap_sr_vmax_show(void *data, u64 *val)
         else if (!(strcmp(sr->voltdm->name, "core"))) *val = coremax;
   return 0;
 }
+*/
 static int omap_sr_vmin_store(void *data, u64 val)
 {
         struct omap_sr *sr_info = (struct omap_sr *) data;
@@ -1166,7 +1167,7 @@ static int omap_sr_vmin_store(void *data, u64 val)
         sr_start_vddautocomp(sr_info);
   return 0;
 }
-
+/*
 static int omap_sr_vmax_store(void *data, u64 val)
 {
         struct omap_sr *sr_info = (struct omap_sr *) data;
@@ -1230,7 +1231,7 @@ static int omap_sr_vmax_store(void *data, u64 val)
         sr_stop_vddautocomp(sr_info);
         sr_start_vddautocomp(sr_info);
   return 0;
-}
+}*/
 
 /* PM Debug Fs enteries to enable disable smartreflex. */
 static int omap_sr_autocomp_show(void *data, u64 *val)
@@ -1278,8 +1279,8 @@ DEFINE_SIMPLE_ATTRIBUTE(pm_sr_fops, omap_sr_autocomp_show,
 
 DEFINE_SIMPLE_ATTRIBUTE(pm_sr_fops2, omap_sr_vmin_show,
     omap_sr_vmin_store, "%llu\n"); 
-DEFINE_SIMPLE_ATTRIBUTE(pm_sr_fops3, omap_sr_vmax_show,
-    omap_sr_vmax_store, "%llu\n"); 
+/*DEFINE_SIMPLE_ATTRIBUTE(pm_sr_fops3, omap_sr_vmax_show,
+    omap_sr_vmax_store, "%llu\n"); */
 
 static int __init omap_sr_probe(struct platform_device *pdev)
 {
@@ -1392,8 +1393,8 @@ static int __init omap_sr_probe(struct platform_device *pdev)
 			sr_info->dbg_dir, (void *)sr_info, &pm_sr_fops);
 	(void) debugfs_create_file("vmin", S_IRUGO | S_IWUSR,
 			sr_info->dbg_dir, (void *)sr_info, &pm_sr_fops2);
-	(void) debugfs_create_file("vmax", S_IRUGO | S_IWUSR,
-			sr_info->dbg_dir, (void *)sr_info, &pm_sr_fops3);
+/*	(void) debugfs_create_file("vmax", S_IRUGO | S_IWUSR,
+			sr_info->dbg_dir, (void *)sr_info, &pm_sr_fops3); */
 	(void) debugfs_create_x32("errweight", S_IRUGO, sr_info->dbg_dir,
 			&sr_info->err_weight);
 	(void) debugfs_create_x32("errmaxlimit", S_IRUGO, sr_info->dbg_dir,
