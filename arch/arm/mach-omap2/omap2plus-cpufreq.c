@@ -43,7 +43,6 @@
 #include "dvfs.h"
 #include "omap2plus-cpufreq.h"
 
-
 #ifdef CONFIG_CUSTOM_VOLTAGE
 #include <linux/custom_voltage.h>
 #endif
@@ -51,7 +50,6 @@
 #ifdef CONFIG_LIVE_OC
 #include <linux/live_oc.h>
 #endif
-
 
 #ifdef CONFIG_SMP
 struct lpj_info {
@@ -410,11 +408,11 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 #ifdef CONFIG_OMAP_OCFREQ_12
 if (policy->min > 100000)
    	policy->min = 100000;
+	
 	policy->max = 1000000;
-#else
+#endif
 	policy->min = policy->cpuinfo.min_freq;
 	policy->max = policy->cpuinfo.max_freq;
-#endif
 	policy->cur = omap_getspeed(policy->cpu);
 
 	for (i = 0; freq_table[i].frequency != CPUFREQ_TABLE_END; i++)
@@ -436,7 +434,7 @@ if (policy->min > 100000)
 
 	omap_cpufreq_cooling_init();
 
-	policy->cpuinfo.transition_latency = 100 * 1000;
+	policy->cpuinfo.transition_latency = 40 * 1000;
 
 #ifdef CONFIG_CUSTOM_VOLTAGE
 	customvoltage_register_freqmutex(&omap_cpufreq_lock);
@@ -490,10 +488,7 @@ static ssize_t store_screen_off_freq(struct cpufreq_policy *policy,
 		CPUFREQ_RELATION_H, &index);
 	if (ret)
 		goto out;
-#ifdef CONFIG_OMAP_OCFREQ_12
-if (screen_off_max_freq < 300000)
-	screen_off_max_freq = 300000;
-#endif
+
 	screen_off_max_freq = freq_table[index].frequency;
 
 	ret = count;

@@ -429,9 +429,8 @@ static void __init omap4_init_voltages(void)
 	if (!cpu_is_omap44xx())
 		return;
 
-	else {
 		omap2_set_init_voltage("mpu", "dpll_mpu_ck", mpu_dev);
-	}
+	
 	omap2_set_init_voltage("core", "virt_l3_ck", l3_dev);
 	omap2_set_init_voltage("iva", "dpll_iva_m5x2_ck", iva_dev);
 }

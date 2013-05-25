@@ -1679,10 +1679,10 @@ static int __cpufreq_set_policy(struct cpufreq_policy *data,
  if (policy->min > 100000)
 	pr_info("[dtrail] cpufreq policy min set to 100 mhz");	
     	policy->min = 100000;
-#ifdef CONFIG_OMAP_OCFREQ_12
+/* #ifdef CONFIG_OMAP_OCFREQ_12
 if (policy->max > 1000000)
 	policy->max = 1000000;
-#endif
+#endif */
 	data->min = policy->min;
 	data->max = policy->max;
 

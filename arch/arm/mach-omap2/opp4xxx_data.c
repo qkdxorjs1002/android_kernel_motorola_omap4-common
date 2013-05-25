@@ -40,7 +40,13 @@
 
 /*
  * Structures containing OMAP4430 voltage supported and various
- * voltage dependent data for each VDD.
+ * voltage dependent data for each VDD. 
+ * 
+ * dtrail: We have default OPP1-5; extendet to steps of +100mhz = 12 OPPs
+ * 	   Because we have limited eFuses, we must define one eFuse per each OPP in header file 
+ *   	   and adjust voltages for OPPs
+ *
+ * 		Define voltage for and fuses for new OPPs
  */
 
 #ifdef CONFIG_OMAP_OCFREQ_12
@@ -64,7 +70,7 @@
 #define OMAP4430_VDD_MPU_OPPNITROSB_UV		1383000			/* 1000 */
 #endif
 
-/* dtrail: connecting OPPs to fuses  */
+/* dtrail: connecting OPPs to fuses and set smartreflex values */
 
 #ifdef CONFIG_OMAP_SMARTREFLEX_CUSTOM_SENSOR
 struct omap_volt_data omap443x_vdd_mpu_volt_data[] = {
@@ -139,7 +145,7 @@ struct omap_volt_data omap443x_vdd_iva_volt_data[] = {
 	VOLT_DATA_DEFINE(0, 0, 0, 0, 0, 0),
 };
 #endif
-
+/* We define two more GPU scaling steps and adjust voltages */
 #define OMAP4430_VDD_CORE_OPP50_UV		 952000
 #define OMAP4430_VDD_CORE_OPP100_UV		1117000
 #define OMAP4430_VDD_CORE_OPP100A_UV		1190000
@@ -346,22 +352,14 @@ int __init omap4_opp_init(void)
 
 	if (!r) {
 		if (omap4_has_mpu_1_2ghz()) 
-			omap4_mpu_opp_enable(100000000);
-			omap4_mpu_opp_enable(200000000);
-			omap4_mpu_opp_enable(300000000);
-			omap4_mpu_opp_enable(400000000);
-			omap4_mpu_opp_enable(500000000);
-			omap4_mpu_opp_enable(600000000);
-			omap4_mpu_opp_enable(800000000);
-			omap4_mpu_opp_enable(1000000000);
 			omap4_mpu_opp_enable(1200000000);
 			omap4_mpu_opp_enable(1350000000);
 	
 		/*if (!trimmed)
 			pr_info("This is DPLL un-trimmed SOM. OPP is limited at 1.2 GHz\n"); */
 
-		if (omap4_has_mpu_1_5ghz())
-			omap4_mpu_opp_enable(1500000000);
+	/*	if (omap4_has_mpu_1_5ghz())
+			omap4_mpu_opp_enable(1500000000); */
 	
 }
 #ifdef CONFIG_CUSTOM_VOLTAGE

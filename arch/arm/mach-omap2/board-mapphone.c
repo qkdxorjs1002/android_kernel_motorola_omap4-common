@@ -691,14 +691,12 @@ static unsigned int __init get_ap_ddr_size(void)
 }
 
 
-static void __init omap_mapphone_init_irq(void)
+/*static void __init omap_mapphone_init_irq(void)
 {
-	/* Initialize the default table */
+	// Initialize the default table 
 	omap4_opp_init();
 
-}
-
-
+} */
 static void __init mapphone_voltage_init(void)
 {
 	struct device_node *node;
