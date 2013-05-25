@@ -80,6 +80,9 @@ static u32 coremax = OMAP4_VP_CORE_VLIMITTO_VDDMAX;
 #define LOWFLOOR 700000
 #define LOWCEILING 1000000
 
+#define HIGHFLOOR 1150000
+#define HIGHCEILING 1450000
+
 
 static inline void sr_write_reg(struct omap_sr *sr, unsigned offset, u32 value)
 {
@@ -1199,12 +1202,12 @@ static int omap_sr_vmax_store(void *data, u64 val)
     vddmax = sr_info->voltdm->pmic->uv_to_vsel(OMAP4_VP_CORE_VLIMITTO_VDDMAX);
     coremax = OMAP4_VP_CORE_VLIMITTO_VDDMAX;
     }
-  } else if (val > highfloor) {
+  } else if (val < highfloor) {
     vddmax = sr_info->voltdm->pmic->uv_to_vsel(highfloor);
     if (srtype==1) mpumax = highfloor;
     else if (srtype==2) ivamax = highfloor;
     else coremax = highfloor;
-  } else if (val < highceiling) {
+  } else if (val > highceiling) {
     vddmax = sr_info->voltdm->pmic->uv_to_vsel(highceiling);
     if (srtype==1) mpumax = highceiling;
     else if (srtype==2) ivamax = highceiling;
