@@ -203,8 +203,8 @@ static int wl1271_sdio_power_off(struct wl1271 *wl)
 	/* Let runtime PM know the card is powered off */
 	return pm_runtime_put_sync(&func->dev);
 }
-
-static int wl1271_sdio_set_power(struct wl1271 *wl, bool enable)
+static void wl1271_sdio_set_power(struct wl1271 *wl, bool enable)
+//static int wl1271_sdio_set_power(struct wl1271 *wl, bool enable)
 {
 	if (enable)
 		return wl1271_sdio_power_on(wl);
