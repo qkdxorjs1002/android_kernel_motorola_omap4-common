@@ -13,6 +13,9 @@ export SUBARCH=arm
 export CROSS_COMPILE=arm-eabi-
 export LOCALVERSION="-JBX-0.5-Hybrid"
 
+# define the defconfig
+make ARCH=arm mapphone_OCE_defconfig
+
 # execute build command with "-j4 core flag" 
 # (You may change this to the count of your CPU.
 # Don't set it too high or it will result in a non-bootable kernel.
