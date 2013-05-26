@@ -4,6 +4,8 @@
  * rip the spread apart.
  */
 SCHED_FEAT(GENTLE_FAIR_SLEEPERS, 0)
+SCHED_FEAT(NEW_FAIR_SLEEPERS, 0)
+SCHED_FEAT(NORMALIZED_SLEEPER, 0)
 
 /*
  * Place new tasks ahead so that they do not starve already running
@@ -29,7 +31,7 @@ SCHED_FEAT(AFFINE_WAKEUPS, 1)
  * wakeup-preemption), since its likely going to consume data we
  * touched, increases cache locality.
  */
-SCHED_FEAT(NEXT_BUDDY, 1)
+SCHED_FEAT(NEXT_BUDDY, 0)
 
 /*
  * Prefer to schedule the task that ran last (when we did
