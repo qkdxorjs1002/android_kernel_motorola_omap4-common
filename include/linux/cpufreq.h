@@ -400,7 +400,6 @@ extern struct cpufreq_governor cpufreq_gov_lulzactivew;
 
 #define CPUFREQ_ENTRY_INVALID ~0
 #define CPUFREQ_TABLE_END     ~1
-#define SCALING_MAX_FREQ (1000000)
 
 struct cpufreq_frequency_table {
 	unsigned int	index;     /* any */

@@ -971,9 +971,12 @@ static int cpufreq_add_dev(struct sys_device *sys_dev)
 		pr_debug("initialization failed\n");
 		goto err_unlock_policy;
 	}
-// Boot at 300 mhz
+// Boot at 300 mhz - 1,2ghz
 if (policy->min < 300000)
 	policy->min = 300000;
+if (policy->max > 1200000)
+	policy->max = 1200000;
+
 	policy->user_policy.min = policy->min;
 	policy->user_policy.max = policy->max;
 
@@ -1676,13 +1679,10 @@ static int __cpufreq_set_policy(struct cpufreq_policy *data,
 
 	// Set min speed to 100mhz
 
- if (policy->min > 100000)
+/* if (policy->min > 100000)
 	pr_info("[dtrail] cpufreq policy min set to 100 mhz");	
-    	policy->min = 100000;
-/* #ifdef CONFIG_OMAP_OCFREQ_12
-if (policy->max > 1000000)
-	policy->max = 1000000;
-#endif */
+    	policy->min = 100000; */
+
 	data->min = policy->min;
 	data->max = policy->max;
 
