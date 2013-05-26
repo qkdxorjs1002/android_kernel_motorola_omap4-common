@@ -406,15 +406,16 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 	cpufreq_frequency_table_get_attr(freq_table, policy->cpu);
 
 #ifdef CONFIG_OMAP_OCFREQ_12
-if (policy->min > 100000)
+	/* We don't set an "if rule" so user won't be stuck at 100/1000 min/max */
    	policy->min = 100000;
-	
 	policy->max = 1000000;
-#endif
+	policy->max = policy->cpuinfo.max_freq;
+	policy->cur = omap_getspeed(policy->cpu);
+#else
 	policy->min = policy->cpuinfo.min_freq;
 	policy->max = policy->cpuinfo.max_freq;
 	policy->cur = omap_getspeed(policy->cpu);
-
+#endif
 	for (i = 0; freq_table[i].frequency != CPUFREQ_TABLE_END; i++)
 		max_freq = max(freq_table[i].frequency, max_freq);
 	max_thermal = max_freq;
