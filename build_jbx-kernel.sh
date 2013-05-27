@@ -21,4 +21,4 @@ export LOCALVERSION="-JBX-0.5a-Hybrid"
 # (You may change this to the count of your CPU.
 # Don't set it too high or it will result in a non-bootable kernel.
 
-make
+make -j4
