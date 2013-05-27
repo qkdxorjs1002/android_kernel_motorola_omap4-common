@@ -2,7 +2,8 @@
 
 # Build script for JBX-Kernel
 
-
+# Clean out prior builds
+make clean
 
 # Exporting the toolchain (You may change this to your local toolchain location)
 export PATH=~/build/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin:$PATH
