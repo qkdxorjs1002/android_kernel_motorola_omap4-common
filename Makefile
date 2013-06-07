@@ -620,6 +620,10 @@ endif
 NOSTDINC_FLAGS += -nostdinc -isystem $(shell $(CC) -print-file-name=include)
 CHECKFLAGS     += $(NOSTDINC_FLAGS)
 
+OPTIMIZATION_FLAGS = -march=armv7-a -mtune=cortex-a9 -mfpu=neon \
+                     -ffast-math -fsingle-precision-constant \
+                     -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr
+
 # warn about C99 declaration after statement
 KBUILD_CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
 
