@@ -116,7 +116,6 @@ struct lpddr2_device_info lpddr2_elpida_4G_S4_dev = {
 		&lpddr2_elpida_timings_200_mhz,
 		&lpddr2_elpida_timings_333_mhz,
 		&lpddr2_elpida_timings_400_mhz,
-		&lpddr2_elpida_timings_466_mhz,
 	},
 	.min_tck	= &lpddr2_elpida_min_tck,
 	.type		= LPDDR2_TYPE_S4,
