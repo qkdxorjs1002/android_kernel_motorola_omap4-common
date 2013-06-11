@@ -22,9 +22,6 @@ LC_COLLATE=C
 LC_NUMERIC=C
 export LC_COLLATE LC_NUMERIC
 
-# Localversion
-export LOCALVERSION="-JBX-0.5x-Hybrid"
-
 # We are using a recursive build, so we need to do a little thinking
 # to get the ordering right.
 #
