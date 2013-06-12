@@ -1083,6 +1083,18 @@ static void __init prcm_setup_regs(void)
 		0x1 << OMAP4430_DISABLE_RTA_EXPORT_SHIFT,
 		OMAP4430_PRM_PARTITION, OMAP4430_PRM_DEVICE_INST, OMAP4_PRM_LDO_SRAM_IVA_SETUP_OFFSET);
 
+	/* Allow SRAM LDO to enter RET during  low power state*/
+	if (cpu_is_omap446x()) {
+		omap4_prminst_rmw_inst_reg_bits(OMAP4430_RETMODE_ENABLE_MASK,
+				0x1 << OMAP4430_RETMODE_ENABLE_SHIFT, OMAP4430_PRM_PARTITION,
+				OMAP4430_PRM_DEVICE_INST, OMAP4_PRM_LDO_SRAM_CORE_CTRL_OFFSET);
+		omap4_prminst_rmw_inst_reg_bits(OMAP4430_RETMODE_ENABLE_MASK,
+				0x1 << OMAP4430_RETMODE_ENABLE_SHIFT, OMAP4430_PRM_PARTITION,
+				OMAP4430_PRM_DEVICE_INST, OMAP4_PRM_LDO_SRAM_MPU_CTRL_OFFSET);
+		omap4_prminst_rmw_inst_reg_bits(OMAP4430_RETMODE_ENABLE_MASK,
+				0x1 << OMAP4430_RETMODE_ENABLE_SHIFT, OMAP4430_PRM_PARTITION,
+				OMAP4430_PRM_DEVICE_INST, OMAP4_PRM_LDO_SRAM_IVA_CTRL_OFFSET);
+	}
 	/* Toggle CLKREQ in RET and OFF states */
 	omap4_prminst_write_inst_reg(0x2, OMAP4430_PRM_PARTITION,
 		OMAP4430_PRM_DEVICE_INST, OMAP4_PRM_CLKREQCTRL_OFFSET);
@@ -1384,6 +1396,9 @@ static int __init omap4_pm_init(void)
 
 	prcm_setup_regs();
 
+	if (cpu_is_omap446x())
+		syscontrol_setup_regs();
+
 	ret = request_irq(OMAP44XX_IRQ_PRCM,
 			  (irq_handler_t)prcm_interrupt_handler,
 			  IRQF_NO_SUSPEND | IRQF_DISABLED, "prcm", NULL);
@@ -1455,6 +1470,9 @@ static int __init omap4_pm_init(void)
 			" MPUSS <-> L3_MAIN_1.\n");
 		pr_info("OMAP4 PM: Static dependency added between"
 			" DUCATI <-> L4_PER/CFG and DUCATI <-> L3.\n");
+	} else if (cpu_is_omap446x()) {
+		ret |= clkdm_add_wkdep(mpuss_clkdm, l4_per);
+		ret |= clkdm_add_wkdep(mpuss_clkdm, l4_cfg);
 
 		/* There appears to be a problem between the MPUSS and L3_1 */
 		ret |= clkdm_add_wkdep(mpuss_clkdm, l3_1_clkdm);

@@ -169,6 +169,11 @@ static int __init omap_l2_cache_init(void)
 	if (!cpu_is_omap44xx())
 		return -ENODEV;
 
+#ifdef CONFIG_OMAP_ALLOW_OSWR
+	if (omap_rev() == OMAP4460_REV_ES1_0)
+		mpu_prefetch_disable_errata = true;
+#endif
+
 	/* Static mapping, never released */
 	l2cache_base = ioremap(OMAP44XX_L2CACHE_BASE, SZ_4K);
 	if (WARN_ON(!l2cache_base))
@@ -221,7 +226,19 @@ static int __init omap_l2_cache_init(void)
 		omap_smc1(0x113, por_ctrl);
 
 
-	
+	/*
+	 * FIXME: Temporary WA for OMAP4460 stability issue.
+	 * Lock-down specific L2 cache ways which  makes effective
+	 * L2 size as 512 KB instead of 1 MB
+	 */
+	if (omap_rev() == OMAP4460_REV_ES1_0) {
+		lockdown = 0xa5a5;
+		writel_relaxed(lockdown, l2cache_base + L2X0_LOCKDOWN_WAY_D0);
+		writel_relaxed(lockdown, l2cache_base + L2X0_LOCKDOWN_WAY_D1);
+		writel_relaxed(lockdown, l2cache_base + L2X0_LOCKDOWN_WAY_I0);
+		writel_relaxed(lockdown, l2cache_base + L2X0_LOCKDOWN_WAY_I1);
+	}
+
 skip_aux_por_api:
 	/* Enable PL310 L2 Cache controller */
 	omap_smc1(0x102, 0x1);

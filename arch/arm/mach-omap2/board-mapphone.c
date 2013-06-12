@@ -690,13 +690,6 @@ static unsigned int __init get_ap_ddr_size(void)
 	return sz;
 }
 
-
-/*static void __init omap_mapphone_init_irq(void)
-{
-	// Initialize the default table 
-	omap4_opp_init();
-
-} */
 static void __init mapphone_voltage_init(void)
 {
 	struct device_node *node;
@@ -1336,6 +1329,14 @@ static void __init mapphone_init(void)
 	omap_dmm_init();
 
 	mapphone_hsmmc_init();
+
+	if (cpu_is_omap446x()) {
+		/* Vsel0 = gpio, vsel1 = gnd */
+		status = omap_tps6236x_board_setup(true, TPS62361_GPIO, -1,
+					OMAP_PIN_OFF_OUTPUT_HIGH, -1);
+		if (status)
+			pr_err("TPS62361 initialization failed: %d\n", status);
+	}
 
 	omap_enable_smartreflex_on_init();
 	if (enable_suspend_off)

@@ -323,6 +323,35 @@ static struct omap_voltdm_pmic omap443x_core_pmic = {
 	.uv_to_vsel		= twl6030_uv_to_vsel,
 };
 
+/* Core uses the MPU rail of 4430 */
+static struct omap_voltdm_pmic omap446x_core_pmic = {
+	.slew_rate		= 9000,
+	.step_size		= 12660,
+	.on_volt		= 1200000,
+	.onlp_volt		= 1200000,
+	.ret_volt		= 750000,
+	/* OMAP4 + TWL + TPS limitation keep off_volt same as ret_volt */
+	.off_volt		= 750000,
+	.volt_setup_time	= 0,
+	.switch_on_time		= 549,
+	.vp_erroroffset		= OMAP4_VP_CONFIG_ERROROFFSET,
+	.vp_vstepmin		= OMAP4_VP_VSTEPMIN_VSTEPMIN,
+	.vp_vstepmax		= OMAP4_VP_VSTEPMAX_VSTEPMAX,
+	.vp_vddmin		= OMAP4_VP_CORE_VLIMITTO_VDDMIN,
+	.vp_vddmax		= OMAP4_VP_CORE_VLIMITTO_VDDMAX,
+	.vp_timeout_us		= OMAP4_VP_VLIMITTO_TIMEOUT_US,
+	.i2c_slave_addr		= OMAP4_SRI2C_SLAVE_ADDR,
+	.i2c_high_speed		= true,
+	.i2c_scll_low		= 0x28,
+	.i2c_scll_high		= 0x2C,
+	.i2c_hscll_low		= 0x0B,
+	.i2c_hscll_high		= 0x00,
+	.volt_reg_addr		= OMAP4_VDD_MPU_SR_VOLT_REG,
+	.cmd_reg_addr		= OMAP4_VDD_MPU_SR_CMD_REG,
+	.vsel_to_uv		= twl6030_vsel_to_uv,
+	.uv_to_vsel		= twl6030_uv_to_vsel,
+};
+
 static int __init twl_set_sr(struct voltagedomain *voltdm)
 {
 	int r = 0;
@@ -382,6 +411,36 @@ static int __init twl_set_4430vcore(struct voltagedomain *voltdm)
 	return _twl_set_regs("OMAP4430 ", omap4430_twl6030_setup);
 }
 
+/* OMAP4460 - VCORE3 is unused, 1 and 2 should go down with PREQ */
+static __initdata struct twl_reg_setup_array omap4460_twl6030_setup[] = {
+	{
+		.addr = TWL6030_REG_VCORE1_CFG_GRP,
+		.val = TWL6030_BIT_APE_GRP,
+		.desc = "Pull VCORE1 down along with App processor's PREQ1",
+	},
+	{
+		.addr = TWL6030_REG_VCORE1_CFG_TRANS,
+		.val = TWL6030_REG_VCOREx_CFG_TRANS_MODE,
+		.desc = "VCORE1" TWL6030_REG_VCOREx_CFG_TRANS_MODE_DESC,
+	},
+	{
+		.addr = TWL6030_REG_VCORE2_CFG_GRP,
+		.val = TWL6030_BIT_APE_GRP,
+		.desc = "Pull VCORE2 down along with App processor's PREQ1",
+	},
+	{
+		.addr = TWL6030_REG_VCORE2_CFG_TRANS,
+		.val = TWL6030_REG_VCOREx_CFG_TRANS_MODE,
+		.desc = "VCORE2" TWL6030_REG_VCOREx_CFG_TRANS_MODE_DESC,
+	},
+	{ .desc = NULL} /* TERMINATOR */
+};
+
+static int __init twl_set_4460vcore(struct voltagedomain *voltdm)
+{
+	return _twl_set_regs("OMAP4460 ", omap4460_twl6030_setup);
+}
+
 #define OMAP3_TWL4030_USED	(CHIP_GE_OMAP3430ES2 |	\
 				CHIP_GE_OMAP3630ES1_1 |	\
 				CHIP_IS_OMAP3630ES1)
@@ -408,6 +467,12 @@ static __initdata struct omap_pmic_map omap_twl_map[] = {
 		.omap_chip = OMAP_CHIP_INIT(CHIP_IS_OMAP443X),
 		.pmic_data = &omap443x_core_pmic,
 		.special_action = twl_set_4430vcore,
+	},
+	{
+		.name = "core",
+		.omap_chip = OMAP_CHIP_INIT(CHIP_IS_OMAP446X),
+		.pmic_data = &omap446x_core_pmic,
+		.special_action = twl_set_4460vcore,
 	},
 	{
 		.name = "iva",
