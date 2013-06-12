@@ -1094,6 +1094,7 @@ static struct omap_hwmod omap44xx_ctrl_module_core_hwmod = {
 	.main_clk       = "l4_div_ck",
 	.slaves         = omap44xx_ctrl_module_core_slaves,
 	.slaves_cnt     = ARRAY_SIZE(omap44xx_ctrl_module_core_slaves),
+	.omap_chip      = OMAP_CHIP_INIT(CHIP_IS_OMAP446X),
 };
 /*
  * 'thermal_sensor' class
@@ -1131,6 +1132,9 @@ static struct omap_hwmod_ocp_if *omap44xx_thermal_sensor_slaves[] = {
 	&omap44xx_l4_cfg__thermal_sensor,
 };
 
+static struct omap_hwmod_opt_clk thermal_sensor446x_opt_clks[] = {
+	{ .role = "fclk", .clk = "bandgap_ts_fclk" },
+};
 
 static struct omap_hwmod omap44xx_thermal_sensor_hwmod = {
 	.name           = "thermal_sensor",
@@ -1145,6 +1149,9 @@ static struct omap_hwmod omap44xx_thermal_sensor_hwmod = {
 			.clkctrl_reg = OMAP4430_CM_WKUP_BANDGAP_CLKCTRL,
 		},
 	},
+	.opt_clks       = thermal_sensor446x_opt_clks,
+	.opt_clks_cnt   = ARRAY_SIZE(thermal_sensor446x_opt_clks),
+	.omap_chip      = OMAP_CHIP_INIT(CHIP_IS_OMAP446X),
 };
 
 /*
@@ -1174,6 +1181,22 @@ static struct omap_hwmod omap443x_bandgap_hwmod = {
 	.omap_chip	= OMAP_CHIP_INIT(CHIP_IS_OMAP443X),
 };
 
+static struct omap_hwmod_opt_clk bandgap446x_opt_clks[] = {
+	{ .role = "fclk", .clk = "bandgap_ts_fclk" },
+};
+
+static struct omap_hwmod omap446x_bandgap_hwmod = {
+	.name		= "bandgap",
+	.class		= &omap44xx_bandgap_hwmod_class,
+	.prcm		= {
+		.omap4 = {
+			.clkctrl_reg = OMAP4430_CM_WKUP_BANDGAP_CLKCTRL,
+		},
+	},
+	.opt_clks	= bandgap446x_opt_clks,
+	.opt_clks_cnt	= ARRAY_SIZE(bandgap446x_opt_clks),
+	.omap_chip	= OMAP_CHIP_INIT(CHIP_IS_OMAP446X),
+};
 
 /*
  * 'counter' class
@@ -2481,6 +2504,27 @@ static struct omap_hwmod omap443x_gpio1_hwmod = {
 	.slaves		= omap44xx_gpio1_slaves,
 	.slaves_cnt	= ARRAY_SIZE(omap44xx_gpio1_slaves),
 	.omap_chip	= OMAP_CHIP_INIT(CHIP_IS_OMAP443X),
+};
+
+static struct omap_hwmod omap446x_gpio1_hwmod = {
+	.name		= "gpio1",
+	.class		= &omap44xx_gpio_hwmod_class,
+	.flags          = HWMOD_INIT_NO_RESET,
+	.mpu_irqs	= omap44xx_gpio1_irqs,
+	.mpu_irqs_cnt	= ARRAY_SIZE(omap44xx_gpio1_irqs),
+	.main_clk	= "gpio1_ick",
+	.prcm = {
+		.omap4 = {
+			.clkctrl_reg = OMAP4430_CM_WKUP_GPIO1_CLKCTRL,
+			.context_reg = OMAP4430_RM_WKUP_GPIO1_CONTEXT,
+		},
+	},
+	.opt_clks	= gpio1_opt_clks,
+	.opt_clks_cnt	= ARRAY_SIZE(gpio1_opt_clks),
+	.dev_attr	= &gpio_dev_attr,
+	.slaves		= omap44xx_gpio1_slaves,
+	.slaves_cnt	= ARRAY_SIZE(omap44xx_gpio1_slaves),
+	.omap_chip	= OMAP_CHIP_INIT(CHIP_IS_OMAP446X),
 };
 
 /* gpio2 */
@@ -6161,6 +6205,7 @@ static __initdata struct omap_hwmod *omap44xx_hwmods[] = {
 
 	/* bandgap class */
 	&omap443x_bandgap_hwmod,
+	&omap446x_bandgap_hwmod,
 
 	/* counter class */
 /*	&omap44xx_counter_32k_hwmod, */
@@ -6190,6 +6235,7 @@ static __initdata struct omap_hwmod *omap44xx_hwmods[] = {
 
 	/* gpio class */
 	&omap443x_gpio1_hwmod,
+	&omap446x_gpio1_hwmod,
 	&omap44xx_gpio2_hwmod,
 	&omap44xx_gpio3_hwmod,
 	&omap44xx_gpio4_hwmod,

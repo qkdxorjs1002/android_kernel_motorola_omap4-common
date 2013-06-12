@@ -249,7 +249,6 @@ static void __init omap4_check_features(void)
 		if (cpu_is_omap443x()) {
 			omap4_features |= OMAP4_HAS_MPU_1GHZ;
 			omap4_features |= OMAP4_HAS_MPU_1_2GHZ;
-		} 
 		break;
 	case 0x1:
 	default:
@@ -455,9 +454,6 @@ static void __init omap4_check_revision(void)
 			omap_revision = OMAP4430_REV_ES2_3;
 			omap_chip.oc |= CHIP_IS_OMAP4430ES2_3;
 		}
-		break;
-
-	
 		break;
 	default:
 		/* Unknown default to latest silicon rev as default */

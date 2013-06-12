@@ -994,6 +994,8 @@ static void omap_init_gpu(void)
 	pdata->access_process_vm = access_process_vm;
 
 	pdata->ovfreqs = 0;
+	if (cpu_is_omap446x())
+		pdata->ovfreqs = 1;
 
 	od = omap_device_build(name, 0, oh, pdata,
 			     sizeof(struct gpu_platform_data),
