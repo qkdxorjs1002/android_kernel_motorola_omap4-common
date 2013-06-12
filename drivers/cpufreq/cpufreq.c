@@ -942,9 +942,7 @@ static int cpufreq_add_dev(struct sys_device *sys_dev)
 		goto err_unlock_policy;
 	}
 // Boot at 300 mhz - 1,2ghz
-if (policy->min < 300000)
 	policy->min = 300000;
-if (policy->max > 1200000)
 	policy->max = 1200000;
 
 	policy->user_policy.min = policy->min;
