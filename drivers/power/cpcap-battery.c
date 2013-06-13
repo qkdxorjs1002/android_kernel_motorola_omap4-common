@@ -412,7 +412,7 @@ static void cpcap_batt_ind_chrg_ctrl(struct cpcap_batt_ps *sply)
 
 #ifdef CONFIG_BLX
 	if (((((get_charginglimit() != MAX_CHARGINGLIMIT) && 
-		(sply->batt_state.batt_capacity_one >= get_charginglimit()) && (sply->ac_state.model == CPCAP_BATT_AC_CABLE)) ||
+		(sply->batt_state.capacity >= get_charginglimit()) && (sply->ac_state.model == CPCAP_BATT_AC_CABLE)) ||
 		(sply->ac_state.model == CPCAP_BATT_AC_SMARTDOCK)) &&
 			(sply->ac_state.online)) || (sply->usb_state.online))
 #else
@@ -440,7 +440,7 @@ static void cpcap_batt_ind_chrg_ctrl(struct cpcap_batt_ps *sply)
 		pr_cpcap_batt(TRANSITION, "overvoltage interrupt chrgterm set");
 		sply->ind_chrg_dsbl_time = (unsigned long)temp;
 #ifdef CONFIG_BLX
-	} else if ((((get_charginglimit() != MAX_CHARGINGLIMIT) && (sply->batt_state.batt_capacity_one >= get_charginglimit()) && (sply->ac_state.model == CPCAP_BATT_AC_IND)) || 
+	} else if ((((get_charginglimit() != MAX_CHARGINGLIMIT) && (sply->batt_state.capacity >= get_charginglimit()) && (sply->ac_state.model == CPCAP_BATT_AC_IND)) || 
 		   (sply->batt_state.batt_capacity_one >= 100)) &&
 		   (sply->ac_state.model == CPCAP_BATT_AC_IND)) {
 #else
@@ -452,7 +452,7 @@ static void cpcap_batt_ind_chrg_ctrl(struct cpcap_batt_ps *sply)
 		pr_cpcap_batt(TRANSITION, "batt capacity 100, chrgcmpl set");
 		sply->ind_chrg_dsbl_time = (unsigned long)temp;
 #ifdef CONFIG_BLX
-	} else if ((((get_charginglimit() == MAX_CHARGINGLIMIT) || (sply->batt_state.batt_capacity_one > get_charginglimit())  && 
+	} else if ((((get_charginglimit() == MAX_CHARGINGLIMIT) || (sply->batt_state.capacity < get_charginglimit())  || 
 		   (temp - sply->ind_chrg_dsbl_time >= INDCHRG_RS_TIME)) ||
 		   (sply->batt_state.batt_capacity_one <= INDCHRG_RS_CPCY))) {
 #else
