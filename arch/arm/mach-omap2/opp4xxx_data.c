@@ -153,10 +153,10 @@ struct omap_volt_data omap443x_vdd_iva_volt_data[] = {
 };
 #endif
 /* We define two more GPU scaling steps and adjust voltages */
-#define OMAP4430_VDD_CORE_OPP50_UV		 952000
-#define OMAP4430_VDD_CORE_OPP100_UV		1117000
-#define OMAP4430_VDD_CORE_OPP100A_UV		1190000
-#define OMAP4430_VDD_CORE_OPP100B_UV		1250000
+#define OMAP4430_VDD_CORE_OPP50_UV		 947000
+#define OMAP4430_VDD_CORE_OPP100_UV		1112000
+#define OMAP4430_VDD_CORE_OPP100A_UV		1185000
+#define OMAP4430_VDD_CORE_OPP100B_UV		1245000
 
 #ifdef CONFIG_OMAP_SMARTREFLEX_CUSTOM_SENSOR
 struct omap_volt_data omap443x_vdd_core_volt_data[] = {
