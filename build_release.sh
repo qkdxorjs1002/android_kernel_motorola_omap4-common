@@ -46,4 +46,10 @@ make -j4
 cp arch/arm/boot/zImage built/rls/system/etc/kexec/kernel
 cd built/rls
 zip -r "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" *
+
+# Cleaning out
+rm built/nightly/system/etc/kexec/*
+rm built/rls/system/etc/kexec/*
+rm built/nightly/system/lib/modules/*
+
 echo "done"
