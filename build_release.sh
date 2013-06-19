@@ -40,16 +40,20 @@ export LOCALVERSION="-JBX-0.6c-Hybrid"
 # Don't set it too high or it will result in a non-bootable kernel.
 make -j4
 
-# Copy and rename the zImage into rls/nightly package folder
+# Copy and rename the zImage into nightly/nightly package folder
 # Keep in mind that we assume that the modules were already built and are in place
 # So we just copy and rename, then pack to zip including the date
-cp arch/arm/boot/zImage built/rls/system/etc/kexec/kernel
-cd built/rls
+cp arch/arm/boot/zImage built/nightly/system/etc/kexec/kernel
+cd built/nightly
 zip -r "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" *
+cp "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built
+
 
 # Cleaning out
-rm built/nightly/system/etc/kexec/*
-rm built/rls/system/etc/kexec/*
-rm built/nightly/system/lib/modules/*
+rm ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/nightly/system/etc/kexec/*
+rm ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/rls/system/etc/kexec/*
+rm ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/nightly/system/lib/modules/*
+rm ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/nightly/**
+rm ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/rls/*
 
 echo "done"
