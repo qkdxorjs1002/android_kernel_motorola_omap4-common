@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Build script for JBX-Kernel
 
@@ -22,3 +22,18 @@ export LOCALVERSION="-JBX-0.6c-Hybrid"
 # Don't set it too high or it will result in a non-bootable kernel.
 
 make -j4
+
+# Copy and rename the zImage into rls/nightly package folder
+# Keep in mind that we assume that the modules were already built and are in place
+# So we just copy and rename
+
+echo Have you built the modules? Otherwise press STRG+C
+
+while true; do
+    read -p "Is this a release? 'No' will handle as nightly (y/n)" yn
+    case $yn in
+        [Yy]* ) cp arch/arm/boot/zImage built/rls/system/etc/kexec/kernel; cd built/rls; zip -r "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" *"; break;;
+        [Nn]* ) cp arch/arm/boot/zImage built/nightly/system/etc/kexec/kernel; cd built/nightly; zip -r "JBX-Kernel-Hybrid_NITHLY_$(date +"%Y-%m-%d").zip" *"; exit;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
