@@ -30,7 +30,6 @@
 #include <linux/irq.h>
 #include <linux/gpio.h>
 #include <linux/interrupt.h>
-#include <linux/slab.h>
 
 #include <linux/motsoc1.h>
 #include <linux/wakelock.h>
@@ -719,7 +718,7 @@ static int motsoc1_get_version(struct motsoc1_data *ps_motsoc1, int versions)
 	return err;
 }
 
-static long motsoc1_misc_ioctl(struct file *file,
+static int motsoc1_misc_ioctl(struct inode *inode, struct file *file,
 				unsigned int cmd, unsigned long arg)
 {
 	void __user *argp = (void __user *)arg;
@@ -994,7 +993,7 @@ static long motsoc1_misc_ioctl(struct file *file,
 static const struct file_operations motsoc1_misc_fops = {
 	.owner = THIS_MODULE,
 	.open = motsoc1_misc_open,
-	.unlocked_ioctl = motsoc1_misc_ioctl,
+	.ioctl = motsoc1_misc_ioctl,
 	.write = motsoc1_misc_write,
 	.release = motsoc1_misc_close,
 };
