@@ -313,9 +313,9 @@ static inline int unregister_pm_notifier(struct notifier_block *nb)
 
 static inline bool pm_wakeup_pending(void) { return false; }
 
-#ifdef CONFIG_PM_DEEPSLEEP
+/*#ifdef CONFIG_PM_DEEPSLEEP
 extern int get_deepsleep_mode(void);
-#endif
+#endif */
 
 static inline void lock_system_sleep(void) {}
 static inline void unlock_system_sleep(void) {}
