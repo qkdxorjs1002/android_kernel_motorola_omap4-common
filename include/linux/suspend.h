@@ -299,9 +299,9 @@ static inline bool pm_wakeup_pending(void) { return false; }
 
 extern struct mutex pm_mutex;
 
-/*#ifdef CONFIG_PM_DEEPSLEEP
+#ifdef CONFIG_PM_DEEPSLEEP
 extern int get_deepsleep_mode(void);
-#endif */
+#endif
 
 #ifndef CONFIG_HIBERNATE_CALLBACKS
 static inline void lock_system_sleep(void) {}
