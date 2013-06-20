@@ -12,7 +12,11 @@ cd ~/android/system
 make ARCH=arm distclean
 make mrproper
 source build/envsetup.sh
-lunch 10
+lunch 9
+
+# Export the target config
+export TARGET_KERNEL_SOURCE := /home/mnl-manz/razr_kdev_kernel/android_kernel_motorola_omap4-common/
+export TARGET_KERNEL_CONFIG := mapphone_OCE_defconfig
 
 # built kernel & modules
 make -j8 $OUT/boot.img
