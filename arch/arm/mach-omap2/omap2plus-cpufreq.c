@@ -435,7 +435,7 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 
 	omap_cpufreq_cooling_init();
 
-	policy->cpuinfo.transition_latency = 40 * 1000;
+	policy->cpuinfo.transition_latency = 60 * 1000;
 
 #ifdef CONFIG_CUSTOM_VOLTAGE
 	customvoltage_register_freqmutex(&omap_cpufreq_lock);
