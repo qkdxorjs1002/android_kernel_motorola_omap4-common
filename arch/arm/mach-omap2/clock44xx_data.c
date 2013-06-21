@@ -1151,13 +1151,6 @@ static struct clk utmi_phy_clkout_ck = {
 	.recalc		= &followparent_recalc,
 };
 
-static struct clk utmi_phy_clkout_ck = {
-	.name		= "utmi_phy_clkout_ck",
-	.ops		= &clkops_null,
-	.parent		= &dpll_usb_clkdcoldo_ck,
-	.recalc		= &followparent_recalc,
-};
-
 static const struct clksel dpll_usb_m2_div[] = {
 	{ .parent = &dpll_usb_ck, .rates = div31_1to31_rates },
 	{ .parent = NULL },
