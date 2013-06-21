@@ -45,10 +45,10 @@ static int lowmem_adj[6] = {
 };
 static int lowmem_adj_size = 4;
 static size_t lowmem_minfree[6] = {
-	7 * 512,	/* JBX-Kernel */
-	6 * 1024,	/* JBX-Kernel */
-	8 * 1024,	/* JBX-Kernel */
-	20 * 1024,	/* JBX-Kernel */
+	3 * 512,	/* 6MB */
+	2 * 1024,	/* 8MB */
+	4 * 1024,	/* 16MB */
+	16 * 1024,	/* 64MB */
 };
 static int lowmem_minfree_size = 4;
 
