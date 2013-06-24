@@ -45,8 +45,8 @@ make -j4
 # So we just copy and rename, then pack to zip including the date
 cp arch/arm/boot/zImage built/nightly/system/etc/kexec/kernel
 cd built/nightly
-zip -r "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" *
-cp "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built
+zip -r "JBX-Kernel-Hybrid-Edison_$(date +"%Y-%m-%d").zip" *
+cp "JBX-Kernel-Hybrid-Edison_$(date +"%Y-%m-%d").zip" ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built
 
 
 # Cleaning out
