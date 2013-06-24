@@ -407,7 +407,7 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 
 #ifdef CONFIG_OMAP_OCFREQ_12
 	/* We don't set an "if rule" so user won't be stuck at 100/1000 min/max */
-   	policy->min = 100000;
+   	policy->min = 300000;
 	policy->max = 1000000;
 	policy->max = policy->cpuinfo.max_freq;
 	policy->cur = omap_getspeed(policy->cpu);
