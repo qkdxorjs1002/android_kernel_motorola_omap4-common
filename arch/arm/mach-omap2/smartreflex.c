@@ -550,9 +550,9 @@ bool is_sr_enabled(struct voltagedomain *voltdm)
 }
 
 /**
- * sr_configure_errgen() - Configures the SmartReflex to perform AVS using the
- *       		   error generator module. 
- * @sr:      		SR module to be configured.
+ * sr_configure_errgen() - Configures the smrtreflex to perform AVS using the
+ *			 error generator module.
+ * @voltdm:	VDD pointer to which the SR module to be configured belongs to.
  *
  * This API is to be called from the smartreflex class driver to
  * configure the error generator module inside the smartreflex module.
@@ -561,16 +561,17 @@ bool is_sr_enabled(struct voltagedomain *voltdm)
  * SR CLASS 2 can choose between ERROR module and MINMAXAVG
  * module. Returns 0 on success and error value in case of failure.
  */
-int sr_configure_errgen(struct omap_sr *sr) 
+int sr_configure_errgen(struct voltagedomain *voltdm)
 {
 	u32 sr_config, sr_errconfig, errconfig_offs, vpboundint_en;
 	u32 vpboundint_st, senp_en = 0, senn_en = 0;
 	u8 senp_shift, senn_shift;
+	struct omap_sr *sr = _sr_lookup(voltdm);
 
-	if (!sr) {
-	    pr_warn("%s: NULL omap_sr from %pF\n", __func__,
-	      (void *)_RET_IP_);
-	    return -EINVAL; 
+	if (IS_ERR(sr)) {
+		pr_warning("%s: omap_sr struct for sr_%s not found\n",
+			__func__, voltdm->name);
+		return -EINVAL;
 	}
 
 	if (!sr->clk_length)
@@ -619,22 +620,23 @@ int sr_configure_errgen(struct omap_sr *sr)
 
 /**
  * sr_disable_errgen() - Disables SmartReflex AVS module's errgen component
- * @sr:      SR module to be configured.
+ * @voltdm: voltagedomain pointer to which the SR module to be configured belongs to.
  *
  * This API is to be called from the smartreflex class driver to
  * disable the error generator module inside the smartreflex module.
  *
  * Returns 0 on success and error value in case of failure.
  */
-int sr_disable_errgen(struct omap_sr *sr)
+int sr_disable_errgen(struct voltagedomain *voltdm)
 {
 	u32 errconfig_offs, vpboundint_en;
 	u32 vpboundint_st;
+	struct omap_sr *sr = _sr_lookup(voltdm);
 
-	if (!sr) {
-	    pr_warn("%s: NULL omap_sr from %pF\n", __func__,
-	      (void *)_RET_IP_);
-	    return -EINVAL; 
+	if (IS_ERR(sr)) {
+		pr_warning("%s: omap_sr struct for sr_%s not found\n",
+			__func__, voltdm->name);
+		return -EINVAL;
 	}
 	/* Check if SR clocks are already disabled. If yes do nothing */
 	if (pm_runtime_suspended(&sr->pdev->dev))
