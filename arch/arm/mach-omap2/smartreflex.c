@@ -742,7 +742,7 @@ int sr_configure_minmax(struct voltagedomain *voltdm)
 
 /**
  * sr_enable() - Enables the smartreflex module.
- * @voltdm:	VDD pointer to which the SR module to be configured belongs to.
+ * @sr:		VDD pointer to which the SR module to be configured belongs to.
  * @volt_data:	The voltage at which the Voltage domain associated with
  *		the smartreflex module is operating at.
  *		This is required only to program the correct Ntarget value.
@@ -751,16 +751,15 @@ int sr_configure_minmax(struct voltagedomain *voltdm)
  * enable a smartreflex module. Returns 0 on success. Returns error
  * value if the voltage passed is wrong or if ntarget value is wrong.
  */
-int sr_enable(struct voltagedomain *voltdm, struct omap_volt_data *volt_data)
+int sr_enable(struct omap_sr *sr, struct omap_volt_data *volt_data)
 {
 	u32 nvalue_reciprocal;
-	struct omap_sr *sr = _sr_lookup(voltdm);
 	int ret;
 
-	if (IS_ERR(sr)) {
-		pr_warning("%s: omap_sr struct for sr_%s not found\n",
-			__func__, voltdm->name);
-		return -EINVAL;
+	if (!sr) {
+	    pr_warn("%s: NULL omap_sr from %pF\n", __func__,
+	      (void *)_RET_IP_);
+	    return -EINVAL; 
 	}
 
 	if (IS_ERR_OR_NULL(volt_data)) {
@@ -799,18 +798,18 @@ int sr_enable(struct voltagedomain *voltdm, struct omap_volt_data *volt_data)
 
 /**
  * sr_disable() - Disables the smartreflex module.
- * @voltdm:	VDD pointer to which the SR module to be configured belongs to.
+ * @sr:	VDD pointer to which the SR module to be configured belongs to.
  *
  * This API is to be called from the smartreflex class driver to
  * disable a smartreflex module.
  */
-void sr_disable(struct voltagedomain *voltdm)
+void sr_disable(struct omap_sr *sr)
 {
 	struct omap_sr *sr = _sr_lookup(voltdm);
 
-	if (IS_ERR(sr)) {
-		pr_warning("%s: omap_sr struct for sr_%s not found\n",
-			__func__, voltdm->name);
+	if (!sr) {
+	    pr_warn("%s: NULL omap_sr from %pF\n", __func__,
+	      (void *)_RET_IP_); 
 		return;
 	}
 

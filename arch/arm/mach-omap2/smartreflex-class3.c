@@ -18,7 +18,7 @@ static int sr_class3_enable(struct voltagedomain *voltdm,
 			    struct omap_volt_data *volt_data)
 {
 	omap_vp_enable(voltdm);
-	return sr_enable(voltdm, volt_data);
+	return sr_enable(sr, volt_data);
 }
 
 static int sr_class3_disable(struct voltagedomain *voltdm,
@@ -28,7 +28,7 @@ static int sr_class3_disable(struct voltagedomain *voltdm,
 {
 	sr_disable_errgen(sr);
 	omap_vp_disable(voltdm);
-	sr_disable(voltdm);
+	sr_disable(sr);
 	if (is_volt_reset)
 		voltdm_reset(voltdm);
 
