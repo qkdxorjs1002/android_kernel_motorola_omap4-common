@@ -32,7 +32,7 @@ export SUBARCH=arm
 export CROSS_COMPILE=arm-eabi-
 
 # define the defconfig (Do not change)
-make ARCH=arm mapphone_OCE_defconfig
+make ARCH=arm mapphone_OCEdison_defconfig
 export LOCALVERSION="-JBX-0.6c-Hybrid-Edison"
 
 # execute build command with "-j4 core flag" 
