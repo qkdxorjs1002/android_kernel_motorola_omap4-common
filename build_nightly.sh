@@ -15,7 +15,7 @@ source build/envsetup.sh
 lunch 9
 
 # built kernel & modules
-make -j8 TARGET_KERNEL_SOURCE=/home/mnl-manz/razr_kdev_kernel/android_kernel_motorola_omap4-common/ TARGET_KERNEL_CONFIG=mapphone_OCE_defconfig $OUT/boot.img
+make -j8 TARGET_KERNEL_SOURCE=/home/mnl-manz/razr_kdev_kernel/android_kernel_motorola_omap4-common/ TARGET_KERNEL_CONFIG=mapphone_OCE_defconfig CONFIG_APANIC_PLABEL="mmcblk1p20" $OUT/boot.img
 
 # We don't use the kernel but the modules
 cp out/target/product/umts_spyder/system/lib/modules/* ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/nightly/system/lib/modules/
