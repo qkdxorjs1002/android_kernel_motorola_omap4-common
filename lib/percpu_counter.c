@@ -4,7 +4,7 @@
 
 #include <linux/percpu_counter.h>
 #include <linux/notifier.h>
-#include <linux/spin.h>
+#include <linux/mutex.h>
 #include <linux/init.h>
 #include <linux/cpu.h>
 #include <linux/module.h>
