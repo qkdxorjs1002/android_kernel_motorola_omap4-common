@@ -5665,8 +5665,6 @@ static struct omap_hwmod omap44xx_uart3_hwmod = {
 	.class		= &omap44xx_uart_hwmod_class,
 #ifdef CONFIG_EMU_UART_DEBUG
 	.flags		= (HWMOD_INIT_NO_IDLE | HWMOD_INIT_NO_RESET),
-#else
-	.flags		= (HWMOD_SWSUP_SIDLE | HWMOD_SWSUP_MSTANDBY),
 #endif
 	.mpu_irqs	= omap44xx_uart3_irqs,
 	.mpu_irqs_cnt	= ARRAY_SIZE(omap44xx_uart3_irqs),
