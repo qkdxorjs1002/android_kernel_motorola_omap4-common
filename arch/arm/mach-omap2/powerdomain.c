@@ -558,6 +558,12 @@ int pwrdm_set_logic_retst(struct powerdomain *pwrdm, u8 pwrst)
 	if (!pwrdm)
 		return -EINVAL;
 
+	if (PWRDM_POWER_RET < pwrst) {
+		pr_err("%s: unsupported logic ret. state value pwrst=%0x",
+		 __func__, pwrst);
+		return -EINVAL;
+	}
+
 	if (!(pwrdm->pwrsts_logic_ret & (1 << pwrst)))
 		return -EINVAL;
 
@@ -950,7 +956,13 @@ int pwrdm_wait_transition(struct powerdomain *pwrdm)
 
 int pwrdm_state_switch(struct powerdomain *pwrdm)
 {
-	return _pwrdm_state_switch(pwrdm, PWRDM_STATE_NOW);
+	int ret;
+
+	ret = pwrdm_wait_transition(pwrdm);
+	if (!ret)
+		ret = _pwrdm_state_switch(pwrdm, PWRDM_STATE_NOW);
+
+	return ret;
 }
 
 int pwrdm_clkdm_state_switch(struct clockdomain *clkdm)
