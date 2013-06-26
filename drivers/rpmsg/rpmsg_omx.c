@@ -339,8 +339,6 @@ static int rpmsg_omx_connect(struct rpmsg_omx_instance *omx, char *omxname)
 	payload = (struct omx_conn_req *)hdr->data;
 	strcpy(payload->name, omxname);
 
-	init_completion(&omx->reply_arrived);
-
 	/* send a conn req to the remote OMX connection service. use
 	 * the new local address that was just allocated by ->open */
 	ret = rpmsg_send_offchannel(omxserv->rpdev, omx->ept->addr,
@@ -400,6 +398,7 @@ long rpmsg_omx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	case OMX_IOCIONREGISTER:
 	{
 		struct ion_fd_data data;
+
 		if (copy_from_user(&data, (char __user *) arg, sizeof(data))) {
 			dev_err(omxserv->dev,
 				"%s: %d: copy_from_user fail: %d\n", __func__,
@@ -407,9 +406,9 @@ long rpmsg_omx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 			return -EFAULT;
 		}
 		data.handle = ion_import_fd(omx->ion_client, data.fd);
-		if (IS_ERR(data.handle))
+		if (IS_ERR_OR_NULL(data.handle))
 			data.handle = NULL;
-		if (copy_to_user(&data, (char __user *) arg, sizeof(data))) {
+		if (copy_to_user((char __user *) arg, &data, sizeof(data))) {
 			dev_err(omxserv->dev,
 				"%s: %d: copy_to_user fail: %d\n", __func__,
 				_IOC_NR(cmd), ret);
@@ -420,6 +419,7 @@ long rpmsg_omx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	case OMX_IOCIONUNREGISTER:
 	{
 		struct ion_fd_data data;
+
 		if (copy_from_user(&data, (char __user *) arg, sizeof(data))) {
 			dev_err(omxserv->dev,
 				"%s: %d: copy_from_user fail: %d\n", __func__,
@@ -427,7 +427,7 @@ long rpmsg_omx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 			return -EFAULT;
 		}
 		ion_free(omx->ion_client, data.handle);
-		if (copy_to_user(&data, (char __user *) arg, sizeof(data))) {
+		if (copy_to_user((char __user *) arg, &data, sizeof(data))) {
 			dev_err(omxserv->dev,
 				"%s: %d: copy_to_user fail: %d\n", __func__,
 				_IOC_NR(cmd), ret);
@@ -480,6 +480,8 @@ static int rpmsg_omx_open(struct inode *inode, struct file *filp)
 					    (1 << OMAP_ION_HEAP_TYPE_TILER),
 					    "rpmsg-omx");
 #endif
+
+	init_completion(&omx->reply_arrived);
 
 	/* associate filp with the new omx instance */
 	filp->private_data = omx;
