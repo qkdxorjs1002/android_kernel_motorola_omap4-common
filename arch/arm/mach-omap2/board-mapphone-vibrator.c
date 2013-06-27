@@ -27,12 +27,15 @@
 #include <linux/clk.h>
 #include <linux/err.h>
 #include <linux/wakelock.h>
-
+#include <linux/init.h>
+#include <linux/device.h>
+#include <linux/miscdevice.h>
 #include <plat/dmtimer.h>
 
 #include "dt_path.h"
 #include <linux/of.h>
 
+#define DM_FILLER		20
 #define MAX_VIBS		2
 #define MAX_PWMS		8
 #define MAX_VOLT		4
@@ -81,6 +84,8 @@ struct vib_ctrl_pwm {
 };
 
 #ifdef CONFIG_VIBRATOR_CONTROL
+struct omap_dm_timer *dmtimer;
+struct vib_signal *vibs;
 static DEFINE_MUTEX(vib_enabled);
 
 extern void vibratorcontrol_register_vibstrength(int vibstrength);
@@ -407,16 +412,16 @@ static int vib_ctrl_pwm_config(struct vib_signal *vibs, unsigned int total_us,
 		       OMAP_TIMER_TRIGGER_OVERFLOW_AND_COMPARE);
 	omap_dm_timer_write_counter(dmtimer, 0xfffffffe);
 	omap_dm_timer_invalidate_saved_context(dmtimer);
-#ifdef CONFIG_VIBRATOR_CONTROL
-vibratorcontrol_register_vibstrength(DM_FILLER);
-#endif
+
 
 	if (total_us == period_us) {
 		pwmc->cycles = 1;
 		omap_dm_timer_set_int_enable(dmtimer,
 				OMAP_TIMER_INT_OVERFLOW);
 	}
-
+#ifdef CONFIG_VIBRATOR_CONTROL
+	vibratorcontrol_register_vibstrength(DM_FILLER);
+#endif
 	return 0;
 }
 
