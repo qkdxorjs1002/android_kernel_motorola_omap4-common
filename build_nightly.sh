@@ -15,7 +15,7 @@ source build/envsetup.sh
 lunch 9
 
 # built kernel & modules
-make -j8 TARGET_BOOTLOADER_BOARD_NAME=edison TARGET_KERNEL_SOURCE=/home/mnl-manz/razr_kdev_kernel/android_kernel_motorola_omap4-common/ TARGET_KERNEL_CONFIG=mapphone_OCEdison_defconfig BOARD_KERNEL_CMDLINE='root=/dev/ram0 rw mem=1023M@0x80000000 console=null vram=10300K omapfb.vram=0:8256K,1:4K,2:2040K init=/init ip=off mmcparts=mmcblk1:p7(pds),p15(boot),p16(recovery),p17(cdrom),p18(misc),p19(cid),p20(kpanic),p21(system),p22(cache),p23(preinstall),p24(webtop),p25(userdata) mot_sst=1 androidboot.bootloader=0x0A73' CONFIG_APANIC_PLABEL="mmcblk1p20" BOARD_KERNEL_BASE=0x80000000 BOARD_PAGE_SIZE=0x4096 $OUT/boot.img
+make -j8 TARGET_KERNEL_SOURCE=/home/mnl-manz/razr_kdev_kernel/android_kernel_motorola_omap4-common/ TARGET_KERNEL_CONFIG=mapphone_OCE_defconfig CONFIG_APANIC_PLABEL="mmcblk1p20" $OUT/boot.img
 
 # We don't use the kernel but the modules
 cp out/target/product/umts_spyder/system/lib/modules/* ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/nightly/system/lib/modules/
@@ -32,8 +32,8 @@ export SUBARCH=arm
 export CROSS_COMPILE=arm-eabi-
 
 # define the defconfig (Do not change)
-make ARCH=arm mapphone_OCEdison_defconfig
-export LOCALVERSION="-JBX-0.7-Hybrid-Edison"
+make ARCH=arm mapphone_OCE_defconfig
+export LOCALVERSION="-JBX-0.7-Hybrid"
 
 # execute build command with "-j4 core flag" 
 # (You may change this to the count of your CPU.
@@ -45,8 +45,8 @@ make -j4
 # So we just copy and rename, then pack to zip including the date
 cp arch/arm/boot/zImage built/nightly/system/etc/kexec/kernel
 cd built/nightly
-zip -r "JBX-Kernel-Hybrid-Edison_$(date +"%Y-%m-%d").zip" *
-cp "JBX-Kernel-Hybrid-Edison_$(date +"%Y-%m-%d").zip" ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built
+zip -r "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" *
+cp "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built
 
 
 # Cleaning out
