@@ -47,8 +47,8 @@ cp arch/arm/boot/zImage built/nightly/system/etc/kexec/kernel
 cd built/nightly
 zip -r "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" *
 cp "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built
-cp ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/prebuilt/sysctl.conf ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/rls/system/etc
-cp ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/prebuilt/01kernel ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/rls/system/etc/init.d/
+cp ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/prebuilt/sysctl.conf ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/nightly/system/etc
+cp ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/prebuilt/01kernel ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/nightly/system/etc/init.d/
 
 # Cleaning out
 rm ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/nightly/system/etc/kexec/*
