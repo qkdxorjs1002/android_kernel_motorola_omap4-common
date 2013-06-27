@@ -27,9 +27,11 @@
 #include <linux/clk.h>
 #include <linux/err.h>
 #include <linux/wakelock.h>
-#include <linux/init.h>
-#include <linux/device.h>
-#include <linux/miscdevice.h>
+
+#ifdef CONFIG_VIBRATOR_CONTROL
+#include <linux/delay.h>
+#endif
+
 #include <plat/dmtimer.h>
 
 #include "dt_path.h"
