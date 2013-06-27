@@ -44,7 +44,7 @@ make -j4
 # Keep in mind that we assume that the modules were already built and are in place
 # So we just copy and rename, then pack to zip including the date
 cp arch/arm/boot/zImage built/rls/system/etc/kexec/kernel
-cp prebuilt/sysctl.conf built/rls/system/etc
+touch built/rls/system/etc/sysctl.conf
 cp prebuilt/01kernel built/rls/system/etc/init.d
 cd built/rls
 zip -r "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" *
