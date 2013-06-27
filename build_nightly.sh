@@ -33,7 +33,7 @@ export CROSS_COMPILE=arm-eabi-
 
 # define the defconfig (Do not change)
 make ARCH=arm mapphone_OCE_defconfig
-export LOCALVERSION="-JBX-0.7a-Hybrid"
+export LOCALVERSION="-JBX-0.7a-Hybrid-Nightly"
 
 # execute build command with "-j4 core flag" 
 # (You may change this to the count of your CPU.
@@ -44,17 +44,10 @@ make -j4
 # Keep in mind that we assume that the modules were already built and are in place
 # So we just copy and rename, then pack to zip including the date
 cp arch/arm/boot/zImage built/nightly/system/etc/kexec/kernel
+cp prebuilt/sysctl.conf ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/nightly/system/etc/
+cp prebuilt/01kernel ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/nightly/system/etc/init.d/
 cd built/nightly
-zip -r "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" *
-cp "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built
-cp ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/prebuilt/sysctl.conf ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/nightly/system/etc
-cp ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/prebuilt/01kernel ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/nightly/system/etc/init.d/
-
-# Cleaning out
-rm ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/nightly/system/etc/kexec/*
-rm ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/rls/system/etc/kexec/*
-rm ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/nightly/system/lib/modules/*
-rm ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/nightly/**
-rm ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/rls/*
+zip -r "JBX-Kernel-Hybrid-Nightly_$(date +"%Y-%m-%d").zip" *
+cp "JBX-Kernel-Hybrid-Nightly_$(date +"%Y-%m-%d").zip" ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built
 
 echo "done"
