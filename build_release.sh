@@ -33,7 +33,7 @@ export CROSS_COMPILE=arm-eabi-
 
 # define the defconfig (Do not change)
 make ARCH=arm mapphone_OCE_defconfig
-export LOCALVERSION="-JBX-0.7-Hybrid"
+export LOCALVERSION="-JBX-0.7a-Hybrid"
 
 # execute build command with "-j4 core flag" 
 # (You may change this to the count of your CPU.
@@ -47,7 +47,8 @@ cp arch/arm/boot/zImage built/rls/system/etc/kexec/kernel
 cd built/rls
 zip -r "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" *
 cp "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built
-
+cp ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/prebuilt/sysctl.conf ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/rls/system/etc
+cp ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/prebuilt/01kernel ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/rls/system/etc/init.d/
 
 # Cleaning out
 rm ~/razr_kdev_kernel/android_kernel_motorola_omap4-common/built/nightly/system/etc/kexec/*
