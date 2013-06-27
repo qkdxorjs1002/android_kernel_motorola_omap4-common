@@ -414,7 +414,7 @@ vibratorcontrol_register_vibstrength(DM_FILLER);
 	if (total_us == period_us) {
 		pwmc->cycles = 1;
 		omap_dm_timer_set_int_enable(dmtimer,
-				OMAP_TIMER_TRIGGER_OVERFLOW_AND_COMPARE);
+				OMAP_TIMER_INT_OVERFLOW);
 	}
 
 	return 0;
