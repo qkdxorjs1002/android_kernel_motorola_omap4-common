@@ -1,0 +1,174 @@
+7919174 Update gitignore
+3d5c8ac Now REALLY final build script changes....
+8d7d5cc Final fix for build script
+e4fdbac Enable CLEANCACHE & FRONTSWAP fro zcache
+4280118 Build script: New package location
+4f59f09 fix build scripts - that's annoying
+52a29c7 Fix gitignore
+d0a75e4 Update gitignore
+8a0d174f Fix damn scripts
+0595b1f Update sciprts, fix typo in hwmod
+5dbce63 Merge branch 'JBX' into JBX_STABLE
+56d01d7 build script: Fix typos
+222a64a Update kernel version
+6abfd96 Add prebuilt scripts and update build scripts
+28c93cf Fix build scripts
+0b31bf3 hwmod: omap4: Add idle flags to uarts
+4368fa8 Disable vibrator control until it's fixed
+7c98dfc Vibrator Control: temp changes...
+729b966 clock: Fix log spam
+d3bf212 Fix a typo
+ec7053d Enable and currently fixing Vibrator Control
+b0ff888 Raise voltages and lcd freqs
+b05e048 Merge branch 'JBX' into JBX_EDISON
+81e6f1c Revert "Emperimental enable sidle modes for uart3"
+0989406 Emperimental enable sidle modes for uart3
+fa39ec2 Reduce overall voltages and underclock lcd a bit
+4b9338e Merge branch 'JBX' into 'EDISON_WORKING'
+72e59d5 Merge branch 'JBX' into JBX_STABLE
+aa9f100 Update kernel version
+4cf690e Now enable the new stuff
+e30c2b7 Fix typo - again! Damn reverts
+3454dab8 Revert "Revert "OMAP: PM: Fixed potential overflow in throughput calculation.""
+50687c1 Revert "Revert "omap2plus-cpufreq.c: Allow throttling to start at current freq""
+4e73dbb Revert "Revert "Enable mutex spin on owner""
+2a15d11 Revert "Revert "mutex: restrict mutex spinning to only one task per mutex""
+b3ea502 Revert "Revert "percpu_counter: Set protection to spinlock""
+0b346bc Revert "Revert "unlzo: fix input buffer free""
+acc3e98 Revert "Revert "net: count hw_addr syncs so that unsync works properly.""
+1adb3db Revert "Revert "locking, percpu_counter: Annotate ::lock as raw""
+bf9e13f Revert "Revert "readahead: fault retry breaks mmap file read random detection""
+916021e Cpufreq: kcondig: Fix typo
+3f456b3 Revert "readahead: fault retry breaks mmap file read random detection"
+da4d1c3 Revert "locking, percpu_counter: Annotate ::lock as raw"
+9841811 Revert "net: count hw_addr syncs so that unsync works properly."
+ad6d63a Revert "unlzo: fix input buffer free"
+ec970bc Revert "percpu_counter: Set protection to spinlock"
+3c5f495 Revert "mutex: restrict mutex spinning to only one task per mutex"
+cf83459 Revert "Enable mutex spin on owner"
+c952e15 Revert "spinlocks and preemption points need to be at least compiler barriers"
+109b5fd Revert "ARM: Don't enable GENERIC_LOCKBREAK with ticket spinlocks"
+310daae Revert "Add security hooks to binder and implement the hooks for SELinux."
+0bf7066 Revert "omap2plus-cpufreq.c: Allow throttling to start at current freq"
+aad4479 Revert "OMAP: PM: Fixed potential overflow in throughput calculation."
+99deb77 Revert "SUNRPC: Add barriers to ensure read ordering in rpc_wake_up_task_queue_locked"
+94ddd74 Revert "dm table: avoid crash if integrity profile changes"
+e908918 Revert "OMAPDSS: DSSCOMP: Fix klocworks errors"
+4fa0318 Revert "signal: Define __ARCH_HAS_SA_RESTORER so we know whether to clear sa_restorer"
+0a19f3f Disable some options for now
+0f3a299 Disable unused option, revert 'decrease dsp freqs'
+e94fa19 percpu_counter: Fix typo
+2c98bd0 Revert "vm: convert fb_mmap to vm_iomap_memory() helper"
+fafd55c Update Edison defconfig
+207fec1 Revert "mmc: omap: Handled number of block increase"
+c150786 Enable more options
+4a4585f Enable mutex spin on owner
+3fd5e76 Revert "mutex: Make more scalable by doing less atomic operations"
+f36560c Enable zcache
+a4694aa SUNRPC: Add barriers to ensure read ordering in rpc_wake_up_task_queue_locked
+c5b47cf signal: Define __ARCH_HAS_SA_RESTORER so we know whether to clear sa_restorer
+7722ffc Enable UKSM and Abyssplug
+60fd797 UKSM: Upgrade to 0.1.2.2
+e8b2e27 Add UKSM 0.1.2
+0d12dd5 dm table: avoid crash if integrity profile changes
+95ad031 OMAPDSS: DSSCOMP: Fix klocworks errors
+1bd6928 I2C: OMAP: Fix the crash in i2c remove
+25a53d5 rpmsg: omx: initialize completion event in rpmsg_omx_open
+c1c7b1a rpmsg: omx: fix copy_to_user in register/unregister ioctls
+ea6031f OMAP4: PM: cold reset: wrong value is used to set LOGICRETSTATE
+55f8e27 OMAP: PM: Fixed potential overflow in throughput calculation.
+8b4d525 Staging: android: timed_gpio: Fix resource leak in timed_gpio_probe error paths
+a1f7d8f ARM: OMAP4: clock data: fix mult and div mask for USB_DPLL
+e92ca2e ARM: OMAP2+: powerdomain: Wait for powerdomain transition in pwrdm_state_switch()
+f3b4d27 OMAP3+: PM: DVFS: add qos requirement to prevent interruptions
+0859bb4 OMAP3+: PM: VP: dereference voltdm after checking valid voltdm
+4419e75 ARM: OMAP2+: hwmod: Restore sysc after a reset
+d9aac88 staging: zcache: fix length type mismatch
+af99cb1 staging: zcache: avoid AB-BA deadlock condition
+26c1c13 staging: zcache: crypto API support
+77ac358 Staging: zcache: Fix calls to obsolete function
+1a5dd2f staging: zcache: fix cleancache crash
+82cc174 staging: zcache: fix typos
+b80456c staging: zcache: fix possible sleep under lock
+0123e21 staging: zcache: include module.h for MODULE_LICENSE
+54eaf4f staging: zcache: fix cleancache race condition with shrinker
+cd9807f zcache: fix deadlock condition
+d5eb72e zcache: Set SWIZ_BITS to 8 to reduce tmem bucket lock contention.
+6ac21b8 staging: zcache: fix serialization bug in zv stats
+ec39502 staging: Add Snappy compression library (v3)
+3e31ad5 staging: zcache: remove zcache_direct_reclaim_lock
+8299010 staging: zcache: reduce tmem bucket lock contention
+7905e25 staging: zcache: fix crash on cpu remove
+c2b72ea staging: zcache: fix cleancache crash
+d4ad980 Staging: zcache: signedness bug in tmem_get()
+f3794d0 staging: zcache: fix crash on high memory swap
+2875d89 zcache: Fix build error when sysfs is not defined
+8785b3e zcache: Use div_u64 for 64-bit division
+6f74fee staging: zcache: module is GPL
+ba5c562 staging: fix zcache building
+ee8fcf2 staging: zcache: support multiple clients, prep for KVM and RAMster
+4a1a5c8 staging/zcache: always enable when selected
+eb3c930 Fix: compat_rw_copy_check_uvector() misuse in aio, readv, writev, and security keys
+d607157 clockevents: Don't allow dummy broadcast timers
+ff4b46f tmpfs: fix mempolicy object leaks
+11634b7 omap2plus-cpufreq.c: Allow throttling to start at current freq
+240a28c b43: A fix for DMA transmission sequence errors
+79762ef NFS: nfs_getaclargs.acl_len is a size_t
+7216f41 NFSv4: Fix an Oops in the NFSv4 getacl code
+7cc1f0b NFSv4: include bitmap in nfsv4 get acl data
+a905ad5 ext4: fixup 64-bit divides in 3.0-stable backport of upstream fix
+75fad09 ext4: use atomic64_t for the per-flexbg free_clusters count
+b412daf panic: Fix a possible deadlock in panic()
+3b6f45c SCHEDULER: Autogroup patch group by current user android UID instead of task ID
+bfbfed5 config SCHED_AUTOGROUP=y
+c94b1dd timer: optimize apply_slack()
+4531895 ARM: smp: Fix cpu_up() racing with sys_reboot
+173c4b6 ARM: SMP: use a timing out completion for cpu hotplug
+fa4885f ARM: smpboot: Enable interrupts after marking CPU online/active
+165b02e CPU hotplug, PM: Remove unused symbol 'suspend_cpu_hotplug'
+44fcb79 cpu-hotplug: Add the function 'cpu_hotplug_inprogress'
+5f4f262 printk: Don't allow cpu to get console lock during hotplugging
+7554511 cpufreq_abyssplug.c: Fix and Adapt to 3.0 Kernel
+ed19d46 Add CPUFREQ Abyssplug
+1be257a ftrace: Consistently restore trace function on sysctl enabling
+0adc9e9 ALSA: hda - fix typo in proc output
+63968d8 ALSA: hda - bug fix on return value when getting HDMI ELD info
+24b55d2 block: avoid using uninitialized value in from queue_var_store
+ef99d29 crypto: gcm - fix assumption that assoc has one segment
+0cac38f spinlocks and preemption points need to be at least compiler barriers
+109cacd  word-at-a-time: make the interfaces truly generic
+0a8a0df vsprintf: optimize decimal conversion (again)
+04b0a25 procfs: add num_to_str() to speed up /proc/stat
+7059106 Decrease LCD frequency
+6e26732 CPU: OPP: CLK: Set dsp and iva virtual clocks
+5e99016 mutex: restrict mutex spinning to only one task per mutex
+2da0403 mutex: Make more scalable by doing less atomic operations
+2e6cf1e mutex: dynamically disable mutex spinning at high load Date	Thu, 4 Apr 2013 10:54:18 -0400
+ef444b6 OMAPDSS: DISPC: Pipe threshold sizes power optimization.
+c440b1b page_alloc.c: min_free_kbytes = 4096
+bc09946 timer: hrtimer: Don't check idle_cpu() before calling get_nohz_timer
+5153c30 hrtimer: Prevent enqueue of hrtimer on dead CPU
+d3f933b hrtimer: Consider preemption when migrating hrtimer cpu_bases
+2af0002 hrtimer: Don't reinitialize a cpu_base's lock on CPU_UP
+145d037 Add security hooks to binder and implement the hooks for SELinux.
+57908f6 readahead: fault retry breaks mmap file read random detection
+49697fb ARM: 7178/1: fault.c: Port OOM changes into do_page_fault
+a70f9d2 wakeup: Use irqsave/irqrestore for events_lock
+6be896c ARM: Don't enable GENERIC_LOCKBREAK with ticket spinlocks
+9378936 unlzo: fix input buffer free
+e7a831d Revert "Revert "percpu_counter.h: comment code for better readability""
+7442c46 percpu_counter: Set protection to spinlock
+e4708d2 Revert "percpu_counter.h: comment code for better readability"
+ae6e03e locking, percpu_counter: Annotate ::lock as raw
+ad14996 percpu_counter.h: comment code for better readability
+c3508b5 oom: do not kill tasks with oom_score_adj OOM_SCORE_ADJ_MIN
+26c45dd oom: remove oom_disable_count
+8ee5716 oom: avoid killing kthreads if they assume the oom killed thread's mm
+7380ba4 oom: thaw threads if oom killed thread is frozen before deferring
+b6a6c664f Revert "oom: do not kill tasks with oom_score_adj OOM_SCORE_ADJ_MIN"
+8159b24 oom: do not kill tasks with oom_score_adj OOM_SCORE_ADJ_MIN
+f7b98bf Enable dyn_fsync at boot
+057d04d vm: convert fb_mmap to vm_iomap_memory() helper
+9100f93 rfkill: properly assign a boolean type" - https://android.googlesource.com/kernel/common/+/6be19ccd698abf9c4f0b7bba5a704f94e7ccdf54%5E%21/#F0
+619fd14 rfkill: prevent unnecessary event generation" - https://patchwork.kernel.org/patch/1415121/
+d3c3131 net: count hw_addr syncs so that unsync works properly.
