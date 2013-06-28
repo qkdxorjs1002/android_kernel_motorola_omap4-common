@@ -1,3 +1,6 @@
+46bca34 Fix hwmod sidle modes
+430a3b3 Accidently deleted ARRAY_SIZE for uart1
+c52c563 Added todays changelog
 05c5b2f Disabled one more option
 6af6e64 Disable some options - was breaking kernel
 c5ec065 fixed a damn typo
@@ -29,4 +32,3 @@ d0a75e4 Update gitignore
 7c98dfc Vibrator Control: temp changes...
 729b966 clock: Fix log spam
 d3bf212 Fix a typo
-ec7053d Enable and currently fixing Vibrator Control
