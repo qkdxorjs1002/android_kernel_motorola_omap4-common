@@ -1,3 +1,8 @@
+f898f3d Revert "ARM: OMAP2+: hwmod: Restore sysc after a reset"
+ec4052c Revert "OMAP3+: PM: VP: dereference voltdm after checking valid voltdm"
+08cfd0c Revert "OMAP3+: voltage: expose transdone APIs"
+d157f98 Revert "OMAP3+: PM: VP: check only the VPINIDLE status bit"
+60021c4 Added todays changelog
 f4f9e5f Enable samepage merging and zache
 a227d99 Revert "OMAP3+: PM: DVFS: remove omap_dvfs_is_scaling"
 54600d1 Revert "OMAP3+: PM: DVFS: add qos requirement to prevent interruptions"
@@ -36,4 +41,3 @@ d0a75e4 Update gitignore
 28c93cf Fix build scripts
 0b31bf3 hwmod: omap4: Add idle flags to uarts
 4368fa8 Disable vibrator control until it's fixed
-7c98dfc Vibrator Control: temp changes...
