@@ -1,3 +1,10 @@
+f4f9e5f Enable samepage merging and zache
+a227d99 Revert "OMAP3+: PM: DVFS: remove omap_dvfs_is_scaling"
+54600d1 Revert "OMAP3+: PM: DVFS: add qos requirement to prevent interruptions"
+cbf3c94 Revert "board_mapphone_usb: Change ehci performance mode to static scaling - might fix lte connectivity"
+a7b802e Revert "ARM: OMAP4: clock data: fix mult and div mask for USB_DPLL"
+32a72d5 Revert "clock: Fix log spam"
+49f72f5 Added todays changelog
 46bca34 Fix hwmod sidle modes
 430a3b3 Accidently deleted ARRAY_SIZE for uart1
 c52c563 Added todays changelog
@@ -30,5 +37,3 @@ d0a75e4 Update gitignore
 0b31bf3 hwmod: omap4: Add idle flags to uarts
 4368fa8 Disable vibrator control until it's fixed
 7c98dfc Vibrator Control: temp changes...
-729b966 clock: Fix log spam
-d3bf212 Fix a typo
