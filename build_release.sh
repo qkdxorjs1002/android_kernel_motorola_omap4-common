@@ -55,6 +55,6 @@ cp arch/arm/boot/zImage /home/mnl-manz/razr_kdev_kernel/built/rls/system/etc/kex
 
 cd /home/mnl-manz/razr_kdev_kernel/built/rls
 zip -r "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" *
-cp "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" /home/mnl-manz/razr_kdev_kernel/built
+mv "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" /home/mnl-manz/razr_kdev_kernel/built
 
 echo "done"

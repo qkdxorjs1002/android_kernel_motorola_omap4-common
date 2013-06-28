@@ -55,6 +55,6 @@ cp arch/arm/boot/zImage /home/mnl-manz/razr_kdev_kernel/built/nightly/system/etc
 
 cd /home/mnl-manz/razr_kdev_kernel/built/nightly
 zip -r "JBX-Kernel-Hybrid-Nightly_$(date +"%Y-%m-%d").zip" *
-cp "JBX-Kernel-Hybrid-Nightly_$(date +"%Y-%m-%d").zip" /home/mnl-manz/razr_kdev_kernel/built
+mv "JBX-Kernel-Hybrid-Nightly_$(date +"%Y-%m-%d").zip" /home/mnl-manz/razr_kdev_kernel/built
 
 echo "done"
