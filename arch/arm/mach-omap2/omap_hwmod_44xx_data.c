@@ -5545,6 +5545,7 @@ static struct omap_hwmod_ocp_if omap44xx_l4_per__uart1 = {
 	.slave		= &omap44xx_uart1_hwmod,
 	.clk		= "l4_div_ck",
 	.addr		= omap44xx_uart1_addrs,
+	.addr_cnt 	= ARRAY_SIZE(omap44xx_uart1_addrs), 
 	.user		= OCP_USER_MPU | OCP_USER_SDMA,
 };
 
