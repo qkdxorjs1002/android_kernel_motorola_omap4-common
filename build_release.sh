@@ -51,7 +51,7 @@ make -j4
 # Keep in mind that we assume that the modules were already built and are in place
 # So we just copy and rename, then pack to zip including the date
 echo "Packaging flashable Zip file..."
-cp -f /arch/arm/boot/zImage /home/mnl-manz/razr_kdev_kernel/built/rls/system/etc/kexec/kernel
+cp arch/arm/boot/zImage /home/mnl-manz/razr_kdev_kernel/built/rls/system/etc/kexec/kernel
 
 cd /home/mnl-manz/razr_kdev_kernel/built/rls
 zip -r "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" *
