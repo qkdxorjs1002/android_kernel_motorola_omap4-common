@@ -19,7 +19,6 @@
 #include <linux/clk.h>
 #include <linux/debugfs.h>
 #include <linux/seq_file.h>
-#include <linux/pm_qos_params.h>
 #include <plat/common.h>
 #include <plat/omap_device.h>
 #include <plat/omap_hwmod.h>
@@ -182,6 +181,8 @@ struct omap_vdd_user_list {
  * @vdd_user_list: The vdd user list
  * @voltdm:	Voltage domains for which dvfs info stored
  * @dev_list:	Device list maintained per domain
+ * @is_scaling: flag to store information about scaling in progress or not
+ *		this flag is already protected by the global mutex.
  *
  * This is a fundamental structure used to store all the required
  * DVFS related information for a vdd.
@@ -193,13 +194,11 @@ struct omap_vdd_dvfs_info {
 	struct plist_head vdd_user_list;
 	struct voltagedomain *voltdm;
 	struct list_head dev_list;
+	bool is_scaling;
 };
 
 static LIST_HEAD(omap_dvfs_info_list);
 DEFINE_MUTEX(omap_dvfs_lock);
-
-/* QoS expected */
-static struct pm_qos_request_list omap_dvfs_pm_qos_handle;
 
 /* Dvfs scale helper function */
 static int _dvfs_scale(struct device *req_dev, struct device *target_dev,
@@ -748,6 +747,11 @@ static int _dvfs_scale(struct device *req_dev, struct device *target_dev,
 	}
 	vdd = voltdm->vdd;
 
+	/* Mark that we are scaling for this device */
+	tdvfs_info->is_scaling = true;
+	/* let the other CPU know as well */
+	smp_wmb();
+
 	/* Find the highest voltage being requested */
 	node = plist_last(&tdvfs_info->vdd_user_list);
 	new_volt = node->prio;
@@ -855,6 +859,11 @@ out:
 	/* Re-enable Smartreflex module */
 	omap_sr_enable(voltdm, new_vdata);
 
+	/* Mark done */
+	tdvfs_info->is_scaling = false;
+	/* let the other CPU know as well */
+	smp_wmb();
+
 	return ret;
 }
 
@@ -906,8 +915,6 @@ int omap_device_scale(struct device *req_dev, struct device *target_dev,
 
 	/* Lock me to ensure cross domain scaling is secure */
 	mutex_lock(&omap_dvfs_lock);
-	/* I would like CPU to be active always at this point */
-	pm_qos_update_request(&omap_dvfs_pm_qos_handle, 0);
 
 	rcu_read_lock();
 	opp = opp_find_freq_ceil(target_dev, &freq);
@@ -995,12 +1002,38 @@ int omap_device_scale(struct device *req_dev, struct device *target_dev,
 	}
 	/* Fall through */
 out:
-	/* Remove the latency requirement */
-	pm_qos_update_request(&omap_dvfs_pm_qos_handle, PM_QOS_DEFAULT_VALUE);
 	mutex_unlock(&omap_dvfs_lock);
 	return ret;
 }
 EXPORT_SYMBOL(omap_device_scale);
+
+/**
+ * omap_dvfs_is_scaling() - Tells the caller if the domain is scaling
+ * @voltdm:	voltage domain we are interested in
+ *
+ * Returns true if the domain is in the middle of scale operation,
+ * returns false if there is no scale operation is in progress or an
+ * invalid parameter was passed.
+ */
+bool omap_dvfs_is_scaling(struct voltagedomain *voltdm)
+{
+	struct omap_vdd_dvfs_info *dvfs_info;
+
+	if (IS_ERR_OR_NULL(voltdm)) {
+		pr_err("%s: bad voltdm\n", __func__);
+		return false;
+	}
+
+	dvfs_info = _voltdm_to_dvfs_info(voltdm);
+	if (IS_ERR_OR_NULL(dvfs_info)) {
+		pr_err("%s: no dvfsinfo for voltdm %s\n",
+			__func__, voltdm->name);
+		return false;
+	}
+
+	return dvfs_info->is_scaling;
+}
+EXPORT_SYMBOL(omap_dvfs_is_scaling);
 
 #ifdef CONFIG_PM_DEBUG
 static int dvfs_dump_vdd(struct seq_file *sf, void *unused)
@@ -1192,7 +1225,6 @@ int __init omap_dvfs_register_device(struct device *dev, char *voltdm_name,
 	struct clk *clk = NULL;
 	struct voltagedomain *voltdm;
 	int ret = 0;
-	static __initdata bool qos_create;
 
 	if (!voltdm_name) {
 		dev_err(dev, "%s: Bad voltdm name!\n", __func__);
@@ -1266,13 +1298,6 @@ int __init omap_dvfs_register_device(struct device *dev, char *voltdm_name,
 	temp_dev->clk = clk;
 	list_add_tail(&temp_dev->node, &dvfs_info->dev_list);
 
-	/* Simpler to have a single request for all domains */
-	if (!qos_create) {
-		pm_qos_add_request(&omap_dvfs_pm_qos_handle,
-				PM_QOS_CPU_DMA_LATENCY,
-				PM_QOS_DEFAULT_VALUE);
-		qos_create = true;
-	}
 	/* Fall through */
 out:
 	mutex_unlock(&omap_dvfs_lock);

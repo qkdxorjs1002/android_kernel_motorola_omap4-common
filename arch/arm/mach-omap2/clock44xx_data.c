@@ -1110,8 +1110,8 @@ static struct dpll_data dpll_usb_dd = {
 			| (1 << DPLL_LOW_POWER_STOP),
 	.autoidle_reg	= OMAP4430_CM_AUTOIDLE_DPLL_USB,
 	.idlest_reg	= OMAP4430_CM_IDLEST_DPLL_USB,
-	.mult_mask	= OMAP4430_DPLL_MULT_USB_MASK,
-	.div1_mask	= OMAP4430_DPLL_DIV_0_7_MASK,
+	.mult_mask	= OMAP4430_DPLL_MULT_MASK,
+	.div1_mask	= OMAP4430_DPLL_DIV_MASK,
 	.enable_mask	= OMAP4430_DPLL_EN_MASK,
 	.autoidle_mask	= OMAP4430_AUTO_DPLL_MODE_MASK,
 	.idlest_mask	= OMAP4430_ST_DPLL_CLK_MASK,
@@ -3936,7 +3936,7 @@ static int omap4_virt_l3_set_rate(struct clk *clk, unsigned long rate)
 #define DPLL_IVA_M4_OPPNITROSB_RATE	500000000
 
 #define DPLL_IVA_M5_OPP50_RATE		133100000
-#define DPLL_IVA_M5_OPP100_RATE		266666666
+#define DPLL_IVA_M5_OPP100_RATE		266000000
 #define DPLL_IVA_M5_OPPTURBO_RATE	331000000
 #define DPLL_IVA_M5_OPPNITRO_RATE	430000000
 #define DPLL_IVA_M5_OPPNITROSB_RATE	500000000
