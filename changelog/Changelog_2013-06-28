@@ -1,0 +1,28 @@
+b49967a Remove old changelog to free place for following ones..
+42cdf45 Changelog is history!
+6da8c8c Fix changelog automation, fix typo in defconfig
+30ed704 Disable zcache - doesn't boot
+d6628b1 Don't export changelog on nightlies
+139c2a7 New options to build scripts
+a595678 Add changelog folder
+7919174 Update gitignore
+3d5c8ac Now REALLY final build script changes....
+8d7d5cc Final fix for build script
+e4fdbac Enable CLEANCACHE & FRONTSWAP fro zcache
+4280118 Build script: New package location
+4f59f09 fix build scripts - that's annoying
+52a29c7 Fix gitignore
+d0a75e4 Update gitignore
+8a0d174f Fix damn scripts
+0595b1f Update sciprts, fix typo in hwmod
+5dbce63 Merge branch 'JBX' into JBX_STABLE
+56d01d7 build script: Fix typos
+222a64a Update kernel version
+6abfd96 Add prebuilt scripts and update build scripts
+28c93cf Fix build scripts
+0b31bf3 hwmod: omap4: Add idle flags to uarts
+4368fa8 Disable vibrator control until it's fixed
+7c98dfc Vibrator Control: temp changes...
+729b966 clock: Fix log spam
+d3bf212 Fix a typo
+ec7053d Enable and currently fixing Vibrator Control
