@@ -1,3 +1,7 @@
+05c5b2f Disabled one more option
+6af6e64 Disable some options - was breaking kernel
+c5ec065 fixed a damn typo
+1b87189 Added new changelog
 b49967a Remove old changelog to free place for following ones..
 42cdf45 Changelog is history!
 6da8c8c Fix changelog automation, fix typo in defconfig
