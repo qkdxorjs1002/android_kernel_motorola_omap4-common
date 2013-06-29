@@ -1,3 +1,5 @@
+0544547 Revert "Revert "cpu-hotplug: Add the function 'cpu_hotplug_inprogress'""
+87daff8 Added todays changelog
 bd7b9ed Revert "Revert "OMAP: PM: Fixed potential overflow in throughput calculation.""
 d5a8c97 Revert "Revert "tmpfs: fix mempolicy object leaks""
 6bee4b4 Revert "Revert "ext4: fixup 64-bit divides in 3.0-stable backport of upstream fix""
