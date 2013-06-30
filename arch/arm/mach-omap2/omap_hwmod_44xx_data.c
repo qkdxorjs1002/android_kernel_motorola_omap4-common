@@ -5545,7 +5545,7 @@ static struct omap_hwmod_ocp_if omap44xx_l4_per__uart1 = {
 	.slave		= &omap44xx_uart1_hwmod,
 	.clk		= "l4_div_ck",
 	.addr		= omap44xx_uart1_addrs,
-	.addr_cnt 	= ARRAY_SIZE(omap44xx_uart1_addrs), 
+	.addr_cnt	= ARRAY_SIZE(omap44xx_uart1_addrs),
 	.user		= OCP_USER_MPU | OCP_USER_SDMA,
 };
 
@@ -5562,7 +5562,6 @@ static struct omap_hwmod omap44xx_uart1_hwmod = {
 	.sdma_reqs	= omap44xx_uart1_sdma_reqs,
 	.sdma_reqs_cnt	= ARRAY_SIZE(omap44xx_uart1_sdma_reqs),
 	.main_clk	= "uart1_fck",
-	.flags		= HWMOD_SWSUP_SIDLE,
 	.prcm = {
 		.omap4 = {
 			.clkctrl_reg = OMAP4430_CM_L4PER_UART1_CLKCTRL,
@@ -5616,7 +5615,6 @@ static struct omap_hwmod omap44xx_uart2_hwmod = {
 	.sdma_reqs	= omap44xx_uart2_sdma_reqs,
 	.sdma_reqs_cnt	= ARRAY_SIZE(omap44xx_uart2_sdma_reqs),
 	.main_clk	= "uart2_fck",
-	.flags		= HWMOD_SWSUP_SIDLE,
 	.prcm = {
 		.omap4 = {
 			.clkctrl_reg = OMAP4430_CM_L4PER_UART2_CLKCTRL,
@@ -5667,8 +5665,6 @@ static struct omap_hwmod omap44xx_uart3_hwmod = {
 	.class		= &omap44xx_uart_hwmod_class,
 #ifdef CONFIG_EMU_UART_DEBUG
 	.flags		= (HWMOD_INIT_NO_IDLE | HWMOD_INIT_NO_RESET),
-#else
-	.flags		= HWMOD_SWSUP_SIDLE,
 #endif
 	.mpu_irqs	= omap44xx_uart3_irqs,
 	.mpu_irqs_cnt	= ARRAY_SIZE(omap44xx_uart3_irqs),
@@ -5728,7 +5724,6 @@ static struct omap_hwmod omap44xx_uart4_hwmod = {
 	.sdma_reqs	= omap44xx_uart4_sdma_reqs,
 	.sdma_reqs_cnt	= ARRAY_SIZE(omap44xx_uart4_sdma_reqs),
 	.main_clk	= "uart4_fck",
-	.flags		= HWMOD_SWSUP_SIDLE,
 	.prcm = {
 		.omap4 = {
 			.clkctrl_reg = OMAP4430_CM_L4PER_UART4_CLKCTRL,
@@ -6367,4 +6362,5 @@ int __init omap44xx_hwmod_init(void)
 {
 	return omap_hwmod_register(omap44xx_hwmods);
 }
+
 
