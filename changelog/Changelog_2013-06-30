@@ -1,3 +1,7 @@
+e05546b Revert "ALSA: hda - fix typo in proc output"
+1fac0eb Disable zenx
+e258fb5 cpufreq: kconfig code fix, add zenx
+9907591 Added todays changelog
 cd140dc omap4-common: Fix prefetch value from prior config
 51b297f Revert "Revert "ARM: OMAP4: l2x0: Set optimized value for prefetch offset""
 e894d59 Revert "ARM: OMAP4: l2x0: Cleanup prefetch offset register setting"
