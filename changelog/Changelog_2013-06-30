@@ -1,3 +1,12 @@
+cd140dc omap4-common: Fix prefetch value from prior config
+51b297f Revert "Revert "ARM: OMAP4: l2x0: Set optimized value for prefetch offset""
+e894d59 Revert "ARM: OMAP4: l2x0: Cleanup prefetch offset register setting"
+57f2912 Revert "ARM: OMAP4: l2x0: Set optimized value for prefetch offset"
+d9a5d7f Revert "Fix prefetch value"
+1186e19 Revert "OMAP: Fix prefetch offset"
+64f337c Revert "Revert "OMAP: Fix prefetch offset""
+de79437 Revert "OMAP4: Fix prefetch definition - was breaking runtime"
+a1c5c7b Added todays changelog
 9c559a2 omap2plus-cpufreq: Fix transition latency
 65fab3f HWMOD: BAck to prior version
 eb17433 Revert "Fix hwmod sidle modes"
