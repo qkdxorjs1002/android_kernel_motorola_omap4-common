@@ -1,3 +1,5 @@
+a54a52e printk: Remove obsolete function
+58737a0 Added todays changelog
 bb6d0d7 Revert "Revert "Revert "ext4: use atomic64_t for the per-flexbg free_clusters count"""
 440f5ef Revert "Revert "Revert "ext4: fixup 64-bit divides in 3.0-stable backport of upstream fix"""
 8193855 Revert "Revert "Revert "tmpfs: fix mempolicy object leaks"""
