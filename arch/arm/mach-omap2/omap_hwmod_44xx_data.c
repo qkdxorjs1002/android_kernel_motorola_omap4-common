@@ -5611,7 +5611,6 @@ static struct omap_hwmod_ocp_if *omap44xx_uart2_slaves[] = {
 static struct omap_hwmod omap44xx_uart2_hwmod = {
 	.name		= "uart2",
 	.class		= &omap44xx_uart_hwmod_class,
-	.flags		= HWMOD_SWSUP_SIDLE,
 	.mpu_irqs	= omap44xx_uart2_irqs,
 	.mpu_irqs_cnt	= ARRAY_SIZE(omap44xx_uart2_irqs),
 	.sdma_reqs	= omap44xx_uart2_sdma_reqs,
@@ -5723,7 +5722,6 @@ static struct omap_hwmod_ocp_if *omap44xx_uart4_slaves[] = {
 static struct omap_hwmod omap44xx_uart4_hwmod = {
 	.name		= "uart4",
 	.class		= &omap44xx_uart_hwmod_class,
-	.flags		= HWMOD_SWSUP_SIDLE,
 	.mpu_irqs	= omap44xx_uart4_irqs,
 	.mpu_irqs_cnt	= ARRAY_SIZE(omap44xx_uart4_irqs),
 	.sdma_reqs	= omap44xx_uart4_sdma_reqs,
@@ -6344,8 +6342,8 @@ static __initdata struct omap_hwmod *omap44xx_hwmods[] = {
 	&omap44xx_uart1_hwmod,
 	&omap44xx_uart2_hwmod,
 #ifndef CONFIG_EMU_UART_DEBUG
-	//TODO: just to prevent debug_ll from dying
-	//&omap44xx_uart3_hwmod,
+	//FIXME-HASH: If EMU_UART we should not call this to prevent debug_ll from dying
+	&omap44xx_uart3_hwmod,
 #endif
 	&omap44xx_uart4_hwmod,
 

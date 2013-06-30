@@ -1,3 +1,13 @@
+aeb311a Final config for now
+7d2348b remoteproc: fix null reference when certain error handling forces removal of virtio devices
+7778750 Revert "Revert "Revert "omap2plus-cpufreq.c: Allow throttling to start at current freq"""
+2cf5e34 Revert "Revert "Revert "OMAP: PM: Fixed potential overflow in throughput calculation."""
+1ec4b07 Revert "OMAP4: PM: cold reset: wrong value is used to set LOGICRETSTATE"
+0aac051 Revert "Revert "Revert "Revert "OMAP: PM: Fixed potential overflow in throughput calculation.""""
+e4522e3 Revert "Revert "Revert "Revert "net: count hw_addr syncs so that unsync works properly.""""
+b3dc431 Revert "Revert "Revert "net: count hw_addr syncs so that unsync works properly."""
+bf761db Revert "Revert "Revert "OMAP: PM: Fixed potential overflow in throughput calculation."""
+250e06a Added todays changelog
 f898f3d Revert "ARM: OMAP2+: hwmod: Restore sysc after a reset"
 ec4052c Revert "OMAP3+: PM: VP: dereference voltdm after checking valid voltdm"
 08cfd0c Revert "OMAP3+: voltage: expose transdone APIs"
@@ -34,10 +44,3 @@ e4fdbac Enable CLEANCACHE & FRONTSWAP fro zcache
 d0a75e4 Update gitignore
 8a0d174f Fix damn scripts
 0595b1f Update sciprts, fix typo in hwmod
-5dbce63 Merge branch 'JBX' into JBX_STABLE
-56d01d7 build script: Fix typos
-222a64a Update kernel version
-6abfd96 Add prebuilt scripts and update build scripts
-28c93cf Fix build scripts
-0b31bf3 hwmod: omap4: Add idle flags to uarts
-4368fa8 Disable vibrator control until it's fixed

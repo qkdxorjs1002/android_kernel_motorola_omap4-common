@@ -2373,59 +2373,29 @@ EXPORT_SYMBOL_GPL(kick_process);
  */
 static int select_fallback_rq(int cpu, struct task_struct *p)
 {
-	const struct cpumask *nodemask = cpumask_of_node(cpu_to_node(cpu));
-	enum { cpuset, possible, fail } state = cpuset;
 	int dest_cpu;
+	const struct cpumask *nodemask = cpumask_of_node(cpu_to_node(cpu));
 
 	/* Look for allowed, online CPU in same node. */
-	for_each_cpu_mask(dest_cpu, *nodemask) {
-		if (!cpu_online(dest_cpu))
-			continue;
-		if (!cpu_active(dest_cpu))
-			continue;
+	for_each_cpu_and(dest_cpu, nodemask, cpu_active_mask)
 		if (cpumask_test_cpu(dest_cpu, &p->cpus_allowed))
 			return dest_cpu;
-	}
 
-	for (;;) {
-		/* Any allowed, online CPU? */
-		for_each_cpu_mask(dest_cpu, *tsk_cpus_allowed(p)) {
-			if (!cpu_online(dest_cpu))
-				continue;
-			if (!cpu_active(dest_cpu))
-				continue;
-			goto out;
-		}
+	/* Any allowed, online CPU? */
+	dest_cpu = cpumask_any_and(&p->cpus_allowed, cpu_active_mask);
+	if (dest_cpu < nr_cpu_ids)
+		return dest_cpu;
 
-		switch (state) {
-		case cpuset:
-			/* No more Mr. Nice Guy. */
-			cpuset_cpus_allowed_fallback(p);
-			state = possible;
-			break;
-
-		case possible:
-			do_set_cpus_allowed(p, cpu_possible_mask);
-			state = fail;
-			break;
-
-		case fail:
-			BUG();
-			break;
-		}
-	}
-
-out:
-	if (state != cpuset) {
-			/*
-			 * Don't tell them about moving exiting tasks or
-			 * kernel threads (both mm NULL), since they never
-			 * leave kernel.
-			 */
-			if (p->mm && printk_ratelimit()) {
-					printk(KERN_DEBUG "process %d (%s) no longer affine to cpu%d\n",
-									task_pid_nr(p), p->comm, cpu);
-			}
+	/* No more Mr. Nice Guy. */
+	dest_cpu = cpuset_cpus_allowed_fallback(p);
+	/*
+	 * Don't tell them about moving exiting tasks or
+	 * kernel threads (both mm NULL), since they never
+	 * leave kernel.
+	 */
+	if (p->mm && printk_ratelimit()) {
+		printk(KERN_INFO "process %d (%s) no longer affine to cpu%d\n",
+				task_pid_nr(p), p->comm, cpu);
 	}
 
 	return dest_cpu;
@@ -4414,30 +4384,8 @@ fail:
  */
 int mutex_spin_on_owner(struct mutex *lock, struct task_struct *owner)
 {
-	unsigned int nrun;
-
 	if (!sched_feat(OWNER_SPIN))
 		return 0;
-
-	/*
-	 * Mutex spinning should be temporarily disabled if the load on
-	 * the current CPU is high. The load is considered high if there
-	 * are 2 or more active tasks waiting to run on this CPU. On the
-	 * other hand, if there is another task waiting and the global
-	 * load (calc_load_tasks - including uninterruptible tasks) is
-	 * bigger than 2X the # of CPUs available, it is also considered
-	 * to be high load.
-	 */
-	nrun = this_rq()->nr_running;
-	if (nrun >= 3)
-		return 0;
-	else if (nrun == 2) {
-		long active = atomic_long_read(&calc_load_tasks);
-		int  ncpu   = num_online_cpus();
-
-		if (active > 2*ncpu)
-			return 0;
-	}
 
 	while (owner_running(lock, owner)) {
 		if (need_resched())
@@ -6568,7 +6516,7 @@ static int __cpuinit sched_cpu_active(struct notifier_block *nfb,
 				      unsigned long action, void *hcpu)
 {
 	switch (action & ~CPU_TASKS_FROZEN) {
-	case CPU_STARTING:
+	case CPU_ONLINE:
 	case CPU_DOWN_FAILED:
 		set_cpu_active((long)hcpu, true);
 		return NOTIFY_OK;
