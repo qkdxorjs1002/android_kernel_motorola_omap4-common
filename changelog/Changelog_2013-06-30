@@ -1,3 +1,14 @@
+9c559a2 omap2plus-cpufreq: Fix transition latency
+65fab3f HWMOD: BAck to prior version
+eb17433 Revert "Fix hwmod sidle modes"
+f42b318 Revert "Revert "Revert "OMAP3+: PM: DVFS: remove omap_dvfs_is_scaling"""
+903bb2b Revert "Revert "Revert "OMAP3+: PM: DVFS: add qos requirement to prevent interruptions"""
+e1b2ad3 Revert "Revert "OMAP3+: PM: DVFS: add qos requirement to prevent interruptions""
+33c92ae Revert "Revert "OMAP3+: PM: DVFS: remove omap_dvfs_is_scaling""
+6d2f420 OMAP4: Fix prefetch definition - was breaking runtime
+95997a0 printk: Allow console lock durin hotplug
+943738e Revert "CPU: OPP: CLK: Set dsp and iva virtual clocks"
+e20ae09 Added todays changelog
 a54a52e printk: Remove obsolete function
 58737a0 Added todays changelog
 bb6d0d7 Revert "Revert "Revert "ext4: use atomic64_t for the per-flexbg free_clusters count"""
