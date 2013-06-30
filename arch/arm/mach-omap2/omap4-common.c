@@ -31,8 +31,7 @@
 #include "clockdomain.h"
 
 #ifdef CONFIG_CACHE_L2X0
-#define L2X0_POR_OFFSET_VALUE		0x5
-#define L2X0_POR_OFFSET_MASK		0x1f
+#define L2X0_POR_OFFSET_VALUE		0x7
 static void __iomem *l2cache_base;
 #endif
 
@@ -215,7 +214,7 @@ static int __init omap_l2_cache_init(void)
 	 */
 	por_ctrl &= ~(1 << L2X0_PREFETCH_DOUBLE_LINEFILL_SHIFT);
 	if (!mpu_prefetch_disable_errata) {
-		por_ctrl &= ~L2X0_POR_OFFSET_MASK;
+		por_ctrl |= 1 << L2X0_PREFETCH_DATA_PREFETCH_SHIFT;
 		por_ctrl |= L2X0_POR_OFFSET_VALUE;
 	}
 
@@ -330,3 +329,4 @@ u32 omap4_secure_dispatcher(u32 idx, u32 flag, u32 nargs, u32 arg1, u32 arg2,
 	return ret;
 }
 #endif
+
