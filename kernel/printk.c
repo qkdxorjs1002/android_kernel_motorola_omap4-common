@@ -842,7 +842,7 @@ static inline int can_use_console(unsigned int cpu)
 {
 
 #ifdef CONFIG_HOTPLUG_CPU
-	if (!cpu_active(cpu) && cpu_hotplug_inprogress())
+	if (!cpu_active(cpu))
 		return 0;
 #endif
 
