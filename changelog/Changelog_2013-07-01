@@ -1,3 +1,5 @@
+4b3f259 AdaptiveX set to default governor - best for power saving as it only turns off the second core during idle/sleep mode and keeps both cores awake on active state. Hotplugging eats power when switching on/off the secondary core(s) all the time when phone enters low tasks state. Better keep the core awake and suspend it in sleep mode only.
+67c1010 Added todays changelog
 5260c0e New modified zcache driver, more non-hotplugging governors for power saving
 fb0e1d3 Revert "Revert back to prior zcache version"
 76a249a Add missing library for dynamic interactive
