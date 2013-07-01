@@ -115,6 +115,7 @@ config CPU_FREQ_DEFAULT_GOV_PEGASUSQ
 	help
 	  Use the CPUFreq governor 'pegasusq' as default. Based on ondemand
 	  governor for multi hotplugging.
+
 config CPU_FREQ_DEFAULT_GOV_DYNAMIC_INTERACTIVE
 	bool "dynamic interactive"
 	select CPU_FREQ_GOV_DYNAMIC_INTERACTIVE
@@ -191,6 +192,11 @@ config CPU_FREQ_DEFAULT_GOV_GALLIMAUFRY
 	select CPU_FREQ_GOV_PERFORMANCE
 	help
 	  Use the CPUFreq governor 'gallimaufry' as default.
+
+config CPU_FREQ_DEFAULT_GOV_SMARTASS2
+	bool "smartass2"
+	select CPU_FREQ_GOV_SMARTASS2
+
 config CPU_FREQ_DEFAULT_GOV_PEGASUSQ
 	bool "pegasusq"
 	select CPU_FREQ_GOV_PEGASUSQ
@@ -326,7 +332,7 @@ config CPU_FREQ_GOV_INTERACTIVE
 	  If in doubt, say N.
 	
 config CPU_FREQ_GOV_DYNAMIC_INTERACTIVE
-	tristate "'dynamic interactive' cpufreq policy governor"
+	tristate "'dynamic_interactive' cpufreq policy governor"
 	help
 	  'dynamic interactive' - This driver adds a dynamic cpufreq policy governor
 	  designed for latency-sensitive workloads.
@@ -336,7 +342,7 @@ config CPU_FREQ_GOV_DYNAMIC_INTERACTIVE
 	  interactive workloads.
 
 	  To compile this driver as a module, choose M here: the
-	  module will be called cpufreq_interactive.
+	  module will be called cpufreq_dynamic_interactive.
 
 	  For details, take a look at linux/Documentation/cpu-freq.
 
@@ -452,6 +458,10 @@ config CPU_FREQ_GOV_ADAPTIVEX
 
 config CPU_FREQ_GOV_GALLIMAUFRY
         tristate "'gallimaufry' cpufreq governor"
+        depends on CPU_FREQ
+
+config CPU_FREQ_GOV_SMARTASS2
+        tristate "'smartass2' cpufreq governor"
         depends on CPU_FREQ
 
 config CPU_FREQ_GOV_HYPER
