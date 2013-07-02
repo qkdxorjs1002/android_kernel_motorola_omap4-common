@@ -32,9 +32,9 @@
  */
 
 #define DEF_FREQUENCY_DOWN_DIFFERENTIAL		(10)
-#define DEF_FREQUENCY_UP_THRESHOLD		(85)
+#define DEF_FREQUENCY_UP_THRESHOLD		(80)
 #define MICRO_FREQUENCY_DOWN_DIFFERENTIAL	(3)
-#define MICRO_FREQUENCY_UP_THRESHOLD		(80)
+#define MICRO_FREQUENCY_UP_THRESHOLD		(90)
 #define MICRO_FREQUENCY_MIN_SAMPLE_RATE		(10000)
 #define MIN_FREQUENCY_UP_THRESHOLD		(11)
 #define MAX_FREQUENCY_UP_THRESHOLD		(100)
@@ -124,7 +124,7 @@ static unsigned int target_freq;
 static DEFINE_MUTEX(short_timer_mutex);
 
 /* Go to max speed when CPU load at or above this value. */
-#define DEFAULT_GO_MAXSPEED_LOAD 70
+#define DEFAULT_GO_MAXSPEED_LOAD 60
 static unsigned long go_maxspeed_load;
 
 #define DEFAULT_KEEP_MINSPEED_LOAD 30
@@ -157,7 +157,7 @@ static void adaptivex_suspend(int suspend)
 	cpumask_t tmp_mask;
 	struct cpu_dbs_info_s *dbs_info;
 
-	if (dbs_enable == 0) return;
+	if (dbs_enable==0) return;
 	if (!suspend) { // resume at max speed:
 		suspended = 0;
 		for_each_cpu_not(cpu, cpu_online_mask) {
@@ -1155,3 +1155,4 @@ fs_initcall(cpufreq_gov_dbs_init);
 module_init(cpufreq_gov_dbs_init);
 #endif
 module_exit(cpufreq_gov_dbs_exit);
+
