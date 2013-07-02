@@ -1,3 +1,4 @@
+cbada46 Added todays changelog
 dc9856f New vibrator control config - not sure
 4731600 Revert "Clean up vibrator driver"
 3df39f0 Added improved glibc memcpy and memmove functions.
