@@ -95,9 +95,9 @@ extern void vibratorcontrol_register_vibstrength(int vibstrength);
 void vibratorcontrol_update(int vibstrength)
 {
     mutex_lock(&vib_enabled);
-
-	omap_dm_timer_set_load(dmtimer, 1, -vibstrength);
-	omap_dm_timer_set_match(dmtimer, 1, -vibstrength+20);
+	
+	vibrator_regulator_enable(vibstrength);
+	vibrator_regulator_disable(vibstrength+20);
 
     mutex_unlock(&vib_enabled);
 
@@ -352,9 +352,7 @@ static int vib_ctrl_pwm_activate(struct vib_signal *vibs)
 	if (!pwmc->active_us)
 		return 0;
 	omap_dm_timer_start(dmtimer);
-#ifdef CONFIG_VIBRATOR_CONTROL
-  	mutex_lock(&vib_enabled);
-#endif 
+
 	return 0;
 }
 
@@ -366,10 +364,6 @@ static int vib_ctrl_pwm_deactivate(struct vib_signal *vibs)
 	omap_dm_timer_enable(dmtimer);
 	omap_dm_timer_set_int_enable(dmtimer, 0);
 	omap_dm_timer_stop(dmtimer);
-
-#ifdef CONFIG_VIBRATOR_CONTROL
-  	mutex_unlock(&vib_enabled);
-#endif 
 
 	return 0;
 }
@@ -421,9 +415,7 @@ static int vib_ctrl_pwm_config(struct vib_signal *vibs, unsigned int total_us,
 		omap_dm_timer_set_int_enable(dmtimer,
 				OMAP_TIMER_INT_OVERFLOW);
 	}
-#ifdef CONFIG_VIBRATOR_CONTROL
-	vibratorcontrol_register_vibstrength(DM_FILLER);
-#endif
+
 	return 0;
 }
 
@@ -665,6 +657,9 @@ static int vibrator_init(void *data)
 		zfprintk("regulator init %s failed %d\n",
 			vib->reg.name, ret);
 	return ret;
+#ifdef CONFIG_VIBRATOR_CONTROL
+	vibratorcontrol_register_vibstrength(vib);
+#endif
 }
 
 static void vibrator_exit(void *data)
@@ -688,7 +683,9 @@ static int vibrator_power_on(int value_ms, void *data)
 			vib->reg.name);
 		return ret;
 	}
-
+#ifdef CONFIG_VIBRATOR_CONTROL
+  	mutex_lock(&vib_enabled);
+#endif 
 	wake_lock(&vib->wakelock);
 
 	pwm = vib_select_pwm(vib, value_ms);
@@ -715,7 +712,9 @@ static int vibrator_power_off(void *data)
 	vib_signal_deactivate(&vib->ctrl.vib_en);
 	vib_signal_deactivate(&vib->ctrl.vib_dir);
 	vibrator_regulator_disable(vib);
-
+#ifdef CONFIG_VIBRATOR_CONTROL
+  	mutex_unlock(&vib_enabled);
+#endif 
 	wake_unlock(&vib->wakelock);
 	return 0;
 }
