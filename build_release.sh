@@ -54,8 +54,8 @@ echo "Packaging flashable Zip file..."
 cp arch/arm/boot/zImage /home/mnl-manz/razr_kdev_kernel/built/rls/system/etc/kexec/kernel
 
 cd /home/mnl-manz/razr_kdev_kernel/built/rls
-zip -r "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" *
-mv "JBX-Kernel-Hybrid_$(date +"%Y-%m-%d").zip" /home/mnl-manz/razr_kdev_kernel/built
+zip -r "JBX-Kernel-0.7b-Hybrid_$(date +"%Y-%m-%d").zip" *
+mv "JBX-Kernel-0.7b-Hybrid_$(date +"%Y-%m-%d").zip" /home/mnl-manz/razr_kdev_kernel/built
 
 # Exporting changelog to file
 echo "Exporting changelog to file: '/built/Changelog-[date]'"
