@@ -157,7 +157,7 @@ static void adaptivex_suspend(int suspend)
 	cpumask_t tmp_mask;
 	struct cpu_dbs_info_s *dbs_info;
 
-	if (dbs_enable==0) return;
+	if (dbs_enable == 0) return;
 	if (!suspend) { // resume at max speed:
 		suspended = 0;
 		for_each_cpu_not(cpu, cpu_online_mask) {
