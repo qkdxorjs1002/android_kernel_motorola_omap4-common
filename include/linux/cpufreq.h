@@ -413,7 +413,9 @@ extern struct cpufreq_governor cpufreq_gov_lazy;
 extern struct cpufreq_governor cpufreq_gov_gallimaufry;
 #define CPUFREQ_DEFAULT_GOVERNOR  (&cpufreq_gov_gallimaufry)
 #endif
-
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_BADASS)
+extern struct cpufreq_governor cpufreq_gov_badass;
+#define CPUFREQ_DEFAULT_GOVERNOR  (&cpufreq_gov_badass) 
 
 /*********************************************************************
  *                     FREQUENCY TABLE HELPERS                       *
