@@ -322,8 +322,13 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 	OPP_INITIALIZER("aess", "abe_clk", "iva", true, 196608000, OMAP4430_VDD_IVA_OPP100_UV),
 	/* DSS OPP1 - OPP50 */
 	OPP_INITIALIZER("dss_dispc", "virt_lcd_pclk", "core", true, 91000000, OMAP4430_VDD_CORE_OPP50_UV),
+#ifdef CONFIG_PVR_GOVERNOR
 	/* DSS OPP2 - OPP100 */
 	OPP_INITIALIZER("dss_dispc", "virt_lcd_pclk", "core", true, 170000000, OMAP4430_VDD_CORE_OPP100_UV),
+#else
+	/* DSS OPP2 - OPP100 */
+	OPP_INITIALIZER("dss_dispc", "virt_lcd_pclk", "core", true, 170000000, OMAP4430_VDD_CORE_OPP100A_UV),
+#endif
 };
 
 #define OMAP4460_VDD_MPU_OPP50_UV    1025000
@@ -444,7 +449,6 @@ static struct omap_opp_def __initdata omap446x_opp_def_list[] = {
   OPP_INITIALIZER("l3_main_1", "virt_l3_ck", "core", true, 100000000, OMAP4460_VDD_CORE_OPP50_UV),
   /* L3 OPP2 - OPP100 */
   OPP_INITIALIZER("l3_main_1", "virt_l3_ck", "core", true, 200000000, OMAP4460_VDD_CORE_OPP100_UV),
-  OPP_INITIALIZER("l3_main_1", "virt_l3_ck", "core", true, 200000000, OMAP4460_VDD_CORE_OPP100_OV_UV),
   /* IVA OPP1 - OPP50 */
   OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", true, 133000000, OMAP4460_VDD_IVA_OPP50_UV),
   /* IVA OPP2 - OPP100 */
@@ -487,6 +491,14 @@ static struct omap_opp_def __initdata omap446x_opp_def_list[] = {
   OPP_INITIALIZER("aess", "abe_clk", "iva", true, 98304000, OMAP4460_VDD_IVA_OPP50_UV),
   /* ABE OPP2 - OPP100 */
   OPP_INITIALIZER("aess", "abe_clk", "iva", true, 196608000, OMAP4460_VDD_IVA_OPP100_UV),
+  /* DSS OPP1 - OPP50 */
+  OPP_INITIALIZER("dss_dispc", "virt_lcd_pclk", "core", true, 93000000, OMAP4460_VDD_CORE_OPP50_UV),
+  /* DSS OPP2 - OPP100 */
+#ifdef CONFIG_PVR_GOVERNOR
+  OPP_INITIALIZER("dss_dispc", "virt_lcd_pclk", "core", true, 170000000, OMAP4460_VDD_CORE_OPP75_UV),
+#else
+  OPP_INITIALIZER("dss_dispc", "virt_lcd_pclk", "core", true, 170000000, OMAP4460_VDD_CORE_OPP100_UV),
+#endif 
 }; 
 /**
  * omap4_mpu_opp_enable() - helper to enable the OPP
