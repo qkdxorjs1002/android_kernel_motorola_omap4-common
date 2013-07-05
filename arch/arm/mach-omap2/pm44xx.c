@@ -79,6 +79,7 @@ static struct clockdomain *tesla_clkdm;
 static struct powerdomain *tesla_pwrdm;
 
 static struct clockdomain *emif_clkdm, *mpuss_clkdm;
+static struct clockdomain *abe_clkdm; 
 static int need_sar_restore;
 
 /* Yet un-named erratum which requires AUTORET to be disabled for IVA PD
