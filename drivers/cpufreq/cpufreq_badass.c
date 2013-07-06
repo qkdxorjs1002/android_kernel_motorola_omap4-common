@@ -37,7 +37,7 @@
 #define DEF_SAMPLING_DOWN_FACTOR		(1)
 #define MAX_SAMPLING_DOWN_FACTOR		(100000)
 #define MICRO_FREQUENCY_DOWN_DIFFERENTIAL	(3)
-#define MICRO_FREQUENCY_UP_THRESHOLD		(95)
+#define MICRO_FREQUENCY_UP_THRESHOLD		(90)
 #define MICRO_FREQUENCY_MIN_SAMPLE_RATE		(10000)
 #define MIN_FREQUENCY_UP_THRESHOLD		(11)
 #define MAX_FREQUENCY_UP_THRESHOLD		(100)
@@ -1090,10 +1090,17 @@ static void bds_check_cpu(struct cpu_bds_info_s *this_bds_info)
 		/* No longer fully busy, reset rate_mult */
 		this_bds_info->rate_mult = 1;
 
-		if (freq_next < policy->min)
-			freq_next = policy->min;
+		/* set 100mhz min if user doesn't set another */
+		if ((policy->min > 100000) && (this_bds_info->cur_policy->cur == 100000))
+			policy->min = 100000;
 
-		if (!bds_tuners_ins.powersave_bias) {
+		if (this_bds_info->cur_policy->cur > 100000)
+		     this_bds_info->cur_policy->cur = policy->min;
+		/* continue here */		
+		if (freq_next < policy->min)
+		       freq_next = policy->min;
+
+	 	if (!bds_tuners_ins.powersave_bias) {
 			__cpufreq_driver_target(policy, freq_next,
 					CPUFREQ_RELATION_L);
 		} else {
