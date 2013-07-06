@@ -134,9 +134,9 @@ struct omap_volt_data omap443x_vdd_mpu_volt_data[] = {
 #endif									
 
 #define OMAP4430_VDD_IVA_OPP50_UV		 910000
-#define OMAP4430_VDD_IVA_OPP100_UV		1092000
-#define OMAP4430_VDD_IVA_OPPTURBO_UV		1232000
-#define OMAP4430_VDD_IVA_OPPNITRO_UV    	1325000
+#define OMAP4430_VDD_IVA_OPP100_UV		1075000
+#define OMAP4430_VDD_IVA_OPPTURBO_UV		1175000
+#define OMAP4430_VDD_IVA_OPPNITRO_UV    	1275000
 
 #ifdef CONFIG_OMAP_SMARTREFLEX_CUSTOM_SENSOR
 struct omap_volt_data omap443x_vdd_iva_volt_data[] = {
@@ -159,7 +159,7 @@ struct omap_volt_data omap443x_vdd_iva_volt_data[] = {
 #define OMAP4430_VDD_CORE_OPP50_UV		 907000
 #define OMAP4430_VDD_CORE_OPP100_UV		 972000
 #define OMAP4430_VDD_CORE_OPP100A_UV		1132000
-#define OMAP4430_VDD_CORE_OPP100B_UV		1185000
+#define OMAP4430_VDD_CORE_OPP100B_UV		1150000
 
 #ifdef CONFIG_OMAP_SMARTREFLEX_CUSTOM_SENSOR
 struct omap_volt_data omap443x_vdd_core_volt_data[] = {
@@ -290,12 +290,18 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 	OPP_INITIALIZER("l3_main_1", "virt_l3_ck", "core", true, 100000000, OMAP4430_VDD_CORE_OPP50_UV),
 	/* L3 OPP2 - OPP100, OPP-Turbo, OPP-SB */
 	OPP_INITIALIZER("l3_main_1", "virt_l3_ck", "core", true, 200000000, OMAP4430_VDD_CORE_OPP100_UV),
+	/* L3 OPP3 - GIve core the abbillity to use higher voltage if needed - this can prevent crashes during OC */
+	OPP_INITIALIZER("l3_main_1", "virt_l3_ck", "core", true, 200000000, OMAP4430_VDD_CORE_OPP100A_UV),
 	/* IVA OPP1 - OPP50 */
 	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", true, 133000000, OMAP4430_VDD_IVA_OPP50_UV),
 	/* IVA OPP2 - OPP100 */
 	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", true, 266100000, OMAP4430_VDD_IVA_OPP100_UV),
 	/* IVA OPP3 - OPP-Turbo */
 	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", true, 332000000, OMAP4430_VDD_IVA_OPPTURBO_UV),
+	/* IVA OPP4 - OPP-Nitro */
+	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", false, 430000000, OMAP4430_VDD_IVA_OPPNITRO_UV),
+	/* IVA OPP5 - OPP-Nitro SpeedBin*/
+	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", false, 500000000, OMAP4430_VDD_IVA_OPPNITRO_UV),
 	/* SGX OPP1 - OPP50 */
 	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 153600000, OMAP4430_VDD_CORE_OPP50_UV),
 	/* SGX OPP2 - OPP100 */
@@ -326,13 +332,8 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 	OPP_INITIALIZER("aess", "abe_clk", "iva", true, 196608000, OMAP4430_VDD_IVA_OPP100_UV),
 	/* DSS OPP1 - OPP50 */
 	OPP_INITIALIZER("dss_dispc", "virt_lcd_pclk", "core", true, 91000000, OMAP4430_VDD_CORE_OPP50_UV),
-#ifdef CONFIG_PVR_GOVERNOR
 	/* DSS OPP2 - OPP100 */
 	OPP_INITIALIZER("dss_dispc", "virt_lcd_pclk", "core", true, 170000000, OMAP4430_VDD_CORE_OPP100_UV),
-#else
-	/* DSS OPP2 - OPP100 */
-	OPP_INITIALIZER("dss_dispc", "virt_lcd_pclk", "core", true, 170000000, OMAP4430_VDD_CORE_OPP100A_UV),
-#endif
 };
 
 #define OMAP4460_VDD_MPU_OPP50_UV    1025000
