@@ -1090,15 +1090,6 @@ static void bds_check_cpu(struct cpu_bds_info_s *this_bds_info)
 		/* No longer fully busy, reset rate_mult */
 		this_bds_info->rate_mult = 1;
 
-		/* set 100mhz min if user doesn't set another */
-		if (policy->min > 100000 && this_bds_info->cur_policy->cur == 100000)
-			policy->min = 100000;
-	
-		if (policy->min > 200000 && this_bds_info->cur_policy->cur == 200000)
-			policy->min = 200000;
-
-		if (this_bds_info->cur_policy->cur > 200000)
-		     this_bds_info->cur_policy->cur = policy->min;
 		/* continue here */		
 		if (freq_next < policy->min)
 		       freq_next = policy->min;
