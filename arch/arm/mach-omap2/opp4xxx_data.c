@@ -136,7 +136,7 @@ struct omap_volt_data omap443x_vdd_mpu_volt_data[] = {
 #define OMAP4430_VDD_IVA_OPP50_UV		 910000
 #define OMAP4430_VDD_IVA_OPP100_UV		1092000
 #define OMAP4430_VDD_IVA_OPPTURBO_UV		1232000
-#define OMAP4460_VDD_IVA_OPPNITRO_UV    	1325000
+#define OMAP4430_VDD_IVA_OPPNITRO_UV    	1325000
 
 #ifdef CONFIG_OMAP_SMARTREFLEX_CUSTOM_SENSOR
 struct omap_volt_data omap443x_vdd_iva_volt_data[] = {
