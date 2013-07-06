@@ -1393,7 +1393,7 @@ static void do_dbs_timer(struct work_struct *work)
 				if (persist_count > 0)
 					persist_count--;
 
-				if (num_online_cpus() == 2 && persist_count == 0 && lmf_screen_state = false) {
+				if (num_online_cpus() == 2 && persist_count == 0 && lmf_screen_state != 1) {
 					cpu_down(1);
 #ifdef CONFIG_CPUFREQ_ID_PERFLOCK
 					saved_policy_min = policy->min;
@@ -1403,7 +1403,7 @@ static void do_dbs_timer(struct work_struct *work)
 				break;
 			case 2:
 				persist_count = 2;
-				if (num_online_cpus() == 1 && lmf_screen_state = true) {
+				if (num_online_cpus() == 1 && lmf_screen_state != 0) {
 					cpu_up(1);
 #ifdef CONFIG_CPUFREQ_ID_PERFLOCK
 					policy->min = saved_policy_min;
