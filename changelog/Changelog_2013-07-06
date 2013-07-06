@@ -1,0 +1,9 @@
+69c3039 Raise kernel version
+1a976f8 PM: Add missing function
+7acffdf OPP: Optimize DSS OPPs
+0584d5d DSS: Implement workaround for Errata ID:i733.
+1420feb PM: IVA AUTO RET relaxed workaround in idle path
+492a1a9 CPU: Fix a wron definition
+c358212 emif: Fix PWR DN value
+329c8ad EMIF: implementation of errata i735 for PM timer
+9b24882 Disable Intellidemand, Badass is default
