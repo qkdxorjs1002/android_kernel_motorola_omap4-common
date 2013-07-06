@@ -691,7 +691,7 @@ static struct cpufreq_driver omap_driver = {
 #ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
 #define MAX_GOV_NAME_LEN 16
 static char cpufreq_default_gov[CONFIG_NR_CPUS][MAX_GOV_NAME_LEN];
-static char *cpufreq_conservative_gov = "conservative";
+static char *cpufreq_hotplug_gov = "hotplug";
 
 static void cpufreq_store_default_gov(void)
 {
@@ -746,9 +746,9 @@ lmf_screen_state = false;
 #endif
 #ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
 cpufreq_store_default_gov();
-if (cpufreq_change_gov(cpufreq_conservative_gov))
+if (cpufreq_change_gov(cpufreq_hotplug_gov))
 pr_err("Early_suspend: Error changing governor to %s\n",
-cpufreq_conservative_gov);
+cpufreq_hotplug_gov);
 #endif
 	omap_cpufreq_suspended = true;
 	mutex_unlock(&omap_cpufreq_lock);
