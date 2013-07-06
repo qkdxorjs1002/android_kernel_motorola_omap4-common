@@ -1,3 +1,5 @@
+9530f46 CPU: Fix typo
+aa41489 CPU: Define missing domain
 69c3039 Raise kernel version
 1a976f8 PM: Add missing function
 7acffdf OPP: Optimize DSS OPPs
