@@ -14,7 +14,7 @@ cd ~/android/system
 make ARCH=arm distclean
 make mrproper
 source build/envsetup.sh
-lunch 9
+lunch 12
 
 # built kernel & modules
 echo "Building modules..."

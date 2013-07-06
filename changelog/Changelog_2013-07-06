@@ -1,3 +1,22 @@
+85f1e2f mutex: dynamically disable mutex spinning at high load Date	Thu, 4 Apr 2013 10:54:18 -0400
+1578425 Add JRCU to config
+67f54d9 RCU: Joe's RCU
+aa0f863 Add ktoonservative governor
+9a19a2d Fix zenx governor
+279cbe0 Set page-writeback to dynamic
+ba7f7d7 Forgot the makefile entry for frandom
+994fa11 optimized LPDDR RAM timings (~10% throughput increase)
+911cff77 Add frandom v2
+5f3689af Intellidemand: No hotplugging while screen is on.
+11bb0a2 Screen off governor is hotplug. Lower voltage limit for mpu SR
+0f708b8 CPU: lower voltages for CORE and IVA. Give CORE the abbility to scale up to higher voltage if needed. Added NITROSB to IVA freqs.
+91b8726 Make generic policy rule for frequencies below 300mhz
+528edec Modify policy in badass governor
+7190fb4 Revert "Revert "Revert "Revert "PM / Sleep: Fix race between CPU hotplug and freezer""""
+4a1a52f Revert "Revert "Revert "Revert "ARM: smpboot: Enable interrupts after marking CPU online/active""""
+d8f8274 Revert "Revert "Revert "Revert "ARM: SMP: use a timing out completion for cpu hotplug""""
+f17eeb4 Revert "Revert "Revert "Revert "ARM: smp: Fix cpu_up() racing with sys_reboot""""
+6abb200 Added todays changelog
 9530f46 CPU: Fix typo
 aa41489 CPU: Define missing domain
 69c3039 Raise kernel version
