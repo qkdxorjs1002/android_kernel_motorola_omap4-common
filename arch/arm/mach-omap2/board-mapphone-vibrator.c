@@ -96,8 +96,8 @@ void vibratorcontrol_update(int vibstrength)
 {
     mutex_lock(&vib_enabled);
 	
-	vibrator_regulator_enable(vibstrength);
-	vibrator_regulator_disable(vibstrength+20);
+hrtimer_start(&gpioc->hrtimer, ns_to_ktime((u64) gpioc->active_us *vibstrength)
+hrtimer_start(&gpioc->hrtimer, ns_to_ktime((u64) gpioc->active_us *vibstrength+20)
 
     mutex_unlock(&vib_enabled);
 
@@ -273,6 +273,9 @@ static int vib_ctrl_gpio_activate(struct vib_signal *vibs)
 	if (ret)
 		dvib_tprint("started timer %p while active.\n",
 				&gpioc->hrtimer);
+#ifdef CONFIG_VIBRATOR_CONTROL
+	vibratorcontrol_register_vibstrength(NSEC_PER_USEC);
+#endif
 	return 0;
 }
 
@@ -657,9 +660,6 @@ static int vibrator_init(void *data)
 		zfprintk("regulator init %s failed %d\n",
 			vib->reg.name, ret);
 	return ret;
-#ifdef CONFIG_VIBRATOR_CONTROL
-	vibratorcontrol_register_vibstrength(vib);
-#endif
 }
 
 static void vibrator_exit(void *data)
