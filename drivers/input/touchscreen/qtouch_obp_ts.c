@@ -39,7 +39,6 @@
 
 #ifdef CONFIG_TOUCH_WAKE
 #include <linux/touch_wake.h>
-
 static struct qtouch_ts_data * touchwake_info;
 #endif
 
@@ -2355,7 +2354,7 @@ finish_touch_setup:
 	ts->cal_check_flag = 0;
 	ts->cal_timer = 0;
 #ifdef CONFIG_TOUCH_WAKE
-	touchwake_info = info;
+	touchwake_info = ts;
 #endif
 	return 0;
 
@@ -2497,7 +2496,7 @@ static int qtouch_ts_resume(struct i2c_client *client)
 	   e.g. ESD got sensor down before). Forcing hard reset here
 	   instead, which makes sure everything gets re-intialized. */
 	qtouch_force_reset(ts, 0);
-
+out:
 	enable_irq(ts->client->irq);
 	return 0;
 }
