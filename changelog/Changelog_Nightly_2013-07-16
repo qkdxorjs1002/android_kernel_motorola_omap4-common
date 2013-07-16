@@ -1,3 +1,7 @@
+8c8f987 Add Touch Wake config option
+b8d0724 Raise Kernel version
+1a88124 Fix a typo in build script
+1d9f5be Added todays changelog (Nightly)
 de57a1f Let's export changelogs for Nightlies
 34005cb Lomemkiller: Fix typos from CK3 tweaks
 d2fdfbb Remove non-fixed options for now
