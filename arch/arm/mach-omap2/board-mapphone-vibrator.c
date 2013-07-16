@@ -145,26 +145,6 @@ struct vibrator {
 	unsigned int max_us;
 };
 
-#ifdef CONFIG_VIBRATOR_CONTROL
-struct omap_dm_timer *dmtimer;
-static DEFINE_MUTEX(vib_enabled);
-
-extern void vibratorcontrol_register_vibstrength(int vibstrength);
-
-void vibratorcontrol_update(int vibstrength)
-{
-    mutex_lock(&vib_enabled);
-	
-	omap_dm_timer_set_load(dmtimer, 1 /* auto_reload */, -vibstrength);
-	omap_dm_timer_set_match(dmtimer, 1 /* do_match */, -vibstrength+20);
-
-    mutex_unlock(&vib_enabled);
-
-    return;
-}
-EXPORT_SYMBOL(vibratorcontrol_update);
-#endif
-
 struct vibrator vibrators[MAX_VIBS]; /* dev_data */
 struct vib_timed vib_timeds[MAX_VIBS]; /* pdata */
 const char *vib_name[MAX_VIBS] = {"vibrator", "vibrator1"};
