@@ -26,10 +26,6 @@
 #include <linux/workqueue.h>
 #include <linux/gpio.h>
 
-#ifdef CONFIG_TOUCH_WAKE
-#include <linux/touch_wake.h>
-#endif
-
 struct gpio_button_data {
 	struct gpio_keys_button *button;
 	struct input_dev *input;
@@ -47,12 +43,6 @@ struct gpio_keys_drvdata {
 	void (*disable)(struct device *dev);
 	struct gpio_button_data data[0];
 };
-
-#ifdef CONFIG_TOUCH_WAKE
-static struct gpio_button_data *touchwakedevdata;
-#endif
-
-gpio_button_data *data
 
 /*
  * SYSFS interface for enabling/disabling keys and switches:
