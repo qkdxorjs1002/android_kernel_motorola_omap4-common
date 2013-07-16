@@ -1,3 +1,6 @@
+02857fe Enable Touch Wake service by default
+79caada Disable Touch Wake until its fixed
+5c4575f Added todays changelog (Nightly)
 f90dc18 Fix build errors in touch wake
 96ee01d Added todays changelog (Nightly)
 8c8f987 Add Touch Wake config option
