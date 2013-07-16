@@ -63,6 +63,6 @@ cd /home/mnl-manz/razr_kdev_kernel/android_kernel_motorola_omap4-common
 git log --oneline --after="yesterday" > /home/mnl-manz/razr_kdev_kernel/android_kernel_motorola_omap4-common/changelog/Changelog_Nightly_$(date +"%Y-%m-%d")
 git add changelog/ .
 git commit -m "Added todays changelog (Nightly)"
-git push origin JBX_STABLE
+git push origin JBX
 
 echo "done"
