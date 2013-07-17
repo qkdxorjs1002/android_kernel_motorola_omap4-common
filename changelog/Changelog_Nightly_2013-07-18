@@ -1,0 +1,4 @@
+7953743 Fix build error, remove unused variable
+8ef4ec0 Added todays changelog (Nightly)
+1e1aa3e Enable touch_wake for another test
+f503199 Fix touch_wake for Razr
