@@ -1253,6 +1253,13 @@ static irqreturn_t ct405_irq_handler(int irq, void *dev)
 {
 	struct ct405_data *ct = dev;
 
+#ifdef CONFIG_TOUCH_WAKE
+if (!val)
+{
+proximity_detected();
+}
+#endif
+
 	disable_irq_nosync(ct->client->irq);
 
 	wake_lock_timeout(&ct->wl, HZ);

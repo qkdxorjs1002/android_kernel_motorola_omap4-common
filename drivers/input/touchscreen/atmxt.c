@@ -40,6 +40,11 @@
 #include <linux/time.h>
 #endif
 
+#ifdef CONFIG_TOUCH_WAKE
+#include <linux/touch_wake.h>
+static struct atmxt_driver_data * touchwake_info;
+#endif
+
 static int atmxt_probe(struct i2c_client *client,
 		const struct i2c_device_id *id);
 static int atmxt_remove(struct i2c_client *client);
@@ -262,6 +267,9 @@ atmxt_probe_pass:
 	} else {
 		printk(KERN_INFO "%s: Probe successful.\n", __func__);
 	}
+#ifdef CONFIG_TOUCH_WAKE
+	touchwake_info = dd;
+#endif
 	return 0;
 }
 
@@ -466,6 +474,7 @@ atmxt_resume_no_dd_fail:
 #ifdef CONFIG_HAS_EARLYSUSPEND
 static void atmxt_early_suspend(struct early_suspend *handler)
 {
+#ifndef CONFIG_TOUCH_WAKE
 	int err = 0;
 	struct atmxt_driver_data *dd;
 
@@ -478,9 +487,11 @@ static void atmxt_early_suspend(struct early_suspend *handler)
 	}
 
 	return;
+#endif
 }
 static void atmxt_late_resume(struct early_suspend *handler)
 {
+#ifndef CONFIG_TOUCH_WAKE
 	int err = 0;
 	struct atmxt_driver_data *dd;
 
@@ -493,7 +504,26 @@ static void atmxt_late_resume(struct early_suspend *handler)
 	}
 
 	return;
+#endif
 }
+
+#ifdef CONFIG_TOUCH_WAKE
+void touchscreen_disable(void)
+{
+	atmxt_suspend(touchwake_info->client, PMSG_SUSPEND);
+
+	return;
+}
+EXPORT_SYMBOL(touchscreen_disable);
+
+void touchscreen_enable(void)
+{
+	atmxt_resume(touchwake_info->client);
+
+	return;
+}
+EXPORT_SYMBOL(touchscreen_enable);
+#endif 
 #endif
 
 static int __devinit atmxt_init(void)
@@ -1085,7 +1115,14 @@ static irqreturn_t atmxt_isr(int irq, void *handle)
 		"%s: IRQ Received -- Driver: %s, IC: %s\n", __func__,
 		atmxt_driver_state_string[drv_state],
 		atmxt_ic_state_string[ic_state]);
+#ifdef CONFIG_TOUCH_WAKE
+if (device_is_suspended())
+{
+touch_press();
 
+goto out;
+}
+#endif
 	switch (drv_state) {
 	case ATMXT_DRV_ACTIVE:
 		switch (ic_state) {
@@ -1124,7 +1161,7 @@ static irqreturn_t atmxt_isr(int irq, void *handle)
 
 	atmxt_dbg(dd, ATMXT_DBG3, "%s: IRQ Serviced.\n", __func__);
 	mutex_unlock(dd->mutex);
-
+out: 
 	return IRQ_HANDLED;
 }
 
