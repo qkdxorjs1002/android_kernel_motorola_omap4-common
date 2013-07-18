@@ -55,7 +55,7 @@ static struct timeval last_powerkeypress;
 
 static void touchwake_disable_touch(void)
 {
-    pr_info("disable touch controls\n");
+    pr_info("touch_wake: disable touch controls\n");
 
     touchscreen_disable();
 
@@ -66,7 +66,7 @@ static void touchwake_disable_touch(void)
 
 static void touchwake_enable_touch(void)
 {
-    pr_info("enable touch controls\n");
+    pr_info("touch_wake: enable touch controls\n");
 
     touchscreen_enable();
 

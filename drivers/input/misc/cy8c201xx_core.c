@@ -37,6 +37,10 @@
 #include <linux/version.h>	/* Required for kernel version checking */
 #include <linux/firmware.h>	/* This enables firmware class loader code */
 
+#ifdef CONFIG_TOUCH_WAKE
+#include <linux/touch_wake.h>
+#endif
+
 #define CY_DELAY_DFLT			20 /* ms */
 #define CY_DELAY_NORMAL			11 /* ms */
 #define CY_DELAY_SAVING			120 /* ms */
@@ -416,6 +420,10 @@ struct cy201 {
 #endif
 	bool resuming;	/* Workaround I2C lockup issues */
 };
+
+#ifdef CONFIG_TOUCH_WAKE
+static struct cy201 *touchwakedevdata;
+#endif
 
 static int cy201_hw_wake(struct cy201 *ts, int wake)
 {
@@ -1173,12 +1181,19 @@ static int cy201_rd_buttons(struct cy201 *ts)
 	button_status = ts->input_ports.input_port0 |
 		(ts->input_ports.input_port1 << 5);
 
-	if (button_down) {	/* Press */
+	if (button_down) {
+	/* Press */
+#ifdef CONFIG_TOUCH_WAKE
+    if (!device_is_suspended())
+#endif 
 		for (i = 0; i < ARRAY_SIZE(ts->button); i++) {
 			if (button_status & button_mask) {
 				ts->button[i].down = true;
 				input_report_key(ts->input,
 					ts->button[i].key, CY_BUTTON_DOWN);
+#ifdef CONFIG_TOUCH_WAKE
+        				touch_press();
+#endif 
 				/*
 				 * Normally check if more keys
 				 * could be reported against
@@ -1192,12 +1207,18 @@ static int cy201_rd_buttons(struct cy201 *ts)
 			}
 			button_mask = button_mask << 1;
 		}
-	} else {	/* Release */
+	} else {
+#ifdef CONFIG_TOUCH_WAKE
+    if (!device_is_suspended())
+#endif 	/* Release */
 		for (i = 0; i < ARRAY_SIZE(ts->button); i++) {
 			if (ts->button[i].down) {
 				ts->button[i].down = false;
 				input_report_key(ts->input,
 					ts->button[i].key, CY_BUTTON_UP);
+#ifdef CONFIG_TOUCH_WAKE
+        				touch_press();
+#endif 
 			}
 		}
 	}

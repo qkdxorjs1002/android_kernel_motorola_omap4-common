@@ -1115,14 +1115,7 @@ static irqreturn_t atmxt_isr(int irq, void *handle)
 		"%s: IRQ Received -- Driver: %s, IC: %s\n", __func__,
 		atmxt_driver_state_string[drv_state],
 		atmxt_ic_state_string[ic_state]);
-#ifdef CONFIG_TOUCH_WAKE
-if (device_is_suspended())
-{
-touch_press();
 
-goto out;
-}
-#endif
 	switch (drv_state) {
 	case ATMXT_DRV_ACTIVE:
 		switch (ic_state) {
@@ -1161,7 +1154,7 @@ goto out;
 
 	atmxt_dbg(dd, ATMXT_DBG3, "%s: IRQ Serviced.\n", __func__);
 	mutex_unlock(dd->mutex);
-out: 
+
 	return IRQ_HANDLED;
 }
 
@@ -2412,7 +2405,9 @@ static void atmxt_report_touches(struct atmxt_driver_data *dd)
 		w = dd->rdat->tchdat[i].w;
 
 		dd->rdat->active_touches++;
-
+#ifdef CONFIG_TOUCH_WAKE
+if (!device_is_suspended())
+#endif
 		atmxt_dbg(dd, ATMXT_DBG1, "%s: ID=%d, X=%d, Y=%d, P=%d, W=%d\n",
 			__func__, id, x, y, p, w);
 
@@ -2434,6 +2429,7 @@ static void atmxt_report_touches(struct atmxt_driver_data *dd)
 				rval = id;
 				break;
 			}
+
 			if (dd->rdat->axis[j] != ATMXT_ABS_RESERVED) {
 				input_report_abs(dd->in_dev,
 					dd->rdat->axis[j], rval);
@@ -2450,7 +2446,9 @@ static void atmxt_report_touches(struct atmxt_driver_data *dd)
 			dd->dbg->evt_act = dd->rdat->active_touches;
 #endif
 	}
-
+#ifdef CONFIG_TOUCH_WAKE
+touch_press();
+#endif
 	if (dd->rdat->active_touches == 0)
 		input_mt_sync(dd->in_dev);
 

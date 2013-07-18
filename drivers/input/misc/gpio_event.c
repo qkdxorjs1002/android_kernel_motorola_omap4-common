@@ -177,7 +177,7 @@ static int gpio_event_probe(struct platform_device *pdev)
 #ifdef CONFIG_TOUCH_WAKE
     if (!strcmp(input_dev->name, "tuna-gpio-keypad"))
         {
-      pr_info("powerkey device set\n");
+      pr_info("touch_wake: powerkey device set\n");
 
       set_powerkeydev(input_dev);
         }
