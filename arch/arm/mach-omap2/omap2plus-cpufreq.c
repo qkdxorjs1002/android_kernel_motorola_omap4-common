@@ -415,7 +415,7 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 	cpufreq_frequency_table_get_attr(freq_table, policy->cpu);
 
 #ifdef CONFIG_OMAP_OCFREQ_12
-	/* We don't set an "if rule" so user won't be stuck at 100/1000 min/max */
+	/* Use an dynamic rule so user won't be stuck at 100/1000 min/max */
 	/* BEcause the policy handling is broken in kexec we have to set a rule for all frequencies below 300mhz */
 	if (policy->cpuinfo.min_freq > 200000 && policy->min > 200000)
    	policy->min = policy->cpuinfo.min_freq;
@@ -448,7 +448,7 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 	}
 
 	/* Tranisition time for worst case */
-	policy->cpuinfo.transition_latency = 300 * 1000;
+	policy->cpuinfo.transition_latency = 40 * 1000;
 
 #ifdef CONFIG_CUSTOM_VOLTAGE
 	customvoltage_register_freqmutex(&omap_cpufreq_lock);
