@@ -800,6 +800,7 @@ static void serial_omap_shutdown(struct uart_port *port)
 		up->uart_dma.rx_buf = NULL;
 	}
 	serial_omap_port_disable(up);
+
 	disable_irq(up->port.irq); 
 }
 
@@ -1632,12 +1633,14 @@ static int serial_omap_probe(struct platform_device *pdev)
 	dma_rx = platform_get_resource_byname(pdev, IORESOURCE_DMA, "rx");
 	if (!dma_rx) {
 		ret = -EINVAL;
+
 		goto do_release_region; 
 	}
 
 	dma_tx = platform_get_resource_byname(pdev, IORESOURCE_DMA, "tx");
 	if (!dma_tx) {
 		ret = -EINVAL;
+
 		goto do_release_region; 
 	}
 
@@ -1677,6 +1680,7 @@ static int serial_omap_probe(struct platform_device *pdev)
 	if (!up->port.membase) {
 		dev_err(&pdev->dev, "can't ioremap UART\n");
 		ret = -ENOMEM;
+
 		goto do_free; 
 	}
 
@@ -1748,6 +1752,7 @@ static int serial_omap_probe(struct platform_device *pdev)
 
 	ret = uart_add_one_port(&serial_omap_reg, &up->port);
 	if (ret != 0)
+
 		goto do_free_irq; 
 
 	dev_set_drvdata(&pdev->dev, up);
@@ -1767,7 +1772,9 @@ do_free:
 do_release_region:
 	release_mem_region(mem->start, (mem->end - mem->start) + 1);
 	  dev_err(&pdev->dev, "[UART%d]: failure [%s]: %d\n",
+
 	        pdev->id, __func__, ret); 
+
 	return ret;
 }
 
@@ -1780,13 +1787,17 @@ static int serial_omap_remove(struct platform_device *dev)
 		struct omap_uart_port_info *info = up->pdev->dev.platform_data;
 
 		pm_runtime_disable(&up->pdev->dev);
+
 		free_irq(up->port.irq, up); 
+
 
 		if (info->board_uart_remove)
 			info->board_uart_remove(up);
 
 		uart_remove_one_port(&serial_omap_reg, &up->port);
+
 		iounmap(up->port.membase); 
+
 		kfree(up);
 	}
 	return 0;
