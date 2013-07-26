@@ -36,6 +36,10 @@
 #include <linux/live_oc.h>
 #endif
 
+#ifdef CONFIG_BATTERY_FRIEND
+extern bool battery_friend_active;
+#endif
+
 /*
  * Structures containing OMAP4430 voltage supported and various
  * voltage dependent data for each VDD. 
@@ -48,9 +52,22 @@
  */
 
 #ifdef CONFIG_OMAP_OCFREQ_12
-#define OMAP4430_VDD_MPU_OPP_UVA_UV		 945000			/* 100 */
-#define OMAP4430_VDD_MPU_OPP50_UV		 960000			/* 200 */
-#define OMAP4430_VDD_MPU_OPP100_UV		 975000			/* 300 */
+#ifdef CONFIG_BATTERY_FRIEND
+if (likely(battery_friend_active))
+#define OMAP4430_VDD_MPU_OPP_UVA_UV		 965000			/* 100 */
+#define OMAP4430_VDD_MPU_OPP50_UV		 985000			/* 200 */
+#define OMAP4430_VDD_MPU_OPP100_UV		1000000			/* 300 */
+#define OMAP4430_VDD_MPU_OPP150_UV		1015000			/* 400 */
+#define OMAP4430_VDD_MPU_OPP200_UV		1055000			/* 500 */
+#define OMAP4430_VDD_MPU_OPP250_UV		1110000			/* 600 */
+#define OMAP4430_VDD_MPU_OPPTURBO_UV		1175000			/* 700 */
+#define OMAP4430_VDD_MPU_OPPTURBOB_UV		1235000			/* 800 */
+#define OMAP4430_VDD_MPU_OPPTURBOC_UV		1285000			/* 900 */
+#define OMAP4430_VDD_MPU_OPPNITRO_UV		1313000			/* 1000 */
+else
+#define OMAP4430_VDD_MPU_OPP_UVA_UV		 975000			/* 100 */
+#define OMAP4430_VDD_MPU_OPP50_UV		 995000			/* 200 */
+#define OMAP4430_VDD_MPU_OPP100_UV		1005000			/* 300 */
 #define OMAP4430_VDD_MPU_OPP150_UV		1015000			/* 400 */
 #define OMAP4430_VDD_MPU_OPP200_UV		1070000			/* 500 */
 #define OMAP4430_VDD_MPU_OPP250_UV		1130000			/* 600 */
@@ -58,6 +75,18 @@
 #define OMAP4430_VDD_MPU_OPPTURBOB_UV		1255000			/* 800 */
 #define OMAP4430_VDD_MPU_OPPTURBOC_UV		1305000			/* 900 */
 #define OMAP4430_VDD_MPU_OPPNITRO_UV		1338000			/* 1000 */
+#else
+#define OMAP4430_VDD_MPU_OPP_UVA_UV		 975000			/* 100 */
+#define OMAP4430_VDD_MPU_OPP50_UV		 995000			/* 200 */
+#define OMAP4430_VDD_MPU_OPP100_UV		1005000			/* 300 */
+#define OMAP4430_VDD_MPU_OPP150_UV		1015000			/* 400 */
+#define OMAP4430_VDD_MPU_OPP200_UV		1070000			/* 500 */
+#define OMAP4430_VDD_MPU_OPP250_UV		1130000			/* 600 */
+#define OMAP4430_VDD_MPU_OPPTURBO_UV		1195000			/* 700 */
+#define OMAP4430_VDD_MPU_OPPTURBOB_UV		1255000			/* 800 */
+#define OMAP4430_VDD_MPU_OPPTURBOC_UV		1305000			/* 900 */
+#define OMAP4430_VDD_MPU_OPPNITRO_UV		1338000			/* 1000 */
+#endif
 #define OMAP4430_VDD_MPU_OPPNITROS_UV		1353000			/* 1100 */
 #define OMAP4430_VDD_MPU_OPPNITROSB_UV		1378000			/* 1200 */
 #define OMAP4430_VDD_MPU_OPPNITROSBA_UV		1410000			/* 1350 */
@@ -132,11 +161,22 @@ struct omap_volt_data omap443x_vdd_mpu_volt_data[] = {
 };
 #endif
 #endif									
-
+#ifdef CONFIG_BATTERY_FRIEND
+if (likely(battery_friend_active))
+#define OMAP4430_VDD_IVA_OPP50_UV		 900000
+#define OMAP4430_VDD_IVA_OPP100_UV		1065000
+#define OMAP4430_VDD_IVA_OPPTURBO_UV		1165000
+else
 #define OMAP4430_VDD_IVA_OPP50_UV		 910000
 #define OMAP4430_VDD_IVA_OPP100_UV		1075000
 #define OMAP4430_VDD_IVA_OPPTURBO_UV		1175000
 #define OMAP4430_VDD_IVA_OPPNITRO_UV    	1275000
+#else
+#define OMAP4430_VDD_IVA_OPP50_UV		 910000
+#define OMAP4430_VDD_IVA_OPP100_UV		1075000
+#define OMAP4430_VDD_IVA_OPPTURBO_UV		1175000
+#define OMAP4430_VDD_IVA_OPPNITRO_UV    	1275000
+#endif
 
 #ifdef CONFIG_OMAP_SMARTREFLEX_CUSTOM_SENSOR
 struct omap_volt_data omap443x_vdd_iva_volt_data[] = {
@@ -290,8 +330,17 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 	OPP_INITIALIZER("l3_main_1", "virt_l3_ck", "core", true, 100000000, OMAP4430_VDD_CORE_OPP50_UV),
 	/* L3 OPP2 - OPP100, OPP-Turbo, OPP-SB */
 	OPP_INITIALIZER("l3_main_1", "virt_l3_ck", "core", true, 200000000, OMAP4430_VDD_CORE_OPP100_UV),
+#ifdef CONFIG_BATTERY_FRIEND
+if (likely(battery_friend_active))
+	/* L3 OPP3 - Don't allow the core to use higher voltage */
+	OPP_INITIALIZER("l3_main_1", "virt_l3_ck", "core", false, 200000000, OMAP4430_VDD_CORE_OPP100A_UV),
+else
 	/* L3 OPP3 - GIve core the abbillity to use higher voltage if needed - this can prevent crashes during OC */
 	OPP_INITIALIZER("l3_main_1", "virt_l3_ck", "core", true, 200000000, OMAP4430_VDD_CORE_OPP100A_UV),
+#else
+	/* L3 OPP3 - GIve core the abbillity to use higher voltage if needed - this can prevent crashes during OC */
+	OPP_INITIALIZER("l3_main_1", "virt_l3_ck", "core", true, 200000000, OMAP4430_VDD_CORE_OPP100A_UV),
+#endif
 	/* IVA OPP1 - OPP50 */
 	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", true, 133000000, OMAP4430_VDD_IVA_OPP50_UV),
 	/* IVA OPP2 - OPP100 */
@@ -299,9 +348,20 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 	/* IVA OPP3 - OPP-Turbo */
 	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", true, 332000000, OMAP4430_VDD_IVA_OPPTURBO_UV),
 	/* IVA OPP4 - OPP-Nitro */
+#ifdef CONFIG_BATTERY_FRIEND
+if (likely(battery_friend_active))
 	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", false, 430000000, OMAP4430_VDD_IVA_OPPNITRO_UV),
 	/* IVA OPP5 - OPP-Nitro SpeedBin*/
 	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", false, 500000000, OMAP4430_VDD_IVA_OPPNITRO_UV),
+else
+	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", true, 430000000, OMAP4430_VDD_IVA_OPPNITRO_UV),
+	/* IVA OPP5 - OPP-Nitro SpeedBin*/
+	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", true, 500000000, OMAP4430_VDD_IVA_OPPNITRO_UV),
+#else
+	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", false, 430000000, OMAP4430_VDD_IVA_OPPNITRO_UV),
+	/* IVA OPP5 - OPP-Nitro SpeedBin*/
+	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", false, 500000000, OMAP4430_VDD_IVA_OPPNITRO_UV),
+#endif
 	/* SGX OPP1 - OPP50 */
 	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 153600000, OMAP4430_VDD_CORE_OPP50_UV),
 	/* SGX OPP2 - OPP100 */
@@ -321,7 +381,14 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 	/* DSP OPP2 - OPP100 */
 	OPP_INITIALIZER("dsp", "dpll_iva_m4x2_ck", "iva", true, 465500000, OMAP4430_VDD_IVA_OPP100_UV),
 	/* DSP OPP3 - OPPTB */
+#ifdef CONFIG_BATTERY_FRIEND
+if (likely(battery_friend_active))
 	OPP_INITIALIZER("dsp", "dpll_iva_m4x2_ck", "iva", false, 496000000, OMAP4430_VDD_IVA_OPPTURBO_UV),
+else
+	OPP_INITIALIZER("dsp", "dpll_iva_m4x2_ck", "iva", true, 496000000, OMAP4430_VDD_IVA_OPPTURBO_UV),
+#else
+	OPP_INITIALIZER("dsp", "dpll_iva_m4x2_ck", "iva", false, 496000000, OMAP4430_VDD_IVA_OPPTURBO_UV),
+#endif
 	/* HSI OPP1 - OPP50 */
 	OPP_INITIALIZER("hsi", "hsi_fck", "core", true, 96000000, OMAP4430_VDD_CORE_OPP50_UV),
 	/* HSI OPP2 - OPP100 */

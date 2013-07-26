@@ -651,5 +651,12 @@ config CPU_FREQ_GOV_HOTPLUG
 
 	  If in doubt, say N.
 
+config BATTERY_FRIEND
+	bool "Battery friendly behavior"
+	depends on OMAP_OCFREQ_2
+	default y
+	help
+		Static lower minimum frequency, voltages and screen-off behavior
+
 endif
 endmenu
