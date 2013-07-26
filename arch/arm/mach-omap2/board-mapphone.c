@@ -85,6 +85,7 @@
 #include <plat/omap-serial.h>
 #include <plat/omap_hsi.h>
 #include <linux/wl12xx.h>
+#include <linux/earlysuspend.h> 
 
 #ifdef CONFIG_SND_LM48901_AMP
 #include <linux/lm48901.h>
@@ -781,6 +782,17 @@ static void mapphone_shutdown_timeout_handler(unsigned long data)
 		set_cold_reset(NULL, arg->event, (void *)arg->command);
 		machine_restart(arg->command);
 	}
+#if defined(CONFIG_DSSCOMP) && defined(CONFIG_EARLYSUSPEND)
+	/*
+	* HACK: Blank screen to avoid screen flicker due to removal of
+	* DSS/panel drivers shutdown in reboot path.
+	*/
+	{
+		extern void dsscomp_early_suspend(struct early_suspend *h);
+
+		dsscomp_early_suspend(NULL);
+	}
+#endif
 }
 
 static int mapphone_shutdown_timer_kickoff(struct notifier_block *this,
