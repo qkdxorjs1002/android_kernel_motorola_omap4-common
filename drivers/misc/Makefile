@@ -83,4 +83,5 @@ obj-$(CONFIG_LIVE_OC)		+= live_oc.o
 obj-$(CONFIG_OMAP_TEMP_CONTROL)	+= temp_control.o
 obj-$(CONFIG_FSYNC_CONTROL)  	+= fsync_control.o
 obj-$(CONFIG_BLX)    		+= blx.o
-obj-$(CONFIG_TOUCH_WAKE)  	+= touch_wake.o 
+obj-$(CONFIG_TOUCH_WAKE)  	+= touch_wake.o
+obj-$(CONFIG_BATTERY_FRIEND)	+= battery_friend.o
