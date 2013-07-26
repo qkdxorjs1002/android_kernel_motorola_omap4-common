@@ -1,0 +1,7 @@
+201d419 Build script update
+c2af678 Add full history changelog
+e7234ca Set new options in defconfig
+c8c2f69 defconfig: changes
+109007d add config: CONFIG_PANEL_MAPPHONE_SKIP_FIRSTBOOT to disable first_boot logic in mapphone_panel
+c5c179c defconfig for edison
+e2610be Add permission checking for binder IPC.
