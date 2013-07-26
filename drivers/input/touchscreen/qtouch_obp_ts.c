@@ -37,6 +37,10 @@
 #include <linux/time.h>
 #endif
 
+#ifdef CONFIG_TOUCH_WAKE
+#include <linux/touch_wake.h>
+static struct qtouch_ts_data * touchwake_info;
+#endif
 
 struct qtm_object {
 	struct qtm_obj_entry		entry;
@@ -143,7 +147,6 @@ static irqreturn_t qtouch_ts_irq_handler(int irq, void *dev_id)
 #ifdef CONFIG_TOUCHSCREEN_DEBUG
 	counter_irq++;
 #endif
-
 	disable_irq_nosync(ts->client->irq);
 	if (ts->mode == 1)
 		queue_work(ts->qtouch_ts_wq, &ts->boot_work);
@@ -2350,7 +2353,9 @@ finish_touch_setup:
 
 	ts->cal_check_flag = 0;
 	ts->cal_timer = 0;
-
+#ifdef CONFIG_TOUCH_WAKE
+	touchwake_info = ts;
+#endif
 	return 0;
 
 err_create_fw_version_file_failed:
@@ -2467,6 +2472,14 @@ static int qtouch_ts_resume(struct i2c_client *client)
 	/* If we were suspended while a touch was happening
 	   we need to tell the upper layers so they do not hang
 	   waiting on the liftoff that will not come. */
+#ifdef CONFIG_TOUCH_WAKE
+	  if (device_is_suspended())
+	      {
+	    touch_press();
+	    
+	    goto out;
+	      }
+#endif
 
 	for (i = 0; i < ts->pdata->multi_touch_cfg.num_touch; i++) {
 		if (qtouch_tsdebug & 4)
@@ -2483,28 +2496,49 @@ static int qtouch_ts_resume(struct i2c_client *client)
 	   e.g. ESD got sensor down before). Forcing hard reset here
 	   instead, which makes sure everything gets re-intialized. */
 	qtouch_force_reset(ts, 0);
-
+out:
 	enable_irq(ts->client->irq);
-
 	return 0;
 }
 
 #ifdef CONFIG_HAS_EARLYSUSPEND
 static void qtouch_ts_early_suspend(struct early_suspend *handler)
 {
+#ifndef CONFIG_TOUCH_WAKE 
 	struct qtouch_ts_data *ts;
 
 	ts = container_of(handler, struct qtouch_ts_data, early_suspend);
 	qtouch_ts_suspend(ts->client, PMSG_SUSPEND);
+#endif
 }
 
 static void qtouch_ts_late_resume(struct early_suspend *handler)
 {
+#ifndef CONFIG_TOUCH_WAKE 
 	struct qtouch_ts_data *ts;
 
 	ts = container_of(handler, struct qtouch_ts_data, early_suspend);
 	qtouch_ts_resume(ts->client);
+#endif
 }
+
+#ifdef CONFIG_TOUCH_WAKE
+void touchscreen_disable(void)
+{
+	qtouch_ts_suspend(&touchwake_info->client, PMSG_SUSPEND);
+
+	return;
+}
+EXPORT_SYMBOL(touchscreen_disable);
+
+void touchscreen_enable(void)
+{
+	qtouch_ts_resume(&touchwake_info->client);
+
+	return;
+}
+EXPORT_SYMBOL(touchscreen_enable);
+#endif 
 #endif
 
 static uint8_t qtouch_calibrate_chip(struct qtouch_ts_data *ts)
