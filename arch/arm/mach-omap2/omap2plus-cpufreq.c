@@ -84,7 +84,7 @@ extern bool battery_friend_active;
 unsigned int cpu;
 struct cpufreq_policy *policy;
 static int oldvar;
-static int gpu = oc_val;
+static int gpu;
 static int polmin = 100000;
 static int polmax = 1000000;
 #endif
@@ -772,9 +772,6 @@ cpufreq_hotplug_gov);
 #ifdef CONFIG_BATTERY_FRIEND
 if (likely(battery_friend_active))
 	{
-	oldvar = policy->max;
-	int gpu = oc_val;
-
 	policy->max = 500000;
 	int oc_val = 0;
 	}
@@ -798,6 +795,8 @@ pr_err("Early_suspend: Unable to restore governor\n");
 #ifdef CONFIG_BATTERY_FRIEND
 if (likely(battery_friend_active))
 	{
+	oldvar = policy->max;
+	gpu = oc_val;
 	policy->max = oldvar;
 	int oc_val = gpu;
 	}
