@@ -16,5 +16,4 @@ extern void liveoc_init(void);
 extern int liveoc_core_ocvalue(void);
 extern unsigned long liveoc_gpu_freq(void);
 extern void liveoc_register_powerkey(struct input_dev * input_device);
-extern int mpu_ocvalue(void);
 #endif

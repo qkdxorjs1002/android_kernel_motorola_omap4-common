@@ -47,7 +47,7 @@ static ssize_t battery_friend_active_store(struct kobject *kobj,
 		if (data == 1) {
 			pr_info("%s: battery friend enabled\n", __FUNCTION__);
 			battery_friend_active = true;
-			extern unsigned int mpu_ocvalue = 100;
+			unsigned long liveoc_gpu_freq = 307200000;
 		}
 		else if (data == 0) {
 			pr_info("%s: battery friend disabled\n", __FUNCTION__);
