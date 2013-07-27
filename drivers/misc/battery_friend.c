@@ -27,7 +27,7 @@
 
 static DEFINE_MUTEX(battery_mutex);
 
-bool early_suspend_active __read_mostly = false;
+bool battery_friend_early_suspend_active __read_mostly = false;
 bool battery_friend_active __read_mostly = true;
 
 
@@ -72,7 +72,7 @@ static ssize_t battery_friend_version_show(struct kobject *kobj,
 static ssize_t battery_friend_earlysuspend_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
 {
-	return sprintf(buf, "early suspend active: %u\n", early_suspend_active);
+	return sprintf(buf, "early suspend active: %u\n", battery_friend_early_suspend_active);
 }
 static struct kobj_attribute battery_friend_active_attribute = 
 	__ATTR(Battery_friend_active, 0666,
@@ -104,7 +104,7 @@ static void battery_friend_early_suspend(struct early_suspend *h)
 {
 	mutex_lock(&battery_mutex);
 	if (battery_friend_active) {
-		early_suspend_active = true;
+		battery_friend_early_suspend_active = true;
 #if 1
 		/* flush all outstanding buffers */
 
@@ -116,7 +116,7 @@ static void battery_friend_early_suspend(struct early_suspend *h)
 static void battery_friend_late_resume(struct early_suspend *h)
 {
 	mutex_lock(&battery_mutex);
-	early_suspend_active = false;
+	battery_friend_early_suspend_active = false;
 	mutex_unlock(&battery_mutex);
 }
 
