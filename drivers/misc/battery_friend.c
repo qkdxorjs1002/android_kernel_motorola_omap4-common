@@ -20,6 +20,7 @@
 #include <linux/sysfs.h>
 #include <linux/earlysuspend.h>
 #include <linux/mutex.h>
+#include <linux/live_oc.h>
 
 #define BATTERY_FRIEND_VERSION_MAJOR 1
 #define BATTERY_FRIEND_VERSION_MINOR 1
@@ -46,6 +47,7 @@ static ssize_t battery_friend_active_store(struct kobject *kobj,
 		if (data == 1) {
 			pr_info("%s: battery friend enabled\n", __FUNCTION__);
 			battery_friend_active = true;
+			extern unsigned int mpu_ocvalue = 100;
 		}
 		else if (data == 0) {
 			pr_info("%s: battery friend disabled\n", __FUNCTION__);

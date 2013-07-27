@@ -1702,15 +1702,19 @@ static int __cpufreq_set_policy(struct cpufreq_policy *data,
 #ifdef CONFIG_BATTERY_FRIEND
 if (likely(battery_friend_active))
 	{
+	extern bool
 	if (data->min > 100000);
 	data->min = 100000;
+	if (data->max > 1000000)
+	data->max = 1000000;
 	}
 else
 	data->min = policy->min;
+	data->max = policy->max;
 #else
 	data->min = policy->min;
-#endif
 	data->max = policy->max;
+#endif
 
 	pr_debug("new min and max freqs are %u - %u kHz\n",
 					data->min, data->max);
