@@ -85,7 +85,7 @@ static struct kobj_attribute battery_friend_earlysuspend_attribute =
 
 static struct attribute *battery_friend_active_attrs[] =
 	{
-		&battery_friend_active.attr,
+		&battery_friend_active_attribute.attr,
 		&battery_friend_version_attribute.attr,
 		&battery_friend_earlysuspend_attribute.attr,
 		NULL,
