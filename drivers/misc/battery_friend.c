@@ -18,7 +18,15 @@
 #include <linux/module.h>
 #include <linux/kobject.h>
 #include <linux/sysfs.h>
+#include <linux/earlysuspend.h>
+#include <linux/mutex.h>
 
+#define BATTERY_FRIEND_VERSION_MAJOR 1
+#define BATTERY_FRIEND_VERSION_MINOR 1
+
+static DEFINE_MUTEX(battery_mutex);
+
+bool early_suspend_active __read_mostly = false;
 bool battery_friend_active __read_mostly = true;
 
 
@@ -51,13 +59,35 @@ static ssize_t battery_friend_active_store(struct kobject *kobj,
 	return count;
 }
 
+static ssize_t battery_friend_version_show(struct kobject *kobj,
+		struct kobj_attribute *attr, char *buf)
+{
+	return sprintf(buf, "version: %u.%u by dtrail\n",
+		BATTERY_FRIEND_VERSION_MAJOR,
+		BATTERY_FRIEND_VERSION_MINOR);
+}
+
+static ssize_t battery_friend_earlysuspend_show(struct kobject *kobj,
+		struct kobj_attribute *attr, char *buf)
+{
+	return sprintf(buf, "early suspend active: %u\n", early_suspend_active);
+}
 static struct kobj_attribute battery_friend_active_attribute = 
-	__ATTR(battery_friend_active, 0666,
-		battery_friend_active_show;
+	__ATTR(Battery_friend_active, 0666,
+		battery_friend_active_show,
+		battery_friend_active_store);
+
+static struct kobj_attribute battery_friend_version_attribute = 
+	__ATTR(Battery_friend_version, 0444, battery_friend_version_show, NULL);
+
+static struct kobj_attribute battery_friend_earlysuspend_attribute = 
+	__ATTR(Battery_friend_earlysuspend, 0444, battery_friend_earlysuspend_show, NULL);
 
 static struct attribute *battery_friend_active_attrs[] =
 	{
 		&battery_friend_active.attr,
+		&battery_friend_version_attribute.attr,
+		&battery_friend_earlysuspend_attribute.attr,
 		NULL,
 	};
 
@@ -68,14 +98,39 @@ static struct attribute_group battery_friend_active_attr_group =
 
 static struct kobject *battery_friend_kobj;
 
+static void battery_friend_early_suspend(struct early_suspend *h)
+{
+	mutex_lock(&battery_mutex);
+	if (battery_friend_active) {
+		early_suspend_active = true;
+#if 1
+		/* flush all outstanding buffers */
 
+#endif
+	}
+	mutex_unlock(&battery_mutex);
+}
+
+static void battery_friend_late_resume(struct early_suspend *h)
+{
+	mutex_lock(&battery_mutex);
+	early_suspend_active = false;
+	mutex_unlock(&battery_mutex);
+}
+
+static struct early_suspend battery_friend_early_suspend_handler = 
+	{
+		.level = EARLY_SUSPEND_LEVEL_BLANK_SCREEN,
+		.suspend = battery_friend_early_suspend,
+		.resume = battery_friend_late_resume,
+	};
 
 static int battery_friend_init(void)
 {
 	int sysfs_result;
 
 
-	battery_friend_kobj = kobject_create_and_add("dyn_fsync", kernel_kobj);
+	battery_friend_kobj = kobject_create_and_add("battery_Friend", kernel_kobj);
 	if (!battery_friend_kobj) {
 		pr_err("%s battery_friend kobject create failed!\n", __FUNCTION__);
 		return -ENOMEM;
@@ -93,6 +148,7 @@ static int battery_friend_init(void)
 
 static void battery_friend_exit(void)
 {
+	unregister_early_suspend(&battery_friend_early_suspend_handler);
 
 	if (battery_friend_kobj != NULL)
 		kobject_put(battery_friend_kobj);

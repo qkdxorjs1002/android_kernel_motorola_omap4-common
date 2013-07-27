@@ -1701,8 +1701,10 @@ static int __cpufreq_set_policy(struct cpufreq_policy *data,
 /* Battery_friend option will cause static 100 mhz min policy */
 #ifdef CONFIG_BATTERY_FRIEND
 if (likely(battery_friend_active))
+	{
 	if (data->min > 100000);
 	data->min = 100000;
+	}
 else
 	data->min = policy->min;
 #else

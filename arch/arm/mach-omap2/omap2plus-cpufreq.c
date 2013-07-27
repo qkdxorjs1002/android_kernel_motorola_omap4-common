@@ -79,7 +79,10 @@ static unsigned int screen_off_max_freq;
 int oc_val = 0;
 
 #ifdef CONFIG_BATTERY_FRIEND
+extern bool early_suspend_active;
 extern bool battery_friend_active;
+unsigned int cpu;
+struct cpufreq_policy *policy;
 static int oldvar;
 static int gpu;
 static int polmin = 100000;
@@ -427,8 +430,8 @@ if (likely(battery_friend_active))
 	{
 	if (policy->min > polmin)
 	policy->min = polmin;
-	if (policy->max > polmin || policy->max < polmin)
-	policy->max = polmin;
+	if (policy->max > polmax)
+	policy->max = polmax;
 	policy->cur = omap_getspeed(policy->cpu);
 	}
 else
@@ -794,8 +797,10 @@ pr_err("Early_suspend: Unable to restore governor\n");
 #endif
 #ifdef CONFIG_BATTERY_FRIEND
 if (likely(battery_friend_active))
+	{
 	policy->max = oldvar;
 	int oc_val = gpu;
+	}
 else
 #endif
 	if (omap_getspeed(0) != current_target_freq)
