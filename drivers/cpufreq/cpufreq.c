@@ -1702,7 +1702,6 @@ static int __cpufreq_set_policy(struct cpufreq_policy *data,
 #ifdef CONFIG_BATTERY_FRIEND
 if (likely(battery_friend_active))
 	{
-	extern bool
 	if (data->min > 100000)
 	data->min = 100000;
 	if (data->max > 1000000)
