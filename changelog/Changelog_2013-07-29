@@ -1,0 +1,58 @@
+7dedef3 Raise KErnel version
+7fb2a8d Added todays changelog and updated full history
+aafa8dc Defconfig updates
+0da1978 build script updates
+c718e47 Cleanup and fixes from last few commits
+a5ac292 Fix SIOPLUS tuning, remove zzmoove governor for now - must be fixed for 3.0.8 hybrid - add Lazy gov again including new feature SmoothUI.
+f53066d Revert "Preparation for new insertion"
+6f2c4f2 Revert "block: Add support for reinsert a dispatched req"
+abcf3a1 Revert "Revert "Revert "block: Add API for urgent request handling"""
+ca81330 Revert "block: elevator: Add missing function for new API"
+4932970 Revert "Revert "block: Add support for reinsert a dispatched req""
+c92b850 Revert "block: Add support for reinsert a dispatched req"
+5233529 mm: vmscan: remove unimplemented above_background_load
+4235893 When reading from large files through the generic file read functions into page cache we can detect when a file is so large that it is unlikely to be fully cached in ram. If that happens we can put it on the tail end of the inactive lru list so it can be the first thing evicted next time we need ram.
+f63bea5 Add a background scanning timer to restore the watermarks to the pages_lots level and only call on it if kswapd has not been called upon for the last 5 seconds. This allows us to balance all zones to the more generous pages_lots watermark at a time unrelated to page allocation thus leading to lighter levels of vm load when called upon under page allocation.
+4163e35 When kswapd is awoken due to reclaim by a running task, set the priority of kswapd to that of the calling task thus making memory reclaim cpu activity affected by nice level.
+c0c2ace While it may be nice to have a copy of pages on swap once written there, the more garbage we leave in the swapspace the slower any further writes and reads to and from it are. Just free swapcache whenever we can.
+b6ce786 Swap Token: Only allow its effect when swap is half full. It's only useful for conditions of swap trash
+a3d5b7b Swappiness: Set to 10 - Never seen a desk which benefits from a high swappiness, but setting to 0 can cause weird behavior. Set it to 10.
+0fbdd87 Kernel: Timekeeping: change raw_internal to u64 to prevent shift overflow
+4240674 Revert "ARM: smp: Fix cpu_up() racing with sys_reboot"
+f835f7a mmc: core: Fix possbile memory leak Fix possible memory leak detected by kmemleak:
+e5318ec Prepare for changes
+e01ef8c random: prevent add_input from doing anything
+eb5f3e4 + "ipv4: save cpu cycles from check_leaf()" (copy&past from Linux 3.8)
+37a103a cpufreq_lazy.c: Add SMOOTH_UI (Thanks to Stratosk)
+9bc050c + "Optimise apply_slack() for size and speed." - http://lkml.indiana.edu/hypermail/linux/kernel/1201.3/03172.html
+982aa90 + "network speed tweak" - https://github.com/ch33kybutt/i5700-kernel/commit/6a9403f22f87f602fe521cb34d55d9b862336c30 [do not merge]
+a777069 lib/checksum.c: optimize do_csum a bit
+7174338 Disable Serial I/O
+7cd55cb block: elevator: Add missing function for new API
+bbdcf88 Revert "Revert "block: Add API for urgent request handling""
+039b807 block: Add support for reinsert a dispatched req
+d05bfdd Preparation for new insertion
+83fa7ff Revert "Preapartion for new API"
+a8845e6 Revert "block: Add API for urgent request handling"
+7577140 block: Add API for urgent request handling
+fcdc52e Preapartion for new API
+94b2197 Makefile: O2 optimization
+2cf17d5 CPUFREQ_STATS: Fix memory leak
+b7f4db5 Add ARM CPU topology
+8862202 Revert "ARM: 7011/1: Add ARM cpu topology definition"
+9557618 Revert "Update topology"
+7dee1d8 Update topology
+9a39364 OMAP: omap-mcbsp: Holding min latency constraint
+05c5b99 I/O Scheds: Give better performance for Android. Give a little more time to finish read/write before sync, this may prevent lag w/ row/vr/deadline/fifo.
+42b2155 Use ccache for faster compile after cleaning
+baa9deb defconfig: Enable/disable some governors
+aa62914 CPU: Adjust OMAP (OC) Freqs to ZZMOOVE and decrease max def OC freq to 1,3ghz
+e031dfe Add zzmoove governor
+8d8468d ext4: fixup 64-bit divides in 3.0-stable backport of upstream fix
+7997b32 ext4: use atomic64_t for the per-flexbg free_clusters count
+8f9565b hrtimer: Consider preemption when migrating hrtimer cpu_bases
+2eb0330  hrtimer: Don't reinitialize a cpu_base's lock on CPU_UP
+8125d86 hrtimer: Prevent enqueue of hrtimer on dead CPU
+239e27d Battery Friend: Disable by default
+64eb4b9 Battery Friend: Forgot sth..
+00d66c4 Battery Friend: Some fixes and new functions
