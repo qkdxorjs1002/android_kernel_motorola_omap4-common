@@ -39,7 +39,7 @@ export CROSS_COMPILE=arm-eabi-
 
 # define the defconfig (Do not change)
 make ARCH=arm mapphone_OCE_defconfig
-export LOCALVERSION="-JBX-0.7d-Hybrid-Nightly"
+export LOCALVERSION="-JBX-0.7b-Hybrid-Nightly"
 
 # execute build command with "-j4 core flag" 
 # (You may change this to the count of your CPU.
@@ -54,7 +54,7 @@ echo "Packaging flashable Zip file..."
 cp arch/arm/boot/zImage /home/mnl-manz/razr_kdev_kernel/built/nightly/system/etc/kexec/kernel
 
 cd /home/mnl-manz/razr_kdev_kernel/built/nightly
-zip -r "JBX-Kernel-0.7d-Hybrid-Nightly_$(date +"%Y-%m-%d").zip" *
-mv "JBX-Kernel-0.7d-Hybrid-Nightly_$(date +"%Y-%m-%d").zip" /home/mnl-manz/razr_kdev_kernel/built
+zip -r "JBX-Kernel-0.7b-Hybrid-Nightly_$(date +"%Y-%m-%d").zip" *
+mv "JBX-Kernel-0.7b-Hybrid-Nightly_$(date +"%Y-%m-%d").zip" /home/mnl-manz/razr_kdev_kernel/built
 
 echo "done"
