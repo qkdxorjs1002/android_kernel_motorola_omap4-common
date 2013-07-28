@@ -41,6 +41,9 @@
 
 #define MAX_MPU_FREQ 2147446153
 
+#ifdef CONFIG_BATTERY_FRIEND
+extern bool battery_friend_active;
+#endif
 static bool device_suspended, screen_on;
 
 static struct wake_lock liveoc_wake_lock;
@@ -362,8 +365,19 @@ static ssize_t mpu_ocvalue_write(struct device * dev, struct device_attribute * 
 		{
 		    if (data != mpu_ocvalue)
 			{
+
+#ifdef CONFIG_BATTERY_FRIEND
+if (likely(battery_friend_active))
+			{
+			mpu_ocvalue = 100;				
+			}
+else
+			{
+			mpu_ocvalue = data;
+			}
+#else
 			    mpu_ocvalue = data;
-		    
+#endif
 			    liveoc_mpu_update();
 
 			    pr_info("LIVEOC MPU oc-value set to %u\n", mpu_ocvalue);
@@ -530,7 +544,18 @@ static ssize_t gpu_performance_write(struct device * dev, struct device_attribut
 		{
 		    if (data != gpu_performance)
 			{
+#ifdef CONFIG_BATTERY_FRIEND
+if (likely(battery_friend_active))
+			{
+			new_gpuperformance = 0;				
+			}
+else
+			{
+			new_gpuperformance = data;
+			}
+#else
 			    new_gpuperformance = data;
+#endif
 		    
 			    liveoc_gpu_update();
 

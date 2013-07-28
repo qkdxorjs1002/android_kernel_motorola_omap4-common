@@ -1706,17 +1706,22 @@ if (likely(battery_friend_active))
 	data->min = 100000;
 	if (data->max > 1000000)
 	data->max = 1000000;
+	pr_debug("Battery Friend: new min and max freqs are %u - %u kHz\n",
+					data->min, data->max);
 	}
 else
 	data->min = policy->min;
 	data->max = policy->max;
+	pr_debug("new min and max freqs are %u - %u kHz\n",
+					data->min, data->max);
 #else
 	data->min = policy->min;
 	data->max = policy->max;
-#endif
-
 	pr_debug("new min and max freqs are %u - %u kHz\n",
 					data->min, data->max);
+#endif
+
+
 
 	if (cpufreq_driver->setpolicy) {
 		data->policy = policy->policy;

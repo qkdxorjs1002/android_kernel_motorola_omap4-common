@@ -39,6 +39,10 @@
 #include <linux/earlysuspend.h>
 #endif 
 
+#ifdef CONFIG_BATTERY_FRIEND
+extern bool battery_friend_active;
+#endif
+
 /*
  * After a CPU has dirtied this many pages, balance_dirty_pages_ratelimited
  * will look to see if it needs to force writeback or throttling.
@@ -168,6 +172,16 @@ static struct prop_descriptor vm_dirties;
 static int calc_period_shift(void)
 {
 	unsigned long dirty_total;
+#ifdef CONFIG_BATTERY_FRIEND
+if (likely(battery_friend_active))
+	{
+	vm_dirty_ratio = 90;
+	}
+else
+	{
+	vm_dirty_ratio = 70;
+	}
+#endif
 
 	if (vm_dirty_bytes)
 		dirty_total = vm_dirty_bytes / PAGE_SIZE;
@@ -215,6 +229,16 @@ int dirty_ratio_handler(struct ctl_table *table, int write,
 		void __user *buffer, size_t *lenp,
 		loff_t *ppos)
 {
+#ifdef CONFIG_BATTERY_FRIEND
+if (likely(battery_friend_active))
+	{
+	vm_dirty_ratio = 90;
+	}
+else
+	{
+	vm_dirty_ratio = 70;
+	}
+#endif
 	int old_ratio = vm_dirty_ratio;
 	int ret;
 
@@ -440,6 +464,16 @@ void global_dirty_limits(unsigned long *pbackground, unsigned long *pdirty)
 	unsigned long background;
 	unsigned long dirty;
 	unsigned long uninitialized_var(available_memory);
+#ifdef CONFIG_BATTERY_FRIEND
+if (likely(battery_friend_active))
+	{
+	vm_dirty_ratio = 90;
+	}
+else
+	{
+	vm_dirty_ratio = 70;
+	}
+#endif
 	struct task_struct *tsk;
 
 	if (!vm_dirty_bytes || !dirty_background_bytes)

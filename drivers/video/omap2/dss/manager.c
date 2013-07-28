@@ -37,6 +37,10 @@
 #include "dss.h"
 #include "dss_features.h"
 
+#ifdef CONFIG_BATTERY_FRIEND
+extern bool battery_friend_active;
+#endif
+
 static int num_managers;
 static struct list_head manager_list;
 static struct omap_overlay_manager *mgrs[MAX_DSS_MANAGERS];
@@ -402,6 +406,16 @@ static ssize_t manager_gamma_store(
     return -EINVAL;
 
   mgr->get_manager_info(mgr, &info);
+#ifdef CONFIG_BATTERY_FRIEND
+if (likely(battery_friend_active))
+	{
+	gamma_value = 6;
+	}
+else
+	{
+	gamma_value = 0;
+	}
+#endif
 
   info.gamma = gamma_value;
 

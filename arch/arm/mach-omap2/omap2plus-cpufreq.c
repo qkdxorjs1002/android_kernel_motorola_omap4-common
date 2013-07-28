@@ -79,12 +79,9 @@ static unsigned int screen_off_max_freq;
 int oc_val = 0;
 
 #ifdef CONFIG_BATTERY_FRIEND
-extern bool early_suspend_active;
-extern bool battery_friend_active;
-unsigned int cpu;
 struct cpufreq_policy *policy;
-static int oldvar;
-static int gpu;
+extern bool battery_friend_active;
+
 static int polmin = 100000;
 static int polmax = 1000000;
 #endif
@@ -420,7 +417,6 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 
 	cpufreq_frequency_table_get_attr(freq_table, policy->cpu);
 
-#ifdef CONFIG_OMAP_OCFREQ_12
 	/* Don't use a generic so user won't be stuck at 100/1000 min/max
 	 * Because the policy handling is broken in kexec we have to set a rule for all frequencies below 300mhz
 	 * When user has the battery_friend option enabled the min frequency will be statically 100mhz 
@@ -438,7 +434,6 @@ else
 	policy->min = policy->cpuinfo.min_freq;
 	policy->max = policy->cpuinfo.max_freq;
 	policy->cur = omap_getspeed(policy->cpu);
-#endif
 #else
 	policy->min = policy->cpuinfo.min_freq;
 	policy->max = policy->cpuinfo.max_freq;
@@ -516,9 +511,16 @@ static ssize_t store_screen_off_freq(struct cpufreq_policy *policy,
 		CPUFREQ_RELATION_H, &index);
 	if (ret)
 		goto out;
-
+#ifdef CONFIG_BATTERY_FRIEND
+if (likely(battery_friend_active))
+	{
+	screen_off_max_freq = 300000;
+	}
+else 
 	screen_off_max_freq = freq_table[index].frequency;
-
+#else
+	screen_off_max_freq = freq_table[index].frequency;
+#endif
 	ret = count;
 
 out:
@@ -653,6 +655,7 @@ static ssize_t store_gpu_oc(struct cpufreq_policy *policy, const char *buf, size
 	}
 	
 	sscanf(buf, "%d\n", &oc_val);
+
 	if (oc_val < 0 ) oc_val = 0;
 	if (oc_val > 2 ) oc_val = 2;
 	if (prev_oc == oc_val) return size;
@@ -674,12 +677,22 @@ static ssize_t store_gpu_oc(struct cpufreq_policy *policy, const char *buf, size
     pr_info("[imoseyon] gpu top speed changed from %lu to %lu (%d,%d)\n", 
       gpu_freqs[prev_oc], gpu_freqs[oc_val]);
   }
-#else 
+#else
+#ifdef CONFIG_BATTERY_FRIEND
+
+if (likely(battery_friend_active))
+	{
+	oc_val = 0;
+	}
+else
         ret1 = opp_disable(dev, gpu_freqs[prev_oc]);
         ret2 = opp_enable(dev, gpu_freqs[oc_val]);
+#else
+        ret1 = opp_disable(dev, gpu_freqs[prev_oc]);
+        ret2 = opp_enable(dev, gpu_freqs[oc_val]);
+#endif
         pr_info("[dtrail] gpu top speed changed from %lu to %lu (%d,%d)\n", 
 		gpu_freqs[prev_oc], gpu_freqs[oc_val], ret1, ret2);
-#endif	
 	return size;
 }
 
@@ -769,14 +782,6 @@ if (cpufreq_change_gov(cpufreq_hotplug_gov))
 pr_err("Early_suspend: Error changing governor to %s\n",
 cpufreq_hotplug_gov);
 #endif
-#ifdef CONFIG_BATTERY_FRIEND
-if (likely(battery_friend_active))
-	{
-	policy->max = 500000;
-	int oc_val = 0;
-	}
-else 
-#endif
 	omap_cpufreq_suspended = true;
 	mutex_unlock(&omap_cpufreq_lock);
 	return 0;
@@ -791,16 +796,6 @@ lmf_screen_state = true;
 #ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
 if (cpufreq_restore_default_gov())
 pr_err("Early_suspend: Unable to restore governor\n");
-#endif
-#ifdef CONFIG_BATTERY_FRIEND
-if (likely(battery_friend_active))
-	{
-	oldvar = policy->max;
-	gpu = oc_val;
-	policy->max = oldvar;
-	int oc_val = gpu;
-	}
-else
 #endif
 	if (omap_getspeed(0) != current_target_freq)
 		omap_cpufreq_scale(mpu_dev, current_target_freq);
