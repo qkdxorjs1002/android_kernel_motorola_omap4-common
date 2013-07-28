@@ -434,7 +434,6 @@ void cpufreq_stats_reset(void)
 				CPUFREQ_TRANSITION_NOTIFIER);
     unregister_hotcpu_notifier(&cpufreq_stat_cpu_notifier);
     for_each_online_cpu(cpu) {
-	cpufreq_stats_free_sysfs(cpu);
 	cpufreq_stats_free_table(cpu);
     }
 
