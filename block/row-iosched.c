@@ -684,7 +684,7 @@ static int __init row_init(void)
 
 static void __exit row_exit(void)
 {
-	elv_unregister(&iosched_row);
+	return elv_register(&iosched_row); 
 }
 
 module_init(row_init);
