@@ -27,7 +27,7 @@
 static DEFINE_MUTEX(battery_mutex);
 
 bool battery_friend_early_suspend_active __read_mostly = false;
-bool battery_friend_active __read_mostly = true;
+bool battery_friend_active __read_mostly = false;
 
 
 static ssize_t battery_friend_active_show(struct kobject *kobj,
