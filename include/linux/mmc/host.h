@@ -268,6 +268,8 @@ struct mmc_host {
 
 	struct delayed_work	detect;
 	struct wake_lock	detect_wake_lock;
+
+	const char *wlock_name;
 	int			init_delay;	/* delay in msec to start host */
 
 	const struct mmc_bus_ops *bus_ops;	/* current bus driver */
