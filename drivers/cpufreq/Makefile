@@ -30,6 +30,7 @@ obj-$(CONFIG_CPU_FREQ_GOV_HYPER)  	+= cpufreq_hyper.o
 obj-$(CONFIG_CPU_FREQ_GOV_LULZACTIVEW)  += cpufreq_lulzactivew.o
 obj-$(CONFIG_CPU_FREQ_GOV_ABYSSPLUG)  	+= cpufreq_abyssplug.o
 obj-$(CONFIG_CPU_FREQ_GOV_BADASS)    	+= cpufreq_badass.o
+obj-$(CONFIG_CPU_FREQ_GOV_ZZMOOVE)    	+= cpufreq_zzmoove.o 
 obj-$(CONFIG_CPU_FREQ_GOV_INTELLIDEMAND)+= cpufreq_intellidemand.o
 
 # CPUfreq cross-arch helpers

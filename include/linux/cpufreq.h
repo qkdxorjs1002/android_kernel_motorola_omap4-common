@@ -419,7 +419,10 @@ extern struct cpufreq_governor cpufreq_gov_gallimaufry;
 #define CPUFREQ_DEFAULT_GOVERNOR  (&cpufreq_gov_gallimaufry)
 #elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_BADASS)
 extern struct cpufreq_governor cpufreq_gov_badass;
-#define CPUFREQ_DEFAULT_GOVERNOR  (&cpufreq_gov_badass) 
+#define CPUFREQ_DEFAULT_GOVERNOR  (&cpufreq_gov_badass)
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_ZZMOOVE)
+extern struct cpufreq_governor cpufreq_gov_zzmoove;
+#define CPUFREQ_DEFAULT_GOVERNOR  (&cpufreq_gov_zzmoove) 
 #elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_INTELLIDEMAND)
 extern struct cpufreq_governor cpufreq_gov_intellidemand;
 #define CPUFREQ_DEFAULT_GOVERNOR (&cpufreq_gov_intellidemand)
