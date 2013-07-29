@@ -29,6 +29,7 @@
 #include <linux/cpu.h>
 #include <linux/thermal_framework.h>
 #include <linux/platform_device.h>
+#include <linux/earlysuspend.h>
 
 #include <asm/system.h>
 #include <asm/smp_plat.h>
@@ -75,6 +76,9 @@ static unsigned int current_cooling_level;
 static bool omap_cpufreq_ready;
 static bool omap_cpufreq_suspended;
 static unsigned int screen_off_max_freq;
+
+unsigned int dyn_hotplug = 1;
+module_param(dyn_hotplug, int, 0755);
 
 int oc_val = 0;
 
@@ -282,6 +286,67 @@ static int omap_target(struct cpufreq_policy *policy,
 
 	return ret;
 }
+
+static void omap_cpu_early_suspend(struct early_suspend *h)
+{       
+
+#ifdef CONFIG_BATTERY_FRIEND
+    if (likely(!battery_friend_active))
+	{
+		cpufreq_store_default_gov();
+		if (cpufreq_change_gov(cpufreq_hotplug_gov))
+		pr_err("Early_suspend: Error changing governor to %s\n",
+		cpufreq_hotplug_gov);
+	}
+    else 
+	{
+        mutex_lock(&omap_cpufreq_lock);
+
+        if (dyn_hotplug) {
+                if (cpu_online(1))
+                        cpu_down(1);
+        }
+
+        mutex_unlock(&omap_cpufreq_lock);
+	pr_info("Battery Friend: CPU1 down due to device suspend\n");
+	}
+#endif
+}
+
+static void omap_cpu_late_resume(struct early_suspend *h, struct cpufreq_policy *policy)
+{
+        unsigned int cur;
+        
+#ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
+#ifdef CONFIG_BATTERY_FRIEND
+    if (likely(!battery_friend_active))
+	{
+	if (cpufreq_restore_default_gov())
+		pr_err("Early_suspend: Unable to restore governor\n");
+	}
+    else 
+	{
+        mutex_lock(&omap_cpufreq_lock);
+
+        if (dyn_hotplug) {
+                if (cpu_online(1) == false)
+                        cpu_up(1);
+        }
+        
+        cur = omap_getspeed(0);
+        if (cur != policy->max)
+                omap_cpufreq_scale(policy->max, cur);
+                
+        mutex_unlock(&omap_cpufreq_lock);
+	pr_info("Battery Friend: CPU1 up due to device wakeup\n");
+	}
+}
+
+static struct early_suspend omap_cpu_early_suspend_handler = {
+        .level = EARLY_SUSPEND_LEVEL_BLANK_SCREEN,
+        .suspend = omap_cpu_early_suspend,
+        .resume = omap_cpu_late_resume,
+};
 
 static inline void freq_table_free(void)
 {
@@ -777,12 +842,7 @@ static int omap_cpufreq_suspend_noirq(struct device *dev)
 #ifdef CONFIG_CPU_FREQ_GOV_INTELLIDEMAND
 lmf_screen_state = false;
 #endif
-#ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
-cpufreq_store_default_gov();
-if (cpufreq_change_gov(cpufreq_hotplug_gov))
-pr_err("Early_suspend: Error changing governor to %s\n",
-cpufreq_hotplug_gov);
-#endif
+
 	omap_cpufreq_suspended = true;
 	mutex_unlock(&omap_cpufreq_lock);
 	return 0;
@@ -794,10 +854,7 @@ static int omap_cpufreq_resume_noirq(struct device *dev)
 #ifdef CONFIG_CPU_FREQ_GOV_INTELLIDEMAND
 lmf_screen_state = true;
 #endif
-#ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
-if (cpufreq_restore_default_gov())
-pr_err("Early_suspend: Unable to restore governor\n");
-#endif
+
 	if (omap_getspeed(0) != current_target_freq)
 		omap_cpufreq_scale(mpu_dev, current_target_freq);
 
@@ -845,6 +902,8 @@ static int __init omap_cpufreq_init(void)
 		return -EINVAL;
 	}
 
+	register_early_suspend(&omap_cpu_early_suspend_handler);
+
 	ret = cpufreq_register_driver(&omap_driver);
 	omap_cpufreq_ready = !ret;
 
@@ -869,6 +928,8 @@ static void __exit omap_cpufreq_exit(void)
 {
 	omap_cpufreq_cooling_exit();
 	cpufreq_unregister_driver(&omap_driver);
+
+        unregister_early_suspend(&omap_cpu_early_suspend_handler);
 	platform_driver_unregister(&omap_cpufreq_platform_driver);
 	platform_device_unregister(&omap_cpufreq_device);
 }

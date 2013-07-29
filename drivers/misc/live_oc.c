@@ -29,7 +29,7 @@
 #define LIVEOC_VERSION 2
 
 #define MAX_MPU_OCVALUE 150
-#define MAX_CORE_OCVALUE 150
+#define MAX_CORE_OCVALUE 100
 
 #define FREQ_INCREASE_STEP 100000
 
@@ -489,9 +489,11 @@ static ssize_t core_ocvalue_write(struct device * dev, struct device_attribute *
 		{
 		    if (data != core_ocvalue)
 			{
-			    new_coreocvalue = data;
+	// Don't allow CORE OC for the RAZR!
+			    new_coreocvalue = 100;
 
-			    pr_info("LIVEOC preparing to change CORE oc-value to %u\n", new_coreocvalue);
+			   // pr_info("LIVEOC preparing to change CORE oc-value to %u\n", new_coreocvalue);
+				pr_info("LIVEOC NOT ALLOWED for RAZR \n");
 
 			    liveoc_core_update();
 			}
