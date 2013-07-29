@@ -1307,7 +1307,7 @@ static void __init mapphone_init(void)
 	mapphone_voltage_init();
 	mapphone_omap44xx_padconf_init();
 #ifdef CONFIG_CPU_FREQ_GOV_ONDEMAND_2_PHASE
-set_two_phase_freq(800000);
+set_two_phase_freq(600000);
 #endif
 #ifdef CONFIG_CPU_FREQ_GOV_INTELLIDEMAND
 id_set_two_phase_freq(800000);

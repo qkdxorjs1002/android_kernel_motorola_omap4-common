@@ -408,15 +408,8 @@ static ssize_t manager_gamma_store(
   mgr->get_manager_info(mgr, &info);
 #ifdef CONFIG_BATTERY_FRIEND
 if (likely(battery_friend_active))
-	{
 	gamma_value = 6;
-	}
-else
-	{
-	gamma_value = 0;
-	}
 #endif
-
   info.gamma = gamma_value;
 
   r = mgr->set_manager_info(mgr, &info);
@@ -2052,6 +2045,10 @@ static int omap_dss_mgr_apply(struct omap_overlay_manager *mgr)
 	mc->cpr_coefs = mgr->info.cpr_coefs;
 	mc->cpr_enable = mgr->info.cpr_enable;
 #ifdef CONFIG_OMAP2_DSS_GAMMA_CONTROL
+#ifdef CONFIG_BATTERY_FRIEND
+if (likely(battery_friend_active))
+	mgr->info.gamma = 6;
+#endif
 	mc->gamma = mgr->info.gamma;
 #endif
 

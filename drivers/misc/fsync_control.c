@@ -11,6 +11,10 @@
 #include <linux/device.h>
 #include <linux/miscdevice.h>
 
+#ifdef CONFIG_BATTERY_FRIEND
+extern bool battery_friend_active;
+#endif
+
 #define FSYNCCONTROL_VERSION 1
 
 static bool fsync_enabled = false;
@@ -34,9 +38,23 @@ static ssize_t fsynccontrol_status_write(struct device * dev, struct device_attr
 	{
 	    if (data == 1) 
 		{
+#ifdef CONFIG_BATTERY_FRIEND
+	if (likely(battery_friend_active))
+		{
+		pr_info("%s: Battery Friend: FSYNC not allowed. DYNAMIC FSYNC locked \n", __FUNCTION__);
+		fsync_enabled = false;
+		}
+	else
+		{
 		    pr_info("%s: FSYNCCONTROL fsync enabled\n", __FUNCTION__);
 
 		    fsync_enabled = true;
+		}
+#else
+		    pr_info("%s: FSYNCCONTROL fsync enabled\n", __FUNCTION__);
+
+		    fsync_enabled = true;
+#endif
 
 		} 
 	    else if (data == 0) 

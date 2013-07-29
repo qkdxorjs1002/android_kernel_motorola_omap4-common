@@ -23,6 +23,10 @@
 
 #include <linux/writeback.h>
 
+#ifdef CONFIG_BATTERY_FRIEND
+extern bool battery_friend_active;
+#endif
+
 #define DYN_FSYNC_VERSION_MAJOR 1
 #define DYN_FSYNC_VERSION_MINOR 1
 
@@ -48,8 +52,21 @@ static ssize_t dyn_fsync_active_store(struct kobject *kobj,
 
 	if(sscanf(buf, "%u\n", &data) == 1) {
 		if (data == 1) {
+#ifdef CONFIG_BATTERY_FRIEND
+	if (likely(battery_friend_active))
+		{
+			pr_info("%s: Battery Friend: dynamic fsync enabled and locked\n", __FUNCTION__);
+			dyn_fsync_active = true;
+		}
+else
+		{
 			pr_info("%s: dynamic fsync enabled\n", __FUNCTION__);
 			dyn_fsync_active = true;
+		}
+#else
+			pr_info("%s: dynamic fsync enabled\n", __FUNCTION__);
+			dyn_fsync_active = true;
+#endif
 		}
 		else if (data == 0) {
 			pr_info("%s: dyanamic fsync disabled\n", __FUNCTION__);
