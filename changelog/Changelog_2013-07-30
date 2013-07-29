@@ -1,3 +1,5 @@
+742abfd Disable DMA shared buffer
+fe26ccb Added todays changelog and updated full history
 0abdd56 disable snappy compress/decompress - its not compatible
 f158c26 Added todays changelog and updated full history
 9c8fc48 Fix snappy
