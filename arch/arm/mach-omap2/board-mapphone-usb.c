@@ -85,8 +85,6 @@ static void set_usb_performance_mode(struct device *dev, bool enabled)
 	dev_dbg(dev, "Performance Mode %s\n", enabled ? "Set" : "Cleared");
 
 	if (enabled) {
-			omap_cpufreq_scale(dev, 300000);
-
 		if (andusb_plat.bp_tools_mode)
 			omap_cpufreq_scale(dev, 800000);
 		else
