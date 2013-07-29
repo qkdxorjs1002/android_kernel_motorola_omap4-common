@@ -85,6 +85,8 @@ static void set_usb_performance_mode(struct device *dev, bool enabled)
 	dev_dbg(dev, "Performance Mode %s\n", enabled ? "Set" : "Cleared");
 
 	if (enabled) {
+			omap_cpufreq_scale(dev, 300000);
+
 		if (andusb_plat.bp_tools_mode)
 			omap_cpufreq_scale(dev, 800000);
 		else
@@ -131,11 +133,7 @@ static int cpcap_usb_connected_probe(struct platform_device *pdev)
 		android_usb_set_connected(1, pdata->accy);
 #if defined(CONFIG_USB_MOT_ANDROID) && defined(CONFIG_USB_MUSB_OTG)
 
-#ifdef CONFIG_FORCE_FAST_CHARGE
-
-#else
 		cpcap_musb_notifier_call(USB_EVENT_VBUS);
-#endif
 #endif
 	}
 
