@@ -398,6 +398,11 @@ static ssize_t manager_gamma_store(
     struct omap_overlay_manager *mgr,
     const char *buf, size_t size)
 {
+#ifdef CONFIG_BATTERY_FRIEND
+if (likely(battery_friend_active))
+	{
+	gamma_value = 6;
+
   struct omap_overlay_manager_info info;
   int gamma_value;
   int r;
@@ -406,13 +411,8 @@ static ssize_t manager_gamma_store(
     return -EINVAL;
 
   mgr->get_manager_info(mgr, &info);
-#ifdef CONFIG_BATTERY_FRIEND
-if (likely(battery_friend_active))
-	{
-	gamma_value = 6;
-	}
-else
-#endif
+
+
 
   info.gamma = gamma_value;
 
@@ -426,6 +426,32 @@ else
 
   return size;
 }
+else
+	{
+  struct omap_overlay_manager_info info;
+  int gamma_value;
+  int r;
+
+  if (sscanf(buf, "%d", &gamma_value) != 1)
+    return -EINVAL;
+
+  mgr->get_manager_info(mgr, &info);
+
+
+
+  info.gamma = gamma_value;
+
+  r = mgr->set_manager_info(mgr, &info);
+  if (r)
+    return r;
+
+  r = mgr->apply(mgr);
+  if (r)
+    return r;
+
+  return size;
+}
+#endif
 #endif
 
 static ssize_t manager_ignore_sync_show(struct omap_overlay_manager *mgr,
