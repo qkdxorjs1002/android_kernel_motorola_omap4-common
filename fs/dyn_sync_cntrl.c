@@ -59,7 +59,7 @@ static ssize_t dyn_fsync_active_store(struct kobject *kobj,
 			dyn_fsync_active = true;
 		}
 else
-		}
+		{
 			pr_info("%s: dynamic fsync enabled\n", __FUNCTION__);
 			dyn_fsync_active = true;
 		}
