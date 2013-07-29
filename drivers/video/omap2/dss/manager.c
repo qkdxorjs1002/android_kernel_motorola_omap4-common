@@ -412,9 +412,6 @@ if (likely(battery_friend_active))
 	gamma_value = 6;
 	}
 else
-	{
-	gamma_value = 0;
-	}
 #endif
 
   info.gamma = gamma_value;
