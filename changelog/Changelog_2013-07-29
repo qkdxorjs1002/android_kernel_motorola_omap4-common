@@ -1,3 +1,5 @@
+77f4e2e USB: Fix wrong insertion
+5f87c5f Added todays changelog and updated full history
 d76af32 Merge branch 'JBX' into JBX_STABLE
 af6b778 Battery Friend: Fix gamma finally
 30d97c9 Revert "Battery Friend: Change the gamma rule for generic change of gamma value"
@@ -16,5 +18,3 @@ c44b70d3 Battery Friend: Change the gamma rule for generic change of gamma value
 1c9c703 Added todays changelog and updated full history
 7dedef3 Raise KErnel version
 7fb2a8d Added todays changelog and updated full history
-aafa8dc Defconfig updates
-0da1978 build script updates
