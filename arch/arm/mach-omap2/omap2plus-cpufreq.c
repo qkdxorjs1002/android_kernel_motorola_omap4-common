@@ -341,7 +341,7 @@ static int cpufreq_restore_default_gov(void)
 
 static void omap_cpu_early_suspend(struct early_suspend *h)
 {       
-
+#ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
 #ifdef CONFIG_BATTERY_FRIEND
     if (likely(!battery_friend_active))
 	{
@@ -362,6 +362,7 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
         mutex_unlock(&omap_cpufreq_lock);
 	pr_info("Battery Friend: CPU1 down due to device suspend\n");
 	}
+#endif
 #endif
 }
 
@@ -392,6 +393,8 @@ static void omap_cpu_late_resume(struct early_suspend *h, struct cpufreq_policy 
         mutex_unlock(&omap_cpufreq_lock);
 	pr_info("Battery Friend: CPU1 up due to device wakeup\n");
 	}
+#endif
+#endif
 }
 
 static struct early_suspend omap_cpu_early_suspend_handler = {
