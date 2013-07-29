@@ -1,3 +1,6 @@
+dfa8206 Disable Intellidemand
+2c895c6 Battery Friend: Fix missing rule definitions
+56cb71b Added todays changelog and updated full history
 820b0fa Battery Friend: Move needed functions for governor change to early suspend area
 8eb98da Battery Friend: Extended with dynamic hotplug function. When Battery Friend is ON it will always turn OFF CPU1 during suspend (screen off) - but it will never allow to turn off CPU1 during active state (screen on). The code also protects against conflicts between using battery friend + a hotplug governor (which isn't a goot idea though). When Battery Friend is disabled the governor will be switched to hotplug during suspend and the prior governor will be restored on resum.
 4a64031 Enable GPU higher clocks
@@ -44,7 +47,3 @@ a8845e6 Revert "block: Add API for urgent request handling"
 fcdc52e Preapartion for new API
 94b2197 Makefile: O2 optimization
 2cf17d5 CPUFREQ_STATS: Fix memory leak
-b7f4db5 Add ARM CPU topology
-8862202 Revert "ARM: 7011/1: Add ARM cpu topology definition"
-9557618 Revert "Update topology"
-7dee1d8 Update topology
