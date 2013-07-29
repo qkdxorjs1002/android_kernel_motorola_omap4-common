@@ -287,6 +287,58 @@ static int omap_target(struct cpufreq_policy *policy,
 	return ret;
 }
 
+
+#ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
+#define MAX_GOV_NAME_LEN 16
+static char cpufreq_default_gov[CONFIG_NR_CPUS][MAX_GOV_NAME_LEN];
+static char *cpufreq_hotplug_gov = "hotplug";
+
+static void cpufreq_store_default_gov(void)
+{
+unsigned int cpu;
+struct cpufreq_policy *policy;
+
+	for (cpu = 0; cpu < CONFIG_NR_CPUS; cpu++) {
+		policy = cpufreq_cpu_get(cpu);
+	  if (policy) {
+	sprintf(cpufreq_default_gov[cpu], "%s",
+		policy->governor->name);
+		cpufreq_cpu_put(policy);
+		}
+	}
+}
+
+static int cpufreq_change_gov(char *target_gov)
+{
+	unsigned int cpu = 0;
+	for_each_online_cpu(cpu)
+	return cpufreq_set_gov(target_gov, cpu);
+}
+
+static int cpufreq_restore_default_gov(void)
+{
+	int ret = 0;
+	unsigned int cpu;
+
+	for (cpu = 0; cpu < CONFIG_NR_CPUS; cpu++) {
+		if (strlen((const char *)&cpufreq_default_gov[cpu])) {
+	ret = cpufreq_set_gov(cpufreq_default_gov[cpu], cpu);
+		if (ret < 0)
+	/* Unable to restore gov for the cpu as
+	* It was online on suspend and becomes
+	* offline on resume.
+	*/
+		pr_info("Unable to restore gov:%s for cpu:%d,"
+			, cpufreq_default_gov[cpu]
+			, cpu);
+	}
+	cpufreq_default_gov[cpu][0] = '\0';
+}
+	return ret;
+}
+#endif
+
+
 static void omap_cpu_early_suspend(struct early_suspend *h)
 {       
 
@@ -786,55 +838,6 @@ static struct cpufreq_driver omap_driver = {
 	.attr		= omap_cpufreq_attr,
 };
 
-#ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
-#define MAX_GOV_NAME_LEN 16
-static char cpufreq_default_gov[CONFIG_NR_CPUS][MAX_GOV_NAME_LEN];
-static char *cpufreq_hotplug_gov = "hotplug";
-
-static void cpufreq_store_default_gov(void)
-{
-unsigned int cpu;
-struct cpufreq_policy *policy;
-
-	for (cpu = 0; cpu < CONFIG_NR_CPUS; cpu++) {
-		policy = cpufreq_cpu_get(cpu);
-	  if (policy) {
-	sprintf(cpufreq_default_gov[cpu], "%s",
-		policy->governor->name);
-		cpufreq_cpu_put(policy);
-		}
-	}
-}
-
-static int cpufreq_change_gov(char *target_gov)
-{
-	unsigned int cpu = 0;
-	for_each_online_cpu(cpu)
-	return cpufreq_set_gov(target_gov, cpu);
-}
-
-static int cpufreq_restore_default_gov(void)
-{
-	int ret = 0;
-	unsigned int cpu;
-
-	for (cpu = 0; cpu < CONFIG_NR_CPUS; cpu++) {
-		if (strlen((const char *)&cpufreq_default_gov[cpu])) {
-	ret = cpufreq_set_gov(cpufreq_default_gov[cpu], cpu);
-		if (ret < 0)
-	/* Unable to restore gov for the cpu as
-	* It was online on suspend and becomes
-	* offline on resume.
-	*/
-		pr_info("Unable to restore gov:%s for cpu:%d,"
-			, cpufreq_default_gov[cpu]
-			, cpu);
-	}
-	cpufreq_default_gov[cpu][0] = '\0';
-}
-	return ret;
-}
-#endif
 
 static int omap_cpufreq_suspend_noirq(struct device *dev)
 {
