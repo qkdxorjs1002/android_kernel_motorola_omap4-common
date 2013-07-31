@@ -60,7 +60,7 @@ mv "JBX-Kernel-0.7d-Hybrid_$(date +"%Y-%m-%d").zip" /home/mnl-manz/razr_kdev_ker
 # Exporting changelog to file
 echo "Exporting changelog to file: '/built/Changelog-[date]'"
 cd /home/mnl-manz/razr_kdev_kernel/android_kernel_motorola_omap4-common
-git log --oneline --after="yesterday" > /home/mnl-manz/razr_kdev_kernel/android_kernel_motorola_omap4-common/changelog/Changelog_$(date +"%Y-%m-%d")
+git log --oneline --since="4 day ago" > /home/mnl-manz/razr_kdev_kernel/android_kernel_motorola_omap4-common/changelog/Changelog_$(date +"%Y-%m-%d")
 git log --oneline  > /home/mnl-manz/razr_kdev_kernel/android_kernel_motorola_omap4-common/changelog/Full_History_Changelog
 git add changelog/ .
 git commit -m "Added todays changelog and updated full history"
