@@ -346,7 +346,7 @@ int omap4460_mpu_dpll_set_rate(struct clk *clk, unsigned long rate)
 		/* enable DCC */
 		v |= OMAP4460_DCC_EN_MASK;
 		__raw_writel(v, dd->mult_div1_reg);
-		//pr_info("dtrail: high OC frequencies activated!\n");
+		pr_info("dtrail: high OC frequencies activated!\n");
 	}
 
 	if (rate < clk->rate)
