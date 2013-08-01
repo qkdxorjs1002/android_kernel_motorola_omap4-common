@@ -418,9 +418,9 @@ static void cpcap_batt_ind_chrg_ctrl(struct cpcap_batt_ps *sply)
 
 #ifdef CONFIG_BLX
 	} else if ((get_charginglimit() != MAX_CHARGINGLIMIT) && (sply->batt_state.capacity >= get_charginglimit())) {
-			pr_info("BLX: Charging limit reached. chrgcmpl set\n");
-			pdata->ind_chrg->force_charge_complete(1);
-		pr_cpcap_batt(TRANSITION, "batt capacity 100, chrgcmpl set");
+			pr_info("BLX: Charging limit reached. chrgterm set\n");
+			pdata->ind_chrg->force_charge_terminate(1);
+		pr_cpcap_batt(TRANSITION, "BLX limit reached, chrgterm set");
 		sply->ind_chrg_dsbl_time = (unsigned long)temp;
 #endif
 	} else if ((sply->batt_state.batt_temp >= INDCHRG_HOT_TEMP)
