@@ -12,12 +12,12 @@ make ARCH=arm distclean
 # First get tags in shell
 echo "Cleaning out Android source directory..."
 echo " "
-cd ~/android/system
+cd ~/android/4.3
 export USE_CCACHE=1
 make ARCH=arm distclean
 make mrproper
 source build/envsetup.sh
-lunch 12
+lunch 11
 
 # built kernel & modules
 echo "Building modules..."
@@ -27,7 +27,7 @@ make -j8 TARGET_KERNEL_SOURCE=/home/mnl-manz/razr_kdev_kernel/android_kernel_mot
 # We don't use the kernel but the modules
 echo "Copying modules to package folder"
 echo " "
-cp -r /home/mnl-manz/android/system/out/target/product/spyder/system/lib/modules/* /home/mnl-manz/razr_kdev_kernel/built/rls/system/lib/modules/
+cp -r /home/mnl-manz/android/4.3/out/target/product/spyder/system/lib/modules/* /home/mnl-manz/razr_kdev_kernel/built/rls/system/lib/modules/
 
 # Switch to kernel folder
 echo "Entering kernel source..."
@@ -46,7 +46,7 @@ export CROSS_COMPILE=arm-eabi-
 
 # define the defconfig (Do not change)
 make ARCH=arm mapphone_OCE_defconfig
-export LOCALVERSION="-JBX-0.7d-Hybrid"
+export LOCALVERSION="-JBX-0.9-Hybrid"
 
 # execute build command with "-j4 core flag" 
 # (You may change this to the count of your CPU.
@@ -63,8 +63,8 @@ echo " "
 cp arch/arm/boot/zImage /home/mnl-manz/razr_kdev_kernel/built/rls/system/etc/kexec/kernel
 
 cd /home/mnl-manz/razr_kdev_kernel/built/rls
-zip -r "JBX-Kernel-0.7d-Hybrid_$(date +"%Y-%m-%d").zip" *
-mv "JBX-Kernel-0.7d-Hybrid_$(date +"%Y-%m-%d").zip" /home/mnl-manz/razr_kdev_kernel/built
+zip -r "JBX-Kernel-0.9-Hybrid_$(date +"%Y-%m-%d").zip" *
+mv "JBX-Kernel-0.9-Hybrid_$(date +"%Y-%m-%d").zip" /home/mnl-manz/razr_kdev_kernel/built
 
 # Exporting changelog to file
 echo "Exporting changelog to file: '/built/Changelog-[date]'"
