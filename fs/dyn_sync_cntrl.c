@@ -69,8 +69,21 @@ else
 #endif
 		}
 		else if (data == 0) {
-			pr_info("%s: dyanamic fsync disabled\n", __FUNCTION__);
+#ifdef CONFIG_BATTERY_FRIEND
+	if (likely(battery_friend_active))
+		{
+			pr_info("%s: Battery Friend: dynamic fsync enabled and locked\n", __FUNCTION__);
+			dyn_fsync_active = true;
+		}
+else
+		{
+			pr_info("%s: dynamic fsync disabled\n", __FUNCTION__);
 			dyn_fsync_active = false;
+		}
+#else
+			pr_info("%s: dynamic fsync disabledd\n", __FUNCTION__);
+			dyn_fsync_active = false;
+#endif
 		}
 		else
 			pr_info("%s: bad value: %u\n", __FUNCTION__, data);
