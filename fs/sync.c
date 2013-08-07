@@ -251,7 +251,7 @@ SYSCALL_DEFINE1(fsync, unsigned int, fd)
 {
 	/*if (!fsync_enabled)
 			return 0;*/
-#ifdef CONFIG_DYNAMIC_FSYNC
+#if 0
   if (likely(dyn_fsync_active && !early_suspend_active))
     return 0;
   else 

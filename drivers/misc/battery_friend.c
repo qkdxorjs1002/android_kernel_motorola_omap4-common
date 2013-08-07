@@ -20,6 +20,7 @@
 #include <linux/sysfs.h>
 #include <linux/earlysuspend.h>
 #include <linux/mutex.h>
+#include <linux/battery_friend.h>
 
 #define BATTERY_FRIEND_VERSION_MAJOR 1
 #define BATTERY_FRIEND_VERSION_MINOR 1
@@ -104,6 +105,7 @@ static void battery_friend_early_suspend(struct early_suspend *h)
 	if (battery_friend_active) {
 		battery_friend_early_suspend_active = true;
 #if 1
+		
 		/* flush all outstanding buffers */
 
 #endif
