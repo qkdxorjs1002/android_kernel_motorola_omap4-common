@@ -1,3 +1,7 @@
+299a1fe Build Script update
+f64783a cpufreq: Fix policy stuck on 300mhz min all the time
+c44733e Battery Friend: Fix suspend state rule
+393ea24 Added todays changelog and updated full history
 f09aaa8 Defconfig updates for 4.3
 5200191 Defconfig updates
 d991c06 Battery Friend: Patches, fixes and merge from remote
