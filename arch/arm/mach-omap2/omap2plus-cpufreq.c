@@ -438,7 +438,7 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 	lmf_screen_state = false;
 #endif
 
-#if def CONFIG_BATTERY_FRIEND
+#ifdef CONFIG_BATTERY_FRIEND
     if (likely(battery_friend_active))
 	{
         if (dyn_hotplug) {
