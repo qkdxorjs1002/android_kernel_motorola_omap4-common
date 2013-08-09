@@ -18,7 +18,7 @@ make ARCH=arm distclean
 make mrproper
 source build/envsetup.sh
 croot
-lunch 96
+lunch 97
 
 # built kernel & modules
 echo "Building modules..."
