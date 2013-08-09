@@ -1,0 +1,55 @@
+d00a54e build script fix
+49b9d12 Build script fixes
+c276392 build script: set for new toolchain path
+49c3884 defconfig updates
+ad7aba7 Android 4.3: Defconfig update
+a1a7ef6 defconfig: turn on kernel size compression, helps with devtree errors
+12767b1 defconfig: add CONFIG_AUDIT for auditd fix
+de4590e ip6_fib: Remove dead code
+529b978 net: ipv6: Don't purge default router if accept_ra=2
+d91eafb ipv6: do not create neighbor entries for local delivery
+a189389 rtnetlink: Compute and store minimum ifinfo dump size
+82b2c5b ipv6: Set default hoplimit as zero.
+d8a4103 ipv6: release reference of ip6_null_entry's dst entry in __ip6_del_rt
+f03be56 ipv6: Move ipv6 proc file registration to end of init order
+bc199bb net: fix a potential rcu_read_lock() imbalance in rt6_fill_node()
+096de4b net: fix NULL dereferences in check_peer_redir()
+0c00832 netfilter: Mark SYN/ACK packets as invalid from original direction
+4dd0690 netfilter: Validate the sequence number of dataless ACK packets as well
+60e07b0 netfilter: xt_limit: have r->cost != 0 case work
+458fb13 netfilter: limit, hashlimit: avoid duplicated inline
+b2145ae netfilter: nf_ct_expect: fix possible access to uninitialized timer
+0893881 netfilter: nf_conntrack: fix racy timer handling with reliable events
+a16d52e netfilter: xt_IDLETIMER: Rename INTERFACE to LABEL in netlink notification.
+71c34c4 netfilter: xt_IDLETIMER: Use uevent instead of new netlink msg type
+3c5161f xt_IDLETIMER: Add new netlink msg type for IDLETIMER.
+33fe118 netfilter: qtaguid: rate limit some of the printks
+0c9c9ff netfilter: xt_qtaguid: Allow tracking loopback
+4b2b5e6 netfilter: xt_qtaguid: extend iface stat to report protocols
+0ff60b2 netfilter: xt_qtaguid: remove AID_* dependency for access control
+84e7796 netfilter: qtaguid: Don't BUG_ON if create_if_tag_stat fails
+d933e9b netfilter: xt_qtaguid: fix error exit that would keep a spinlock.
+923c6c3 netfilter: xt_qtaguid: report only uid tags to non-privileged processes
+7bf283e netfilter: xt_qtaguid: start tracking iface rx/tx at low level
+013065b netfilter: xt_qtaguid: fix ipv6 protocol lookup
+7430e77 netfilter: qtaguid: initialize a local var to keep compiler happy.
+d730379 Added todays changelog and updated full history
+6e20d32 Fix build script
+212dea2 Added todays changelog and updated full history
+713670a cpufreq: fix typo
+d943566 Added todays changelog and updated full history
+299a1fe Build Script update
+f64783a cpufreq: Fix policy stuck on 300mhz min all the time
+c44733e Battery Friend: Fix suspend state rule
+393ea24 Added todays changelog and updated full history
+f09aaa8 Defconfig updates for 4.3
+5200191 Defconfig updates
+d991c06 Battery Friend: Patches, fixes and merge from remote
+c10b337 Revert "Board: DSSCOMP: Try to avoid screen flickering/artifacts during shutdown"
+e699c4b Battery Friend: Fix dynamic fsync
+6363d98 Defconfig: Add ARCH_HAS_RELAX
+05e137b Defconfig updstes
+426f77b [PATCH, v9] cgroups: introduce timer slack controller Changelog:
+34d9a31 dpll44xx: Set pr_info active for debugging
+1363d52 BLX: change complete chrgcmpl to charge terminate chrgterm
+963afa9 BLX: Try new config
