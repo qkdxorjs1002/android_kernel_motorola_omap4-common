@@ -75,6 +75,6 @@ git log --oneline --since="4 day ago" > /home/dtrail/android/android_kernel_moto
 git log --oneline  > /home/dtrail/android/android_kernel_motorola_omap4-common/changelog/Full_History_Changelog
 git add changelog/ .
 git commit -m "Added todays changelog and updated full history"
-git push origin JBX_STABLE
+git push origin JBX_4.3
 
 echo "done"
