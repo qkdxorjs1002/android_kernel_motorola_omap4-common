@@ -23,7 +23,7 @@ lunch 96
 # built kernel & modules
 echo "Building modules..."
 echo " "
-make -j8 TARGET_KERNEL_SOURCE=/home/dtrail/android/android_kernel_motorola_omap4-common/ TARGET_KERNEL_CONFIG=mapphone_OCE_defconfig CONFIG_APANIC_PLABEL="mmcblk1p20" $OUT/boot.img
+make -j4 TARGET_KERNEL_SOURCE=/home/dtrail/android/android_kernel_motorola_omap4-common/ TARGET_KERNEL_CONFIG=mapphone_OCE_defconfig CONFIG_APANIC_PLABEL="mmcblk1p20" $OUT/boot.img
 
 # We don't use the kernel but the modules
 echo "Copying modules to package folder"
@@ -65,7 +65,7 @@ cp arch/arm/boot/zImage /home/dtrail/android/built/rls/system/etc/kexec/kernel
 
 cd /home/dtrail/android/built/rls
 zip -r "JBX-Kernel-0.9-Hybrid_$(date +"%Y-%m-%d").zip" *
-mv "JBX-Kernel-0.9-Hybrid_$(date +"%Y-%m-%d").zip" /home/mnl-manz/razr_kdev_kernel/built
+mv "JBX-Kernel-0.9-Hybrid_$(date +"%Y-%m-%d").zip" /home/dtrail/android/out
 
 # Exporting changelog to file
 echo "Exporting changelog to file: '/built/Changelog-[date]'"
