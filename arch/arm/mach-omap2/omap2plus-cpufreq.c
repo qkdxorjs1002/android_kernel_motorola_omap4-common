@@ -90,7 +90,18 @@ static unsigned int stock_freq_max;
 unsigned int dyn_hotplug = 1;
 module_param(dyn_hotplug, int, 0755);
 
-int oc_val = 1;
+// int oc_val = 1;
+
+#ifdef CONFIG_OMAP4430_GPU_OVERCLOCK
+static const int gpu_max_freqs[] = { 153600000, 307200000, 384000000, 416000000 }; // [antsvx]: must match opp4xxx_data.c:omap443x_opp_def_list gpu table high frequencies
+#define DEFAULT_MAX_GPU_FREQUENCY_INDEX  3
+static int gpu_freq_idx = DEFAULT_MAX_GPU_FREQUENCY_INDEX;
+#endif
+
+#ifdef CONFIG_OMAP4430_IVA_OVERCLOCK
+#define OMAP4430_IVA_OC_FREQUENCY 430000000 // must match value in opp4xxx_data.c
+static int iva_freq_oc = 0; // boolean flag
+#endif
 
 #ifdef CONFIG_BATTERY_FRIEND
 struct cpufreq_policy *policy;
@@ -693,6 +704,73 @@ static int omap_cpu_exit(struct cpufreq_policy *policy)
 	return 0;
 }
 
+
+#ifdef CONFIG_OMAP4430_GPU_OVERCLOCK
+
+static ssize_t show_gpu_max_freq(struct cpufreq_policy *policy, char *buf)
+{
+	return sprintf(buf, "%d\n", gpu_max_freqs[gpu_freq_idx] / 1000000); // store frequecny in Mhz
+}
+
+static ssize_t store_gpu_max_freq(struct cpufreq_policy *policy, const char *buf, size_t size)
+{
+	int prev_idx;
+        struct device *dev;
+	int val, i, i_min, ret;
+
+	prev_idx = gpu_freq_idx;
+	if (prev_idx < 0 || prev_idx >= ARRAY_SIZE(gpu_max_freqs)) {
+		// shouldn't be here
+		pr_info("gpu_oc prev_idx error, bailing\n");	
+		return size;
+	}
+
+	sscanf(buf, "%d\n", &val);
+	
+	// [antsvx] can process values as: index into table (gpu_freq_val = 0..ARRAY_SIZE-1), frequency/MHz, frequency. Frequencies can be approximate.
+	
+	if ( val < 32 ) // small number, must be index 
+		gpu_freq_idx = val;
+	else {
+		if ( val < 10000000 ) val *= 1000000; // below 10Mhz, must be frequency in MHz
+		
+		for ( i = 0, i_min = INT_MAX; i < ARRAY_SIZE( gpu_max_freqs ); ++i )
+			if ( abs( val - gpu_max_freqs[i] ) < i_min ) {
+				gpu_freq_idx = i;
+				i_min = abs( val - gpu_max_freqs[i] );
+			}
+	}	
+         
+	if (gpu_freq_idx < 0) gpu_freq_idx = 0;
+	if (gpu_freq_idx >= ARRAY_SIZE(gpu_max_freqs) ) gpu_freq_idx = ARRAY_SIZE(gpu_max_freqs)-1;
+	if (prev_idx == gpu_freq_idx) return size;
+
+        dev = omap_hwmod_name_get_dev("gpu");
+	if (IS_ERR(dev)) {
+		pr_err("gpu_oc: no gpu device, bailing\n" );
+		return size;
+	}
+
+        for ( i = 0; i < ARRAY_SIZE(gpu_max_freqs); ++i ) // [antsvx] disable all higher frequencies and enable lower
+        	if ( i <= gpu_freq_idx ) { 
+			ret = opp_enable(dev, gpu_max_freqs[i]);
+			pr_info("gpu speed enabled:  %d, ret: %d\n", gpu_max_freqs[i], ret);
+                } else {
+        		ret = opp_disable(dev, gpu_max_freqs[i]);
+        		pr_info("gpu speed disabled: %d, ret: %d\n", gpu_max_freqs[i], ret);
+		}
+	
+	return size;
+}
+
+static struct freq_attr omap_cpufreq_attr_gpu_max_freq = {
+	.attr = { .name = "gpu_max_freq", .mode = 0644,},
+	.show = show_gpu_max_freq,
+	.store = store_gpu_max_freq,
+};
+#endif // CONFIG_OMAP4430_GPU_OVERCLOCK
+
+// Screen Off Max Freq
 static ssize_t show_screen_off_freq(struct cpufreq_policy *policy, char *buf)
 {
 	return sprintf(buf, "%u\n", screen_off_max_freq);
@@ -718,16 +796,9 @@ static ssize_t store_screen_off_freq(struct cpufreq_policy *policy,
 		CPUFREQ_RELATION_H, &index);
 	if (ret)
 		goto out;
-/*#ifdef CONFIG_BATTERY_FRIEND
-if (likely(battery_friend_active))
-	{
-	screen_off_max_freq = 400000;
-	}
-else 
+
 	screen_off_max_freq = freq_table[index].frequency;
-#else */
-	screen_off_max_freq = freq_table[index].frequency;
-//#endif
+
 	ret = count;
 
 out:
@@ -741,8 +812,10 @@ struct freq_attr omap_cpufreq_attr_screen_off_freq = {
 		},
 	.show = show_screen_off_freq,
 	.store = store_screen_off_freq,
-};
+}; // Screen Off Max Freq
 
+
+// Screen On Max freq
 static ssize_t show_screen_on_freq(struct cpufreq_policy *policy, char *buf)
 {
 return sprintf(buf, "%u\n", screen_on_min_freq);
@@ -768,17 +841,9 @@ mutex_lock(&omap_cpufreq_lock);
 		CPUFREQ_RELATION_H, &index);
 	if (ret)
 		goto out;
-/* #ifdef CONFIG_BATTERY_FRIEND
 
-if (likely(battery_friend_active))
-	{
-	screen_on_min_freq = polmin;
-	}
-else
-      	screen_on_min_freq = freq_table[index].frequency;
-#else */
 	screen_on_min_freq = freq_table[index].frequency;
-// #endif
+
 	ret = count;
 	
 	min_capped = screen_on_min_freq;
@@ -794,20 +859,10 @@ out:
 	},
 		.show = show_screen_on_freq,
 		.store = store_screen_on_freq,
-};
+}; // Screen On Max freq
 
-/* static ssize_t show_gpu_clock(struct cpufreq_policy *policy, char *buf) {
-struct clk *clk = clk_get(NULL, "dpll_per_m7x2_ck");	
-return sprintf(buf, "%lu Mhz\n", clk->rate/1000000);
-}
 
-static struct freq_attr gpu_clock = {
-    .attr = {.name = "gpu_clock",
-	     .mode=0644,
-				    },
-	     .show = show_gpu_clock,
-}; */
-
+// Clock Speed
 static ssize_t show_iva_clock(struct cpufreq_policy *policy, char *buf) {
 struct clk *clk = clk_get(NULL, "dpll_iva_m5x2_ck");	
 return sprintf(buf, "%lu Mhz\n", clk->rate/1000000);
@@ -830,7 +885,7 @@ static struct freq_attr core_clock = {
 	     .mode=0644,
 				    },
 	     .show = show_core_clock,
-};
+}; // Clock Speed
 
 /* OMAP4 MPU Voltage Control struct opp is defined elsewhere, but not in any accessible header files */
 struct opp {
@@ -929,74 +984,80 @@ static struct freq_attr omap_uV_mV_table = {
 };
 
 
+#ifdef CONFIG_OMAP4430_IVA_OVERCLOCK
 
-
-/*
- * Variable GPU OC - sysfs interface for cycling through different GPU top speeds
- * Author: imoseyon@gmail.com
- *
-*/
-
-/* static ssize_t show_gpu_oc(struct cpufreq_policy *policy, char *buf)
+static ssize_t show_iva_freq_oc(struct cpufreq_policy *policy, char *buf)
 {
-	return sprintf(buf, "%d\n", oc_val);
+	return sprintf(buf, "%d\n", iva_freq_oc );
 }
 
-static ssize_t store_gpu_oc(struct cpufreq_policy *policy, const char *buf, size_t size)
+static ssize_t store_iva_freq_oc(struct cpufreq_policy *policy, const char *buf, size_t size)
 {
-	int prev_oc, ret1, ret2; 
-        struct device *dev;
-	unsigned long gpu_freqs[4] = {307200000,384000000,416000000};
+	int prev_oc, ret;
+	struct device *dev;
+	struct voltagedomain *mpu_voltdm;
 
-	prev_oc = oc_val;
-	if (prev_oc < 0 || prev_oc > 4) {
-		// shouldn't be here
-		pr_info("[dtrail] gpu_oc error - bailing\n");	
+	if (iva_freq_oc < 0 || iva_freq_oc > 1 ) {
+		pr_info("iva_oc value error, bailing\n");	
 		return size;
 	}
-	
-	sscanf(buf, "%d\n", &oc_val);
 
-	if (oc_val < 0 ) oc_val = 0;
-	if (oc_val > 4 ) oc_val = 4;
-	if (prev_oc == oc_val) return size;
-
-        dev = omap_hwmod_name_get_dev("gpu");
-
-#ifdef CONFIG_BATTERY_FRIEND
-
-if (likely(battery_friend_active))
-	{
-	oc_val = 0;
+	mpu_voltdm = voltdm_lookup("iva");
+	if ( mpu_voltdm == NULL ) {
+		pr_info("iva_oc voltdomain error, bailing\n");			
+		return size;
 	}
-else
-        ret1 = opp_disable(dev, gpu_freqs[prev_oc]);
-        ret2 = opp_enable(dev, gpu_freqs[oc_val]);
-#else
-        ret1 = opp_disable(dev, gpu_freqs[prev_oc]);
-        ret2 = opp_enable(dev, gpu_freqs[oc_val]);
-#endif
 
-        pr_info("[dtrail] gpu top speed changed from %lu to %lu (%d,%d)\n", 
-		gpu_freqs[prev_oc], gpu_freqs[oc_val], ret1, ret2);
+	prev_oc = iva_freq_oc;
+
+	sscanf(buf, "%d\n", &iva_freq_oc);
+	
+	if (prev_oc == iva_freq_oc) return size;
+
+	mutex_lock(&omap_cpufreq_lock);
+
+	omap_sr_disable_reset_volt(mpu_voltdm);
+
+	dev = omap_hwmod_name_get_dev("iva");
+	if (IS_ERR(dev)) {
+		pr_err("iva_oc: no iva device, bailing\n" );
+		goto Exit;
+	}
+
+        if ( iva_freq_oc )
+        	ret = opp_enable(dev, OMAP4430_IVA_OC_FREQUENCY);
+	else
+		ret = opp_disable(dev, OMAP4430_IVA_OC_FREQUENCY);
+
+	pr_info("iva speed %s:  %d, ret: %d\n", iva_freq_oc ? "enabled" : "disabled", OMAP4430_IVA_OC_FREQUENCY, ret);
+
+Exit:
+	omap_sr_enable(mpu_voltdm, omap_voltage_get_curr_vdata(mpu_voltdm));
+
+	mutex_unlock(&omap_cpufreq_lock);
+
 	return size;
 }
 
-static struct freq_attr gpu_oc = {
-	.attr = {.name = "gpu_oc", .mode=0666,},
-	.show = show_gpu_oc,
-	.store = store_gpu_oc,
-}; */
+static struct freq_attr omap_cpufreq_attr_iva_freq_oc = {
+	.attr = { .name = "iva_freq_oc", .mode = 0644,},
+	.show = show_iva_freq_oc,
+	.store = store_iva_freq_oc,
+};
+
+#endif // CONFIG_OMAP4430_IVA_OVERCLOCK
+
 
 static struct freq_attr *omap_cpufreq_attr[] = {
 	&cpufreq_freq_attr_scaling_available_freqs,
 	&omap_cpufreq_attr_screen_off_freq,
 	&omap_cpufreq_attr_screen_on_freq, 
 	&omap_uV_mV_table,
-	//&gpu_clock,
+#ifdef CONFIG_OMAP4430_GPU_OVERCLOCK
+	&omap_cpufreq_attr_gpu_max_freq,
+#endif
 	&iva_clock,
 	&core_clock,
-	//&gpu_oc,
 	NULL,
 };
 
@@ -1051,7 +1112,13 @@ static int __init omap_cpufreq_init(void)
 {
 	int ret;
 
-	/* oc_val = 0; */
+#ifdef CONFIG_OMAP4430_GPU_OVERCLOCK
+	gpu_freq_idx = DEFAULT_MAX_GPU_FREQUENCY_INDEX;
+#endif
+
+#ifdef CONFIG_OMAP4430_IVA_OVERCLOCK
+	iva_freq_oc = 0;
+#endif
 
 	if (cpu_is_omap24xx())
 		mpu_clk_name = "virt_prcm_set";
