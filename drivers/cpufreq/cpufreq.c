@@ -32,10 +32,6 @@
 
 #include <trace/events/power.h>
 
-#ifdef CONFIG_BATTERY_FRIEND
-extern bool battery_friend_active;
-#endif
-
 /**
  * The "cpufreq driver" - the arch- or hardware-dependent low
  * level driver of CPUFreq support, and its spinlock. This lock
@@ -1698,30 +1694,11 @@ static int __cpufreq_set_policy(struct cpufreq_policy *data,
 
 	// Set min speed to 100mhz
 
-/* Battery_friend option will cause static 100 mhz min policy */
-#ifdef CONFIG_BATTERY_FRIEND
-if (likely(battery_friend_active))
-	{
-	if (data->min > 100000)
-	data->min = 100000;
-	if (data->max > 1000000)
-	data->max = 1000000;
-	pr_debug("Battery Friend: new min and max freqs are %u - %u kHz\n",
-					data->min, data->max);
-	}
-else
+
 	data->min = policy->min;
 	data->max = policy->max;
 	pr_debug("new min and max freqs are %u - %u kHz\n",
 					data->min, data->max);
-#else
-	data->min = policy->min;
-	data->max = policy->max;
-	pr_debug("new min and max freqs are %u - %u kHz\n",
-					data->min, data->max);
-#endif
-
-
 
 	if (cpufreq_driver->setpolicy) {
 		data->policy = policy->policy;
