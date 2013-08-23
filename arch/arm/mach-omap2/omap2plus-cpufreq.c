@@ -88,7 +88,7 @@ int oc_val = 0;
 struct cpufreq_policy *policy;
 extern bool battery_friend_active;
 
-static int polmin = 100000;
+// static int polmin = 200000;
 static int polmax = 1000000;
 #endif
 
@@ -596,8 +596,7 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 #ifdef CONFIG_BATTERY_FRIEND
 if (likely(battery_friend_active))
 	{
-	if (policy->min > polmin)
-	policy->min = polmin;
+	policy->min = policy->cpuinfo.min_freq;
 	if (policy->max > polmax)
 	policy->max = polmax;
 	policy->cur = omap_getspeed(policy->cpu);
@@ -686,7 +685,7 @@ static ssize_t store_screen_off_freq(struct cpufreq_policy *policy,
 #ifdef CONFIG_BATTERY_FRIEND
 if (likely(battery_friend_active))
 	{
-	screen_off_max_freq = 300000;
+	screen_off_max_freq = 500000;
 	}
 else 
 	screen_off_max_freq = freq_table[index].frequency;
