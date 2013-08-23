@@ -30,7 +30,6 @@
 #include <linux/thermal_framework.h>
 #include <linux/platform_device.h>
 #include <linux/earlysuspend.h>
-#include <linux/battery_friend.h>
 
 #include <asm/system.h>
 #include <asm/smp_plat.h>
