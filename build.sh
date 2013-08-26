@@ -5,7 +5,6 @@ set -m
 echo "Cleaning out kernel source directory..."
 echo " "
 make mrproper
-make ARCH=arm distclean
 
 # We build the kernel and its modules first
 # Launch execute script in background
@@ -14,7 +13,6 @@ echo "Cleaning out Android source directory..."
 echo " "
 cd /data/4.3
 export USE_CCACHE=1
-make ARCH=arm distclean
 make mrproper
 source build/envsetup.sh
 lunch cm_spyder-userdebug
