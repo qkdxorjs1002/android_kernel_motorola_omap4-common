@@ -13,7 +13,8 @@ echo "Cleaning out Android source directory..."
 echo " "
 cd /home/dtrail/android/4.3
 export USE_CCACHE=1
-make mrproper && make ARCH=arm distclean
+make mrproper
+make ARCH=arm distclean
 source build/envsetup.sh
 lunch cm_spyder-userdebug
 
