@@ -1,3 +1,15 @@
+2eae5ee Revert "Added improved glibc memcpy and memmove functions."
+f394ef4 Remove vibrator control file
+33f91b8 Revert "lib/sha1: use the git implementation of SHA-1"
+e8c79f8 Revert "Remove ARM sha1 routines"
+819b6bd Revert "lib/sha1.c: quiet sparse noise about symbol not declared"
+fb23820 Several fixes and changes for 4.3 preparation
+5d0dab8 Revert "Revert "Remove ARM sha1 routines""
+e6b5a22 Revert "Remove ARM sha1 routines"
+13a0bd5 Revert "Revert "Revert "Added optimized CRC32 algorithm."""
+b4f7ca3 i2c-omap: fixes
+77fa8b4 Revert "Revert "Revert "I2C: OMAP: Fix the crash in i2c remove"""
+e52c29a Added todays changelog and updated full history
 41df81a Another build script change
 2cc7bea Added todays changelog and updated full history
 a00fdc2 defconfig enable gamma control
