@@ -1,3 +1,6 @@
+a00fdc2 defconfig enable gamma control
+df9468f Fix build script
+0bdf08b Added todays changelog and updated full history
 89ecad8 Add build script for external server
 1637f6f Revert "Revert "I2C: OMAP: Fix the crash in i2c remove""
 55aac80 Prepare for EMU_UART_DEBUG
