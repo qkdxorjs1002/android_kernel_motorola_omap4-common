@@ -1,3 +1,4 @@
+875de2b defconfig updates
 f16c304 build script: add distclean
 bbd5462 build script: enable localversion vermagic hack - experimental
 7481826 derfconfig changes
