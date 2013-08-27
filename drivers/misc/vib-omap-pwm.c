@@ -24,6 +24,11 @@
 #include <mach/dmtimer.h>
 #include <mach/gpio.h>
 #include <mach/mux.h>
+#include <plat/dmtimer.h> 
+
+#ifdef CONFIG_VIBRATOR_CONTROL
+#include <linux/delay.h>
+#endif 
 
 /* TODO: replace with correct header */
 #include "../staging/android/timed_output.h"
@@ -40,6 +45,26 @@ static unsigned long on_period = 1800;
 static unsigned long off_period = 1200;
 static unsigned long load_reg;
 static unsigned long cmp_reg;
+
+#ifdef CONFIG_VIBRATOR_CONTROL
+extern void vibratorcontrol_register_vibstrength(int vibstrength);
+static DEFINE_MUTEX(vib_enabled);
+void vibratorcontrol_update(int vibstrength)
+{
+	mutex_lock(&vib_enabled);
+	
+	omap_dm_timer_set_load(pwm_timer, 1, -vibstrength);
+	pwm_timer->context.tldr = (unsigned int)-vibstrength; 
+
+	omap_dm_timer_set_match(pwm_timer, 1, -vibstrength+10);
+	pwm_timer->context.tmar = (unsigned int)(-vibstrength+10); 
+
+   	mutex_unlock(&vib_enabled);
+
+    return;
+}
+EXPORT_SYMBOL(vibratorcontrol_update);
+#endif 
 
 static void pwm_timer_init(void)
 {
@@ -131,6 +156,9 @@ static struct timed_output_dev gptimer_pwm_vibrator = {
 
 void __init vibrator_omap_pwm_init(int initial_vibrate)
 {
+#ifdef CONFIG_VIBRATOR_CONTROL
+#define PWM_DUTY_MAX
+#endif
 	INIT_WORK(&vibrator_work, update_vibrator);
 
 	spin_lock_init(&vibe_lock);
@@ -152,12 +180,18 @@ void __init vibrator_omap_pwm_init(int initial_vibrate)
 
 	load_reg = 32768 * (on_period + off_period) / 1000000;
 	cmp_reg = 32768 * off_period / 1000000;
-
+#ifdef CONFIG_VIBRATOR_CONTROL
+	PWM_DUTY_MAX += load_reg;
+	PWM_DUTY_MAX += cmp_reg;
+#endif
 	vibrator_enable(NULL, 0);
 	if (initial_vibrate)
 		vibrator_enable(NULL, initial_vibrate);
 
 	pr_info("vib-omap-pwm initialized\n");
+#ifdef CONFIG_VIBRATOR_CONTROL
+  vibratorcontrol_register_vibstrength(PWM_DUTY_MAX);
+#endif 
 }
 
 MODULE_DESCRIPTION("timed output gptimer pwm vibrator device");
