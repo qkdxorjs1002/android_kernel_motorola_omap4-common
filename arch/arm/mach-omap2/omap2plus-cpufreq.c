@@ -52,6 +52,10 @@
 #include <linux/live_oc.h>
 #endif
 
+#ifdef CONFIG_SUSPEND_GOV
+extern bool suspend_gov;
+#endif
+
 #ifdef CONFIG_SMP
 struct lpj_info {
 	unsigned long	ref;
@@ -324,7 +328,26 @@ static int omap_target(struct cpufreq_policy *policy,
 #ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
 #define MAX_GOV_NAME_LEN 16
 static char cpufreq_default_gov[CONFIG_NR_CPUS][MAX_GOV_NAME_LEN];
-static char *cpufreq_ondemand_gov = "ondemand";
+static char *cpufreq_ondemand_gov;
+
+#ifdef CONFIG_SUSPEND_GOV
+    if (likely(suspend_gov))
+	{
+ 	       if (suspend_gov == 0) {
+cpufreq_ondemand_gov = "ondemand";
+	} else if (suspend_gov == 1) {
+cpufreq_ondemand_gov = "ktoonservative";
+	} else if (suspend_gov == 2) {
+cpufreq_ondemand_gov = "conservative";
+	} else if (suspend_goc == 3) {
+cpufreq_ondemand_gov = "ondemandx";
+	}
+ }
+else
+cpufreq_ondemand_gov = "ondemand";
+#else
+cpufreq_ondemand_gov = "ondemand";
+#endif
 
 static void cpufreq_store_default_gov(void)
 {

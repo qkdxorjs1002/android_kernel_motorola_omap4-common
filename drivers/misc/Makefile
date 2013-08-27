@@ -83,3 +83,4 @@ obj-$(CONFIG_LIVE_OC)		+= live_oc.o
 obj-$(CONFIG_FSYNC_CONTROL)  	+= fsync_control.o
 obj-$(CONFIG_BLX)    		+= blx.o
 obj-$(CONFIG_BATTERY_FRIEND)	+= battery_friend.o
+obj-$(CONFIG_SUSPEND_GOV)	+= suspend_gov.o

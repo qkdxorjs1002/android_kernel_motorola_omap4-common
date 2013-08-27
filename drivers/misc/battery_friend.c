@@ -2,7 +2,6 @@
  * Author: Manuel Manz alias dtrail <mnl.manz@gmail.com>
  *
  * Copyright 2013 Manuel Manz
- * Copyright 2012 Manuel Manz
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -74,15 +73,15 @@ static ssize_t battery_friend_earlysuspend_show(struct kobject *kobj,
 	return sprintf(buf, "early suspend active: %u\n", battery_friend_early_suspend_active);
 }
 static struct kobj_attribute battery_friend_active_attribute = 
-	__ATTR(Battery_friend_active, 0666,
+	__ATTR(battery_friend_active, 0666,
 		battery_friend_active_show,
 		battery_friend_active_store);
 
 static struct kobj_attribute battery_friend_version_attribute = 
-	__ATTR(Battery_friend_version, 0444, battery_friend_version_show, NULL);
+	__ATTR(battery_friend_version, 0444, battery_friend_version_show, NULL);
 
 static struct kobj_attribute battery_friend_earlysuspend_attribute = 
-	__ATTR(Battery_friend_earlysuspend, 0444, battery_friend_earlysuspend_show, NULL);
+	__ATTR(battery_friend_earlysuspend, 0444, battery_friend_earlysuspend_show, NULL);
 
 static struct attribute *battery_friend_active_attrs[] =
 	{
@@ -132,7 +131,7 @@ static int battery_friend_init(void)
 	int sysfs_result;
 
 
-	battery_friend_kobj = kobject_create_and_add("battery_Friend", kernel_kobj);
+	battery_friend_kobj = kobject_create_and_add("battery_friend", kernel_kobj);
 	if (!battery_friend_kobj) {
 		pr_err("%s battery_friend kobject create failed!\n", __FUNCTION__);
 		return -ENOMEM;
