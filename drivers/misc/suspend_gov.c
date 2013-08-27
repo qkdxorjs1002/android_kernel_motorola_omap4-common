@@ -2,7 +2,6 @@
  * Author: Manuel Manz alias dtrail <mnl.manz@gmail.com>
  *
  * Copyright 2013 Manuel Manz
- * Copyright 2012 Manuel Manz
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -33,7 +32,7 @@ bool suspend_gov __read_mostly = false;
 static ssize_t suspend_gov_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
 {
-	return sprintf(buf, "%u\n", (suspend_gov ? 0, 1, 2, 3, 4));
+	return sprintf(buf, "%u\n", suspend_gov);
 }
 
 
