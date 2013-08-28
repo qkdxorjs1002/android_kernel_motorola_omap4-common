@@ -1,3 +1,6 @@
+6353f4f Suspend Governor: Fix some stupid mistakes
+f958405 Suspend Governor: Set integer to unsigned integer
+a8dd98a Added todays changelog and updated full history
 53e337b Revert "Revert "Revert "Revert "Revert "I2C: OMAP: Fix the crash in i2c remove"""""
 392759d Suspend Governor: fix definition of suspend_goc
 259db3e Suspend Governor: Use integer value instead of empt type 'bool'
