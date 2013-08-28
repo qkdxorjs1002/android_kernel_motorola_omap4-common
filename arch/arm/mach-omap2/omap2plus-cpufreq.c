@@ -331,8 +331,6 @@ static char cpufreq_default_gov[CONFIG_NR_CPUS][MAX_GOV_NAME_LEN];
 static char *cpufreq_ondemand_gov;
 
 #ifdef CONFIG_SUSPEND_GOV
-    if (likely(suspend_gov))
-	{
  	       if (suspend_gov == 0) {
 cpufreq_ondemand_gov = "ondemand";
 	} else if (suspend_gov == 1) {
@@ -342,9 +340,6 @@ cpufreq_ondemand_gov = "conservative";
 	} else if (suspend_goc == 3) {
 cpufreq_ondemand_gov = "ondemandx";
 	}
- }
-else
-cpufreq_ondemand_gov = "ondemand";
 #else
 cpufreq_ondemand_gov = "ondemand";
 #endif
