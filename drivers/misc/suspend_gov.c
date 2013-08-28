@@ -26,7 +26,7 @@
 static DEFINE_MUTEX(suspend_mutex);
 
 bool suspend_gov_early_suspend_active __read_mostly = true;
-bool suspend_gov __read_mostly = false;
+int suspend_gov __read_mostly = false;
 
 
 static ssize_t suspend_gov_show(struct kobject *kobj,
@@ -41,7 +41,7 @@ static ssize_t suspend_gov_store(struct kobject *kobj,
 {
 	unsigned int data;
 
-	if(sscanf(buf, "%u\n", &data) == 0) {
+	if(sscanf(buf, "%u\n", &data) == 1) {
 		if (data == 0) {
 			pr_info("%s: Suspend Governor is ondemand\n", __FUNCTION__);
 			suspend_gov = true;

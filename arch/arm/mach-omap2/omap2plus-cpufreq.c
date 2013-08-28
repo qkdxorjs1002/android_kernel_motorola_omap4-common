@@ -53,7 +53,7 @@
 #endif
 
 #ifdef CONFIG_SUSPEND_GOV
-extern bool suspend_gov;
+extern int suspend_gov;
 #endif
 
 #ifdef CONFIG_SMP
