@@ -25,8 +25,8 @@
 
 static DEFINE_MUTEX(suspend_mutex);
 
-bool suspend_gov_early_suspend_active __read_mostly = true;
-int suspend_gov __read_mostly = false;
+bool suspend_gov_early_suspend_active __read_mostly = false;
+unsigned int suspend_gov __read_mostly = true;
 
 
 static ssize_t suspend_gov_show(struct kobject *kobj,
