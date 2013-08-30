@@ -551,6 +551,13 @@ config OMAP4_PPA_CPU1_ONLINE_BUG
 
 	  If, on the other hand, you do not understand the change, leave the
 	  default as enabled.
+
+config SUSPEND_GOV
+        bool "Support for suspend governor control"
+        default y
+        help
+          Say Y here to enable Suspend Governor Control
+
 endmenu
 
 config RQ_STATS

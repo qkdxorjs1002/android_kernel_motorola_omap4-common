@@ -53,7 +53,7 @@
 #endif
 
 #ifdef CONFIG_SUSPEND_GOV
-extern unsigned int suspend_gov;
+#include <linux/suspend_gov.h>
 #endif
 
 #ifdef CONFIG_SMP
@@ -331,17 +331,62 @@ static char cpufreq_default_gov[CONFIG_NR_CPUS][MAX_GOV_NAME_LEN];
 static char *cpufreq_ondemand_gov;
 
 #ifdef CONFIG_SUSPEND_GOV
- 	       if (suspend_gov == 0) {
-cpufreq_ondemand_gov = "ondemand";
-	} else if (suspend_gov == 1) {
-cpufreq_ondemand_gov = "ktoonservative";
-	} else if (suspend_gov == 2) {
-cpufreq_ondemand_gov = "conservative";
-	} else if (suspend_goc == 3) {
-cpufreq_ondemand_gov = "ondemandx";
+static ssize_t show_suspend_gov(struct cpufreq_policy *policy, char *buf)
+{
+	return sprintf(buf, "%d\n", new_gov);
+}
+
+static ssize_t store_suspend_gov(struct cpufreq_policy *policy, const char *buf, size_t size)
+{
+	int prev_oc, ret1, ret2; 
+
+	unsigned int governor[4] = {0,1,2,3};
+
+	prev_gov = new_gov;
+	if (prev_gov < 0 || prev_gov > 3) {
+		// shouldn't be here
+		pr_info("[dtrail] suspend governor error - bailing\n");	
+		return size;
 	}
+	
+	sscanf(buf, "%d\n", &gov_val);
+
+	if (gov_val == 0) {
+		*cpufreq_ondemand_gov = "ondemand";
+			pr_info("%s: Suspend Governor is Ondemand\n");
+
+	} else if (gov_val == 1) {
+		*cpufreq_ondemand_gov = "ktoonservative";
+			pr_info("%s: Suspend Governor is Ktoonservative\n");
+
+	} else if (gov_val == 2) {
+		*cpufreq_ondemand_gov = "conservative";
+			pr_info("%s: Suspend Governor is Conservative\n");
+
+	} else if (gov_val == 3) {
+		*cpufreq_ondemand_gov = "ondemandx";		
+			pr_info("%s: Suspend Governor is OndemandX\n");
+
+	} else
+		pr_info("%s: Suspend Governor unknown input!\n");
+			
+		 return size;
+
+        dev = omap_hwmod_name_get_dev("gpu");
+
+
+        pr_info("[dtrail] suspend governor changed from %u to %u (%d,%d)\n", 
+		governor[prev_gov], governor[new_gov]);
+	return size;
+}
+
+static struct freq_attr suspend_gov = {
+	.attr = {.name = "suspend_gov", .mode=0666,},
+	.show = show_suspend_gov,
+	.store = store_suspend_gov,
+};
 #else
-cpufreq_ondemand_gov = "ondemand";
+*cpufreq_ondemand_gov = "ondemand";
 #endif
 
 static void cpufreq_store_default_gov(void)
@@ -894,6 +939,7 @@ static struct freq_attr *omap_cpufreq_attr[] = {
 	&cpufreq_freq_attr_scaling_available_freqs,
 	&omap_cpufreq_attr_screen_off_freq,
 	&omap_uV_mV_table,
+	&suspend_gov
 	&gpu_oc,
 	NULL,
 };

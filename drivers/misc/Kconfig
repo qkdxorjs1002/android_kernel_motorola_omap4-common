@@ -734,13 +734,6 @@ config BATTERY_FRIEND
         bool "Support for Battery friendly mode"
         default y
         help
-          Say Y here to enable Battery Friend Feature
-
-config SUSPEND_GOV
-        bool "Support for suspend governor control"
-        default y
-        help
-          Say Y here to enable Suspend Governor Control
- 
+          Say Y here to enable Battery Friend Feature 
 
 endif # MISC_DEVICES
