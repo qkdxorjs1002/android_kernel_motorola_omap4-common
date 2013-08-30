@@ -1,0 +1,62 @@
+70357b4 defconfig: Turn of basic debugging
+fef2aab remove uneccessary file
+bf11ecb Revert "Revert "Revert "Revert "Revert "i2c-algo-bit: Generate correct i2c address sequence for 10-bit target"""""
+7e1b108 Suspend Governor: Not a module anymore. Suspend Governor Control is now given by cpufreq userspace.
+4da82ec Added todays changelog and updated full history
+6353f4f Suspend Governor: Fix some stupid mistakes
+f958405 Suspend Governor: Set integer to unsigned integer
+a8dd98a Added todays changelog and updated full history
+53e337b Revert "Revert "Revert "Revert "Revert "I2C: OMAP: Fix the crash in i2c remove"""""
+392759d Suspend Governor: fix definition of suspend_goc
+259db3e Suspend Governor: Use integer value instead of empt type 'bool'
+6f7506c Added todays changelog and updated full history
+b88bdbb Suspend Governor: Fix range of input value
+a9d53ef remove auto localversion
+5ec11f9 Added todays changelog and updated full history
+abd60b0 Added todays changelog and updated full history
+43756d5 Merge branch 'JBX_4.3' of https://github.com/RAZR-K-Devs/android_kernel_motorola_omap4-common into JBX_4.3
+e33d95f Add new feature 'Suspend Governor Control' A new option written by me for switch suspend governor via userspace
+aa6b0b7 Added todays changelog and updated full history
+875de2b defconfig updates
+f16c304 build script: add distclean
+bbd5462 build script: enable localversion vermagic hack - experimental
+7481826 derfconfig changes
+f84d86b Revert "Revert "Revert "Revert "i2c-algo-bit: Generate correct i2c address sequence for 10-bit target""""
+31c315f Revert "Revert "Enable optimized CRC32 and RWSEM algorithms""
+73caae3 Revert "Revert "Optimize ARM AWSEM algorithm""
+1b8c4af Revert "Revert "Revert "Revert "I2C: OMAP: Fix the crash in i2c remove""""
+573b635 Revert "i2c-omap: fixes"
+9cc7e71 Revert "Revert "Revert "Revert "Added optimized CRC32 algorithm.""""
+a0677d3 Revert "Revert "Remove ARM sha1 routines""
+afac4a1 Revert "Revert "Revert "Remove ARM sha1 routines"""
+8ec7f2b Revert "Several fixes and changes for 4.3 preparation"
+9c24b04 Revert "Revert "lib/sha1.c: quiet sparse noise about symbol not declared""
+a1ae6a3 Revert "Revert "Remove ARM sha1 routines""
+1de092f Revert "Revert "lib/sha1: use the git implementation of SHA-1""
+11ad591 Revert "Remove vibrator control file"
+09cc26a Revert "Revert "Added improved glibc memcpy and memmove functions.""
+4d38e01 Revert "Revert "PM / Usermodehelper: Fix freezer failures due to racy usermodehelper_is_disabled()""
+f3b8feb Revert "PM / Usermodehelper: Fix freezer failures due to racy usermodehelper_is_disabled()"
+7e77619 Added todays changelog and updated full history
+2eae5ee Revert "Added improved glibc memcpy and memmove functions."
+f394ef4 Remove vibrator control file
+33f91b8 Revert "lib/sha1: use the git implementation of SHA-1"
+e8c79f8 Revert "Remove ARM sha1 routines"
+819b6bd Revert "lib/sha1.c: quiet sparse noise about symbol not declared"
+fb23820 Several fixes and changes for 4.3 preparation
+5d0dab8 Revert "Revert "Remove ARM sha1 routines""
+e6b5a22 Revert "Remove ARM sha1 routines"
+13a0bd5 Revert "Revert "Revert "Added optimized CRC32 algorithm."""
+b4f7ca3 i2c-omap: fixes
+77fa8b4 Revert "Revert "Revert "I2C: OMAP: Fix the crash in i2c remove"""
+e52c29a Added todays changelog and updated full history
+41df81a Another build script change
+2cc7bea Added todays changelog and updated full history
+a00fdc2 defconfig enable gamma control
+df9468f Fix build script
+0bdf08b Added todays changelog and updated full history
+89ecad8 Add build script for external server
+1637f6f Revert "Revert "I2C: OMAP: Fix the crash in i2c remove""
+55aac80 Prepare for EMU_UART_DEBUG
+a4b0caa defconfig updates
+09283da build script fix
