@@ -52,10 +52,6 @@
 #include <linux/live_oc.h>
 #endif
 
-#ifdef CONFIG_SUSPEND_GOV
-#include <linux/suspend_gov.h>
-#endif
-
 #ifdef CONFIG_SMP
 struct lpj_info {
 	unsigned long	ref;
@@ -939,7 +935,6 @@ static struct freq_attr *omap_cpufreq_attr[] = {
 	&cpufreq_freq_attr_scaling_available_freqs,
 	&omap_cpufreq_attr_screen_off_freq,
 	&omap_uV_mV_table,
-	&suspend_gov
 	&gpu_oc,
 	NULL,
 };
