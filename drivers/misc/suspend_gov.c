@@ -28,6 +28,8 @@
 
 static DEFINE_MUTEX(suspend_mutex);
 
+char *cpufreq_ondemand_gov;
+
 int suspend_gov;
 unsigned int gov_val;
 

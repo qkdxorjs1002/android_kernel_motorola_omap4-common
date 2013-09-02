@@ -1,4 +1,4 @@
-/* include/linux/live_oc.h */
+/* include/linux/suspend_gov.h */
 
 #ifndef _LINUX_SUSPEND_GOV_H
 #define _LINUX_SUSPEND_GOV_H
