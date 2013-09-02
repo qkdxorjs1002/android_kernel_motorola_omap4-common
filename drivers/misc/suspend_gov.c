@@ -44,6 +44,11 @@ static ssize_t suspend_gov_store(struct kobject *kobj,
 		struct kobj_attribute *attr, const char *buf, size_t count)
 {
 
+	unsigned int prev_gov; 
+	
+	prev_gov = gov_val;
+
+	if (prev_gov < 0 || prev_gov > 3) { 
 	sscanf(buf, "%d\n", &gov_val);
 
 	if (gov_val < 0) gov_val = 0;
@@ -51,8 +56,9 @@ static ssize_t suspend_gov_store(struct kobject *kobj,
 		// shouldn't be here
 		pr_info("[dtrail] suspend governor error - bailing\n");	
 		return count;
-
-	if (gov_val == 0) {
+	}
+	
+	  else if (gov_val == 0) {
 		cpufreq_ondemand_gov = "ondemand";
 			pr_info("Suspend Governor: Ondemand\n");
 
@@ -67,6 +73,7 @@ static ssize_t suspend_gov_store(struct kobject *kobj,
 	} else if (gov_val == 3) {
 		cpufreq_ondemand_gov = "ondemandx";		
 			pr_info("Suspend Governor: OndemandX\n");
+	}
 	
 return count;
 
