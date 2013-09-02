@@ -1,3 +1,6 @@
+4f33915 build script update: Fix localversion
+242d2f1 build script updates
+49a2a02 Remove trash, update changelog
 588a1d8 defconfig updates, add new build script
 1a5a01a Added todays changelog and updated full history
 b5553b5 build script update
