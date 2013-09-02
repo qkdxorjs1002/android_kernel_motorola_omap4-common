@@ -49,8 +49,10 @@ static ssize_t suspend_gov_store(struct kobject *kobj,
 	prev_gov = gov_val;
 
 	if (prev_gov < 0 || prev_gov > 3) { 
-	sscanf(buf, "%d\n", &gov_val);
+
 	}
+
+	sscanf(buf, "%d\n", &gov_val);
 	
 	if (gov_val == 0) {
 		cpufreq_ondemand_gov = "ondemand";
