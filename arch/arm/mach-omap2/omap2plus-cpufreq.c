@@ -52,6 +52,10 @@
 #include <linux/live_oc.h>
 #endif
 
+#ifdef CONFIG_SUSPEND_GOV
+#include <linux/suspend_gov.h>
+#endif
+
 #ifdef CONFIG_SMP
 struct lpj_info {
 	unsigned long	ref;
@@ -324,66 +328,6 @@ static int omap_target(struct cpufreq_policy *policy,
 #ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
 #define MAX_GOV_NAME_LEN 16
 static char cpufreq_default_gov[CONFIG_NR_CPUS][MAX_GOV_NAME_LEN];
-static char *cpufreq_ondemand_gov;
-
-#ifdef CONFIG_SUSPEND_GOV
-static ssize_t show_suspend_gov(struct cpufreq_policy *policy, char *buf)
-{
-	return sprintf(buf, "%d\n", new_gov);
-}
-
-static ssize_t store_suspend_gov(struct cpufreq_policy *policy, const char *buf, size_t size)
-{
-	int prev_oc, ret1, ret2; 
-
-	unsigned int governor[4] = {0,1,2,3};
-
-	prev_gov = new_gov;
-	if (prev_gov < 0 || prev_gov > 3) {
-		// shouldn't be here
-		pr_info("[dtrail] suspend governor error - bailing\n");	
-		return size;
-	}
-	
-	sscanf(buf, "%d\n", &gov_val);
-
-	if (gov_val == 0) {
-		*cpufreq_ondemand_gov = "ondemand";
-			pr_info("%s: Suspend Governor is Ondemand\n");
-
-	} else if (gov_val == 1) {
-		*cpufreq_ondemand_gov = "ktoonservative";
-			pr_info("%s: Suspend Governor is Ktoonservative\n");
-
-	} else if (gov_val == 2) {
-		*cpufreq_ondemand_gov = "conservative";
-			pr_info("%s: Suspend Governor is Conservative\n");
-
-	} else if (gov_val == 3) {
-		*cpufreq_ondemand_gov = "ondemandx";		
-			pr_info("%s: Suspend Governor is OndemandX\n");
-
-	} else
-		pr_info("%s: Suspend Governor unknown input!\n");
-			
-		 return size;
-
-        dev = omap_hwmod_name_get_dev("gpu");
-
-
-        pr_info("[dtrail] suspend governor changed from %u to %u (%d,%d)\n", 
-		governor[prev_gov], governor[new_gov]);
-	return size;
-}
-
-static struct freq_attr suspend_gov = {
-	.attr = {.name = "suspend_gov", .mode=0666,},
-	.show = show_suspend_gov,
-	.store = store_suspend_gov,
-};
-#else
-*cpufreq_ondemand_gov = "ondemand";
-#endif
 
 static void cpufreq_store_default_gov(void)
 {
@@ -442,6 +386,15 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 
 #if defined(CONFIG_BATTERY_FRIEND) && defined(CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF)
     if (likely(battery_friend_active))
+// Change to defined suspend governor
+	{
+
+		cpufreq_store_default_gov();
+	if (cpufreq_change_gov(cpufreq_ondemand_gov))
+			pr_err("Suspend Governor: Error changing governor to %s\n",
+			cpufreq_ondemand_gov);
+	}
+// Bring CPU1 down
 	{
         if (dyn_hotplug) {
                 if (cpu_online(1))
@@ -450,14 +403,7 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 	pr_info("Battery Friend: CPU1 down due to device suspend\n");
         	}
 	}  
-else   
-	{
 
-		cpufreq_store_default_gov();
-	if (cpufreq_change_gov(cpufreq_ondemand_gov))
-			pr_err("ScreenOff Governor: Error changing governor to %s\n",
-			cpufreq_ondemand_gov);
-	}
 #endif
 
 
@@ -482,6 +428,7 @@ unsigned int cur;
 
 #if defined(CONFIG_BATTERY_FRIEND) && defined(CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF)
     if (likely(battery_friend_active))
+// Bring CPU1 up
 	{
 
         if (dyn_hotplug) {
@@ -491,10 +438,10 @@ unsigned int cur;
 	pr_info("Battery Friend: CPU1 up due to device wakeup\n");
         }
  }   
-else
+// Restore prior governor
 	{
 	if (cpufreq_restore_default_gov())
-		pr_err("ScreenOff Governor: Unable to restore governor\n");
+		pr_err("Suspend Governor: Unable to restore governor\n");
 	}
 #endif
 	if (max_capped) {
