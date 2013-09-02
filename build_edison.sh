@@ -22,7 +22,7 @@ lunch cm_spyder-userdebug
 echo "Building kernel and modules..."
 echo " "
 export LOCALVERSION="-JBX-1.0-Hybrid-Edison"
-make -j4 TARGET_KERNEL_SOURCE=/home/dtrail/android/android_kernel_motorola_omap4-common/ TARGET_KERNEL_CONFIG=mapphone_OCE_defconfig $OUT/boot.img
+make -j4 TARGET_BOOTLOADER_BOARD_NAME=edison TARGET_KERNEL_SOURCE=/home/dtrail/android/android_kernel_motorola_omap4-common/ TARGET_KERNEL_CONFIG=mapphone_OCEdison_defconfig BOARD_KERNEL_CMDLINE='root=/dev/ram0 rw mem=1023M@0x80000000 console=null vram=10300K omapfb.vram=0:8256K,1:4K,2:2040K init=/init ip=off mmcparts=mmcblk1:p7(pds),p15(boot),p16(recovery),p17(cdrom),p18(misc),p19(cid),p20(kpanic),p21(system),p22(cache),p23(preinstall),p24(webtop),p25(userdata) mot_sst=1 androidboot.bootloader=0x0A72' $OUT/boot.img
 
 # We don't use the kernel but the modules
 echo "Copying modules to package folder"
@@ -53,6 +53,6 @@ git log --oneline --since="4 day ago" > /home/dtrail/android/android_kernel_moto
 git log --oneline  > /home/dtrail/android/android_kernel_motorola_omap4-common/changelog/Full_History_Changelog
 git add changelog/ .
 git commit -m "Added todays changelog and updated full history"
-git push origin JBX_4.3
+git push origin EDISON_4.3
 
 echo "done"
