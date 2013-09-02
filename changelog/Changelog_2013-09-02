@@ -1,0 +1,11 @@
+4a4513c Suspend Governor: Code cleanup
+821be36 defconfig updates
+1319c05 Suspend Governor: Add to Makefile and kconfig
+2388410 Suspend Governor: Make suspend_gov a kobject. The module controls the selection of the suspend governor by userspace and the variable will be used in omap2plus-cpufreq
+556e0f4 Added todays changelog and updated full history
+44088b3 Suspend Governor: Fix some stuff
+b0d3656 Added todays changelog and updated full history
+70357b4 defconfig: Turn of basic debugging
+fef2aab remove uneccessary file
+bf11ecb Revert "Revert "Revert "Revert "Revert "i2c-algo-bit: Generate correct i2c address sequence for 10-bit target"""""
+7e1b108 Suspend Governor: Not a module anymore. Suspend Governor Control is now given by cpufreq userspace.
