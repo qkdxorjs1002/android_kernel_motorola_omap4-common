@@ -46,8 +46,8 @@ static ssize_t suspend_gov_store(struct kobject *kobj,
 
 	sscanf(buf, "%d\n", &gov_val);
 
-	if (gov_val < 0) gov_val == 0;
-	if (gov_val > 3) gov_val == 3;
+	if (gov_val < 0) gov_val = 0;
+	if (gov_val > 3) gov_val = 3;
 		// shouldn't be here
 		pr_info("[dtrail] suspend governor error - bailing\n");	
 		return count;

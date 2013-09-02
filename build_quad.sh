@@ -5,6 +5,7 @@ set -m
 echo "Cleaning out kernel source directory..."
 echo " "
 make mrproper
+make ARCH=arm distclean
 
 # We build the kernel and its modules first
 # Launch execute script in background
