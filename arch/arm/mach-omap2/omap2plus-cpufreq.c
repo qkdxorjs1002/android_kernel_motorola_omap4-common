@@ -390,9 +390,12 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 	{
 
 		cpufreq_store_default_gov();
+		pr_info("Suspend Governor: Restored stored user governor\n");
 	if (cpufreq_change_gov(cpufreq_ondemand_gov))
 			pr_err("Suspend Governor: Error changing governor to %s\n",
 			cpufreq_ondemand_gov);
+	else
+		pr_info("Suspend Governor: Governor successfully set\n");
 	}
 // Bring CPU1 down
 	{
@@ -442,6 +445,8 @@ unsigned int cur;
 	{
 	if (cpufreq_restore_default_gov())
 		pr_err("Suspend Governor: Unable to restore governor\n");
+	else
+		pr_info("Suspend Governor: Restored user governor\n");
 	}
 #endif
 	if (max_capped) {
