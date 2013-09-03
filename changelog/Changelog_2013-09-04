@@ -1,0 +1,31 @@
+c8dc0aa Suspend Governor: Fix undefined reference error. For some reason (I really don't know) the option cannot be used when it's being renamed...
+0437ae5 Added todays changelog and updated full history
+df8238c Delete old changelogs
+803bf40 build script updates
+19803c3 Enable sound debug options: Some users reported about crashes w/ sound loss. Hope to find something this way
+e4f31ed Revert "Revert "ALSA: hda - fix typo in proc output""
+72acf23 defconfigs: enable more debugging options for now
+87fd8a5 Suspend Governor: Merge old config option into suspend_gov feature
+211e6b5 Added todays changelog and updated full history
+8c33fb8 Suspend Governor: And this is the last damn stupid mistake I made here
+0cd2610 Suspend Governor: Fix another mistake
+e785691 Added todays changelog and updated full history
+b5a8a24 Suspend Governor: Fix my mistake
+42119e6 Added todays changelog and updated full history
+308add4 build script fix
+ed6dade Added todays changelog and updated full history
+45da305 Added todays changelog and updated full history
+4f33915 build script update: Fix localversion
+242d2f1 build script updates
+49a2a02 Remove trash, update changelog
+588a1d8 defconfig updates, add new build script
+1a5a01a Added todays changelog and updated full history
+b5553b5 build script update
+59258b7 Suspend Governor: Add some debugging info and remove unecessary code
+f744c47 Added todays changelog and updated full history
+fc999e4 suspend Governor: Minor fixes
+5bd380b Added todays changelog and updated full history
+4a4513c Suspend Governor: Code cleanup
+821be36 defconfig updates
+1319c05 Suspend Governor: Add to Makefile and kconfig
+2388410 Suspend Governor: Make suspend_gov a kobject. The module controls the selection of the suspend governor by userspace and the variable will be used in omap2plus-cpufreq
