@@ -1,3 +1,4 @@
+57214e7 Added todays changelog and updated full history
 b581efc Enable suspend governor in defconfig
 c8dc0aa Suspend Governor: Fix undefined reference error. For some reason (I really don't know) the option cannot be used when it's being renamed...
 0437ae5 Added todays changelog and updated full history
