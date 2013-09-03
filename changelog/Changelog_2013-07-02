@@ -1,7 +1,0 @@
-cbada46 Added todays changelog
-dc9856f New vibrator control config - not sure
-4731600 Revert "Clean up vibrator driver"
-3df39f0 Added improved glibc memcpy and memmove functions.
-8873c89 Enable optimized CRC32 and RWSEM algorithms
-2abd3de Optimize ARM AWSEM algorithm
-268a702 CPU: Fix governors, increase transition latency
