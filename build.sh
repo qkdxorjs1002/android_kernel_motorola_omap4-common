@@ -12,7 +12,7 @@ make mrproper
 echo "Cleaning out Android source directory..."
 echo " "
 cd /data/4.3
-# export USE_CCACHE=1
+export USE_CCACHE=1
 make mrproper
 make ARCH=arm distclean
 source build/envsetup.sh
