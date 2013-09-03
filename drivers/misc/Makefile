@@ -85,4 +85,4 @@ obj-$(CONFIG_FSYNC_CONTROL)  	+= fsync_control.o
 obj-$(CONFIG_BLX)    		+= blx.o
 obj-$(CONFIG_TOUCH_WAKE)  	+= touch_wake.o
 obj-$(CONFIG_BATTERY_FRIEND)	+= battery_friend.o
-obj-$(CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF)	+= suspend_gov.o
+obj-$(CONFIG_SUSPEND_GOV)	+= suspend_gov.o

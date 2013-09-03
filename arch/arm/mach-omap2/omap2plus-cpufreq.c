@@ -52,7 +52,7 @@
 #include <linux/live_oc.h>
 #endif
 
-#ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
+#ifdef CONFIG_SUSPEND_GOV
 #include <linux/suspend_gov.h>
 #endif
 
@@ -325,7 +325,7 @@ static int omap_target(struct cpufreq_policy *policy,
 	return ret;
 }
 
-#ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
+#ifdef CONFIG_SUSPEND_GOV
 #define MAX_GOV_NAME_LEN 16
 static char cpufreq_default_gov[CONFIG_NR_CPUS][MAX_GOV_NAME_LEN];
 
@@ -384,7 +384,7 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 	lmf_screen_state = false;
 #endif
 
-#ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
+#ifdef CONFIG_SUSPEND_GOV
 
 // Change to defined suspend governor
 
@@ -443,7 +443,7 @@ unsigned int cur;
         }
  }   
 #endif
-#ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
+#ifdef CONFIG_SUSPEND_GOV
 // Restore prior governor
 	{
 	if (cpufreq_restore_default_gov())
