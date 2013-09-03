@@ -325,7 +325,7 @@ static int omap_target(struct cpufreq_policy *policy,
 	return ret;
 }
 
-#ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
+#ifdef CONFIG_SUSPEND_GOV
 #define MAX_GOV_NAME_LEN 16
 static char cpufreq_default_gov[CONFIG_NR_CPUS][MAX_GOV_NAME_LEN];
 
@@ -384,20 +384,21 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 	lmf_screen_state = false;
 #endif
 
-#if defined(CONFIG_BATTERY_FRIEND) && defined(CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF)
-    if (likely(battery_friend_active))
+#ifdef CONFIG_SUSPEND_GOV
+
 // Change to defined suspend governor
-	{
 
 		cpufreq_store_default_gov();
-		pr_info("Suspend Governor: Restored stored user governor\n");
+		pr_info("Suspend Governor: Stored default governor\n");
 	if (cpufreq_change_gov(cpufreq_ondemand_gov))
 			pr_err("Suspend Governor: Error changing governor to %s\n",
 			cpufreq_ondemand_gov);
 	else
 		pr_info("Suspend Governor: Governor successfully set\n");
-	}
+#endif
+#ifdef CONFIG_BATTERY_FRIEND
 // Bring CPU1 down
+    if (likely(battery_friend_active))
 	{
         if (dyn_hotplug) {
                 if (cpu_online(1))
@@ -429,7 +430,7 @@ unsigned int cur;
 	lmf_screen_state = true;
 #endif
 
-#if defined(CONFIG_BATTERY_FRIEND) && defined(CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF)
+#ifdef CONFIG_BATTERY_FRIEND
     if (likely(battery_friend_active))
 // Bring CPU1 up
 	{
@@ -441,6 +442,8 @@ unsigned int cur;
 	pr_info("Battery Friend: CPU1 up due to device wakeup\n");
         }
  }   
+#endif
+#ifdef CONFIG_SUSPEND_GOV
 // Restore prior governor
 	{
 	if (cpufreq_restore_default_gov())
