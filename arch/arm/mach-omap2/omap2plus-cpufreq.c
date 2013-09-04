@@ -410,10 +410,6 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 
 #endif
 // 200mhz min frequency during suspend
-	if (policy->min > polmin)
-	policy->min = polmin;
-	pr_info("Suspend: Set min frequency to %d\n",polmin);
-
 	if (screen_off_max_freq) {
 		max_capped = screen_off_max_freq;
 
@@ -429,9 +425,6 @@ static void omap_cpu_late_resume(struct early_suspend *h)
 unsigned int cur;
 
 	mutex_lock(&omap_cpufreq_lock);
-// Restore default min frequency
-	policy->min = policy->cpuinfo.min_freq;
-	pr_info("Resume: Set min frequency to default\n");
 #ifdef CONFIG_CPU_FREQ_GOV_INTELLIDEMAND
 	lmf_screen_state = true;
 #endif
@@ -612,6 +605,14 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 	 * Because the policy handling is broken in kexec we have to set a rule for all frequencies below 300mhz
 	 * When user has the battery_friend option enabled the min frequency will be statically 100mhz 
 	 */
+if (omap_cpufreq_suspended) {
+	if (policy->min > polmin)
+	policy->min = polmin;
+	if (policy->max > polmax)
+	policy->max = polmax;
+	policy->cur = omap_getspeed(policy->cpu);
+	}
+else
 #ifdef CONFIG_BATTERY_FRIEND
 if (likely(battery_friend_active))
 	{
@@ -629,6 +630,7 @@ else
 	policy->max = policy->cpuinfo.max_freq;
 	policy->cur = omap_getspeed(policy->cpu);
 #endif
+
 	for (i = 0; freq_table[i].frequency != CPUFREQ_TABLE_END; i++)
 		max_freq = max(freq_table[i].frequency, max_freq);
 	max_thermal = max_freq;
