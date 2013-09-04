@@ -1,3 +1,6 @@
+1861959 Suspend Governor: Fixed some typos
+e5e37fe Suspend governor fix, re-enable JRCU, re-enable Topology
+bbbf3bf Added todays changelog and updated full history
 068a422 Added todays changelog and updated full history
 5e9395f Revert CCACHE
 69c3153 Revert back to prior config for Suspend Governor
