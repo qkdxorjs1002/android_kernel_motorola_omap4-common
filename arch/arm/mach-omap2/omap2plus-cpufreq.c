@@ -394,7 +394,7 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 			pr_err("Suspend Governor: Error changing governor to %s\n",
 			governor);
 	else
-		pr_info("Suspend Governor: Governor successfully set to %s\n");
+		pr_info("Suspend Governor: Governor successfully set to %s\n", governor);
 #endif
 #ifdef CONFIG_BATTERY_FRIEND
 // Bring CPU1 down
@@ -412,7 +412,7 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 // 200mhz min frequency during suspend
 	if (policy->min > polmin)
 	policy->min = polmin;
-	pr_info("Suspend: Set min frequency to 200mhz");
+	pr_info("Suspend: Set min frequency to %d\n",polmin);
 
 	if (screen_off_max_freq) {
 		max_capped = screen_off_max_freq;
@@ -431,7 +431,7 @@ unsigned int cur;
 	mutex_lock(&omap_cpufreq_lock);
 // Restore default min frequency
 	policy->min = policy->cpuinfo.min_freq;
-	pr_info("Resume: Set min frequency to default");
+	pr_info("Resume: Set min frequency to default\n");
 #ifdef CONFIG_CPU_FREQ_GOV_INTELLIDEMAND
 	lmf_screen_state = true;
 #endif

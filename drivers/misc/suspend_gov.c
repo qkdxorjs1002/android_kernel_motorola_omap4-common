@@ -55,19 +55,19 @@ static ssize_t suspend_gov_store(struct kobject *kobj,
 	
 	if (gov_val == 0) {
 		governor = cpufreq_gov_ondemand;
-			pr_info("Suspend Governor: Ondemand\n");
+			pr_info("Suspend Governor: %s\n", governor);
 
 	} else if (gov_val == 1) {
 		governor = cpufreq_gov_ktoonservative;
-			pr_info("Suspend Governor: Ktoonservative\n");
+			pr_info("Suspend Governor: %s\n", governor);
 
 	} else if (gov_val == 2) {
 		governor = cpufreq_gov_conservative;
-			pr_info("Suspend Governor: Conservative\n");
+			pr_info("Suspend Governor: %s\n", governor);
 
 	} else if (gov_val == 3) {
 		governor = cpufreq_gov_ondemandx;		
-			pr_info("Suspend Governor: OndemandX\n");
+			pr_info("Suspend Governor: %s\n", governor);
 
 	} else if (gov_val < 0) {
 		gov_val = 0;
