@@ -33,7 +33,7 @@ static DEFINE_MUTEX(suspend_mutex);
 char governor;
 
 char *cpufreq_gov_ondemand = "ondemand";
-char *cpufreq_gov_ktoonservative = "ktoonservative";
+char *cpufreq_gov_interactive = "interactive";
 char *cpufreq_gov_conservative = "conservative";
 char *cpufreq_gov_ondemandx = "ondemandx";
 
@@ -58,7 +58,7 @@ static ssize_t suspend_gov_store(struct kobject *kobj,
 			pr_info("Suspend Governor: %c\n", governor);
 
 	} else if (gov_val == 1) {
-		governor = *cpufreq_gov_ktoonservative;
+		governor = *cpufreq_gov_interactive;
 			pr_info("Suspend Governor: %c\n", governor);
 
 	} else if (gov_val == 2) {
