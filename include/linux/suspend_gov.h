@@ -8,6 +8,6 @@
 #include <linux/cpufreq.h>
 
 // extern int suspend_gov_init(void); 
-extern char *cpufreq_ondemand_gov;
+extern char governor;
 
 #endif

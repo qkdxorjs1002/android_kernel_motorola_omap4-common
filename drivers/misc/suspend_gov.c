@@ -26,9 +26,16 @@
 #define SUSPEND_GOV_VERSION_MAJOR 1
 #define SUSPEND_GOV_VERSION_MINOR 1
 
+#define MAX_GOV_NAME_LEN 16
+
 static DEFINE_MUTEX(suspend_mutex);
 
-char *cpufreq_ondemand_gov;
+char governor;
+
+char *cpufreq_gov_ondemand = "ondemand";
+char *cpufreq_gov_ktoonservative = "ktoonservative";
+char *cpufreq_gov_conservative = "conservative";
+char *cpufreq_gov_ondemandx = "ondemandx";
 
 int suspend_gov;
 unsigned int gov_val;
@@ -44,30 +51,22 @@ static ssize_t suspend_gov_store(struct kobject *kobj,
 		struct kobj_attribute *attr, const char *buf, size_t count)
 {
 
-	unsigned int prev_gov; 
-	
-	prev_gov = gov_val;
-
-	if (prev_gov < 0 || prev_gov > 3) { 
-
-	}
-
 	sscanf(buf, "%d\n", &gov_val);
 	
 	if (gov_val == 0) {
-		cpufreq_ondemand_gov = "ondemand";
+		governor = cpufreq_gov_ondemand;
 			pr_info("Suspend Governor: Ondemand\n");
 
 	} else if (gov_val == 1) {
-		cpufreq_ondemand_gov = "ktoonservative";
+		governor = cpufreq_gov_ktoonservative;
 			pr_info("Suspend Governor: Ktoonservative\n");
 
 	} else if (gov_val == 2) {
-		cpufreq_ondemand_gov = "conservative";
+		governor = cpufreq_gov_conservative;
 			pr_info("Suspend Governor: Conservative\n");
 
 	} else if (gov_val == 3) {
-		cpufreq_ondemand_gov = "ondemandx";		
+		governor = cpufreq_gov_ondemandx;		
 			pr_info("Suspend Governor: OndemandX\n");
 
 	} else if (gov_val < 0) {
