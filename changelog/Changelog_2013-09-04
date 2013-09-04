@@ -1,3 +1,7 @@
+f4291d8 Suspend Governor: Replace Ktoonservative with Interactive because Ktoonservative is the default governor
+c40eabd Disable CPU RELAX
+cfb2b41c build script changes: Don't export changelog on every new build
+af37ded Suspend Governor: Fix some minor stuff
 8b3bb84 Added todays changelog and updated full history
 1861959 Suspend Governor: Fixed some typos
 e5e37fe Suspend governor fix, re-enable JRCU, re-enable Topology
