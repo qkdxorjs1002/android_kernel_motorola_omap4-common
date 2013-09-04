@@ -1,3 +1,11 @@
+e98cc4e OMAP: CPU: Fix suspend freq. Don't set policy in early suspend area - causes reboot immediately
+ed8f938 Revert "Patch to 3.0.9"
+00ac7d4 Patch to 3.0.9
+2fc5262 Revert some testing
+b720e55 fix build path
+83661a7 build script changes
+91af15a Edison build script§
+9909464 Added todays changelog and updated full history
 f4291d8 Suspend Governor: Replace Ktoonservative with Interactive because Ktoonservative is the default governor
 c40eabd Disable CPU RELAX
 cfb2b41c build script changes: Don't export changelog on every new build
