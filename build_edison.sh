@@ -28,8 +28,8 @@ make -j4 TARGET_BOOTLOADER_BOARD_NAME=edison TARGET_KERNEL_SOURCE=/home/dtrail/a
 # We don't use the kernel but the modules
 echo "Copying modules to package folder"
 echo " "
-cp -r /home/dtrail/android/4.3/out/target/product/spyder/system/lib/modules/* /home/dtrail/android/built/rls/system/lib/modules/
-cp /home/dtrail/android/4.3/out/target/product/spyder/kernel /home/dtrail/android/built/rls/system/etc/kexec/
+cp -r /home/dtrail/android/4.3/out/target/product/spyder/system/lib/modules/* /home/dtrail/android/built/edison/rls/system/lib/modules/
+cp /home/dtrail/android/4.3/out/target/product/spyder/kernel /home/dtrail/android/built/edison/rls/system/etc/kexec/
 
 echo "------------- "
 echo "Done building"
@@ -42,7 +42,7 @@ echo " "
 echo "Packaging flashable Zip file..."
 echo " "
 
-cd /home/dtrail/android/built/rls
+cd /home/dtrail/android/built/edison/rls
 zip -r "JBX-Kernel-1.0-Hybrid-Edison-4.3_$(date +"%Y-%m-%d").zip" *
 mv "JBX-Kernel-1.0-Hybrid-Edison-4.3_$(date +"%Y-%m-%d").zip" /home/dtrail/android/out
 
