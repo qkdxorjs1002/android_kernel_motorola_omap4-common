@@ -1,3 +1,5 @@
+18d15d3 Fix accidently set Kernel subversion
+f91ed23 Added todays changelog and updated full history
 e98cc4e OMAP: CPU: Fix suspend freq. Don't set policy in early suspend area - causes reboot immediately
 ed8f938 Revert "Patch to 3.0.9"
 00ac7d4 Patch to 3.0.9
