@@ -5,7 +5,6 @@
 
 #include <linux/suspend_gov.h>
 #include <linux/input.h>
-#include <linux/cpufreq.h>
 
 // extern int suspend_gov_init(void); 
 extern char governor;
