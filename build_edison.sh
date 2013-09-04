@@ -12,7 +12,7 @@ make ARCH=arm distclean
 # First get tags in shell
 echo "Cleaning out Android source directory..."
 echo " "
-cd /home/dtrail/android/4.3
+cd /data/4.3
 export USE_CCACHE=1
 make mrproper
 make ARCH=arm distclean
@@ -28,8 +28,8 @@ make -j4 TARGET_BOOTLOADER_BOARD_NAME=edison TARGET_KERNEL_SOURCE=/home/dtrail/a
 # We don't use the kernel but the modules
 echo "Copying modules to package folder"
 echo " "
-cp -r /home/dtrail/android/4.3/out/target/product/spyder/system/lib/modules/* /home/dtrail/android/built/edison/rls/system/lib/modules/
-cp /home/dtrail/android/4.3/out/target/product/spyder/kernel /home/dtrail/android/built/edison/rls/system/etc/kexec/
+cp -r /data/4.3/out/target/product/spyder/system/lib/modules/* /home/dtrail/android/built/edison/rls/system/lib/modules/
+cp /data/4.3/out/target/product/spyder/kernel /home/dtrail/android/built/edison/rls/system/etc/kexec/
 
 echo "------------- "
 echo "Done building"
