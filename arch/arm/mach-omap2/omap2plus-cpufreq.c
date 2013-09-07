@@ -335,6 +335,7 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 	lmf_screen_state = false;
 #endif
 
+#ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
 #ifdef CONFIG_SUSPEND_GOV
 
 // Change to defined suspend governor
@@ -346,6 +347,7 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 			sgovernor);
 	else
 		pr_info("Suspend Governor: Governor successfully set to %s\n", sgovernor);
+#endif
 #endif
 #ifdef CONFIG_BATTERY_FRIEND
 // Bring CPU1 down
@@ -393,6 +395,7 @@ unsigned int cur;
         }
  }   
 #endif
+#ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
 #ifdef CONFIG_SUSPEND_GOV
 // Restore prior governor
 	{
@@ -401,6 +404,7 @@ unsigned int cur;
 	else
 		pr_info("Suspend Governor: Restored user governor\n");
 	}
+#endif
 #endif
 	if (max_capped) {
 		max_capped = 0;

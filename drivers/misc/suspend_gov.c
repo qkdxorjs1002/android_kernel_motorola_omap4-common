@@ -83,6 +83,7 @@ return count;
 
 }
 
+#ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
 char cpufreq_default_gov[CONFIG_NR_CPUS][MAX_GOV_NAME_LEN];
 #define MAX_GOV_NAME_LEN 16
 
@@ -133,7 +134,7 @@ unsigned int cpu;
 			return ret;
 }
 EXPORT_SYMBOL(cpufreq_restore_default_gov);
-
+#endif
 static ssize_t suspend_gov_version_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
 {
