@@ -12,9 +12,6 @@
 extern char cpufreq_default_gov[CONFIG_NR_CPUS][MAX_GOV_NAME_LEN];
 extern void cpufreq_store_default_gov(void);
 extern int cpufreq_change_gov(char *target_gov);
-static int cpufreq_restore_default_gov(void);
 extern int cpufreq_restore_default_gov(void);
-
-extern char sgovernor;
-
+extern char *cpufreq_conservative_gov;
 #endif

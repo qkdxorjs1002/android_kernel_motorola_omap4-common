@@ -30,12 +30,9 @@
 static DEFINE_MUTEX(suspend_mutex);
 
 unsigned int suspend_gov;
-unsigned int gov_val = 2;
-char sgovernor;
-char *cpufreq_gov_ondemand = "ondemand";
-char *cpufreq_gov_interactive = "interactive";
-char *cpufreq_gov_conservative = "conservative";
-char *cpufreq_gov_ondemandx = "ondemandx";
+int gov_val = 2;
+
+char *cpufreq_conservative_gov = "conservative";
 
 static ssize_t suspend_gov_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
@@ -51,20 +48,20 @@ static ssize_t suspend_gov_store(struct kobject *kobj,
 	sscanf(buf, "%d\n", &gov_val);
 	
 	if (gov_val == 0) {
-		sgovernor = cpufreq_gov_ondemand;
-			pr_info("Suspend Governor: %s\n", sgovernor);
+		char *cpufreq_conservative_gov = "ondemand";
+			pr_info("Suspend Governor: %s\n", cpufreq_conservative_gov);
 
 	} else if (gov_val == 1) {
-		sgovernor = cpufreq_gov_interactive;
-			pr_info("Suspend Governor: %s\n", sgovernor);
+		char *cpufreq_conservative_gov = "interactive";
+			pr_info("Suspend Governor: %s\n", cpufreq_conservative_gov);
 
 	} else if (gov_val == 2) {
-		sgovernor = cpufreq_gov_conservative;
-			pr_info("Suspend Governor: %s\n", sgovernor);
+		char *cpufreq_conservative_gov = "conservative";
+			pr_info("Suspend Governor: %s\n", cpufreq_conservative_gov);
 
 	} else if (gov_val == 3) {
-		sgovernor = cpufreq_gov_ondemandx;		
-			pr_info("Suspend Governor: %s\n", sgovernor);
+		char *cpufreq_conservative_gov = "ondemandx";		
+			pr_info("Suspend Governor: %s\n", cpufreq_conservative_gov);
 
 	} else if (gov_val < 0) {
 		gov_val = 0;
@@ -83,6 +80,7 @@ return count;
 }
 
 #ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
+
 char cpufreq_default_gov[CONFIG_NR_CPUS][MAX_GOV_NAME_LEN];
 #define MAX_GOV_NAME_LEN 16
 
@@ -92,15 +90,14 @@ unsigned int cpu;
 struct cpufreq_policy *policy;
 
 	for (cpu = 0; cpu < CONFIG_NR_CPUS; cpu++) {
-			policy = cpufreq_cpu_get(cpu);
+		policy = cpufreq_cpu_get(cpu);
 		if (policy) {
 			sprintf(cpufreq_default_gov[cpu], "%s",
-			policy->governor->name);
+					policy->governor->name);
 			cpufreq_cpu_put(policy);
 			}
 		}
 	}
-EXPORT_SYMBOL(cpufreq_store_default_gov);
 
 int cpufreq_change_gov(char *target_gov)
 	{
@@ -108,7 +105,6 @@ int cpufreq_change_gov(char *target_gov)
 	for_each_online_cpu(cpu)
 	return cpufreq_set_gov(target_gov, cpu);
 	}
-EXPORT_SYMBOL(cpufreq_change_gov);
 
 int cpufreq_restore_default_gov(void)
 	{
@@ -132,8 +128,8 @@ unsigned int cpu;
 	}
 			return ret;
 }
-EXPORT_SYMBOL(cpufreq_restore_default_gov);
 #endif
+
 static ssize_t suspend_gov_version_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
 {
