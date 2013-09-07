@@ -31,7 +31,7 @@ static DEFINE_MUTEX(suspend_mutex);
 
 unsigned int suspend_gov;
 unsigned int gov_val;
-char *sgovernor;
+char sgovernor;
 
 static ssize_t suspend_gov_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
@@ -44,27 +44,27 @@ static ssize_t suspend_gov_store(struct kobject *kobj,
 		struct kobj_attribute *attr, const char *buf, size_t count)
 {
 
-static char *cpufreq_gov_ondemand = "ondemand";
-static char *cpufreq_gov_interactive = "interactive";
-static char *cpufreq_gov_conservative = "conservative";
-static char *cpufreq_gov_ondemandx = "ondemandx";
+char *cpufreq_gov_ondemand = "ondemand";
+char *cpufreq_gov_interactive = "interactive";
+char *cpufreq_gov_conservative = "conservative";
+char *cpufreq_gov_ondemandx = "ondemandx";
 
 	sscanf(buf, "%d\n", &gov_val);
 	
 	if (gov_val == 0) {
-		*sgovernor = cpufreq_gov_ondemand;
+		sgovernor = *cpufreq_gov_ondemand;
 			pr_info("Suspend Governor: %s\n", sgovernor);
 
 	} else if (gov_val == 1) {
-		*sgovernor = cpufreq_gov_interactive;
+		sgovernor = *cpufreq_gov_interactive;
 			pr_info("Suspend Governor: %s\n", sgovernor);
 
 	} else if (gov_val == 2) {
-		*sgovernor = cpufreq_gov_conservative;
+		sgovernor = *cpufreq_gov_conservative;
 			pr_info("Suspend Governor: %s\n", sgovernor);
 
 	} else if (gov_val == 3) {
-		*sgovernor = cpufreq_gov_ondemandx;		
+		sgovernor = *cpufreq_gov_ondemandx;		
 			pr_info("Suspend Governor: %s\n", sgovernor);
 
 	} else if (gov_val < 0) {
