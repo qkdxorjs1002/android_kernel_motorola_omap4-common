@@ -104,6 +104,7 @@ int cpufreq_change_gov(char *target_gov)
 	unsigned int cpu = 0;
 	for_each_online_cpu(cpu)
 	return cpufreq_set_gov(target_gov, cpu);
+	pr_info("Suspend Governor: Set");
 	}
 
 int cpufreq_restore_default_gov(void)
@@ -115,7 +116,8 @@ unsigned int cpu;
 	for (cpu = 0; cpu < CONFIG_NR_CPUS; cpu++) {
 		if (strlen((const char *)&cpufreq_default_gov[cpu])) {
 			ret = cpufreq_set_gov(cpufreq_default_gov[cpu], cpu);
-		if (ret < 0)
+	if (ret < 0)
+
 	/* Unable to restore gov for the cpu as
 	* It was online on suspend and becomes
 	* offline on resume.
@@ -123,8 +125,11 @@ unsigned int cpu;
 		pr_info("Unable to restore gov:%s for cpu:%d,"
 		, cpufreq_default_gov[cpu]
 		, cpu);
+	else
+		pr_info("Suspend Governor: Restored default governor");
 								}
 		cpufreq_default_gov[cpu][0] = '\0';
+		pr_info("Suspend Governor: Restored default governor");
 	}
 			return ret;
 }

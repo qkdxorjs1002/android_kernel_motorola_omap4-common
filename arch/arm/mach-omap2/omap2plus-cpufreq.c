@@ -949,7 +949,9 @@ static int __init omap_cpufreq_init(void)
 				__func__);
 	ret = omap_cpufreq_cooling_init();
 	}
-
+#ifdef CONFIG_SUSPEND_GOV
+suspend_gov_init();
+#endif
 	return ret;
 }
 
