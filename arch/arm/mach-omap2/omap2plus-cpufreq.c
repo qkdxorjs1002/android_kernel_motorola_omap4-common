@@ -342,11 +342,11 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 
 		cpufreq_store_default_gov();
 		pr_info("Suspend Governor: Stored default governor\n");
-	if (cpufreq_change_gov(sgovernor))
+	if (cpufreq_change_gov(cpufreq_conservative_gov))
 			pr_err("Suspend Governor: Error changing governor to %s\n",
-			sgovernor);
+			cpufreq_conservative_gov);
 	else
-		pr_info("Suspend Governor: Governor successfully set to %s\n", sgovernor);
+		pr_info("Suspend Governor: Governor successfully set to %s\n", cpufreq_conservative_gov);
 #endif
 #endif
 #ifdef CONFIG_BATTERY_FRIEND
@@ -404,6 +404,7 @@ unsigned int cur;
 	else
 		pr_info("Suspend Governor: Restored user governor\n");
 	}
+		pr_info("Suspend Governor: Restored user governor\n");
 #endif
 #endif
 	if (max_capped) {
@@ -949,9 +950,7 @@ static int __init omap_cpufreq_init(void)
 				__func__);
 	ret = omap_cpufreq_cooling_init();
 	}
-#ifdef CONFIG_SUSPEND_GOV
-suspend_gov_init();
-#endif
+
 	return ret;
 }
 
