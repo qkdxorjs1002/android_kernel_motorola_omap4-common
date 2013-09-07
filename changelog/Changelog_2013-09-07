@@ -1,3 +1,9 @@
+154176d Suspend Governor: Remove init call from cpufreq file
+a7407b8 Suspend Governor: Some last fixes
+965e353 Suspend Governor: It doesn't want to work...
+d47e2e7 Suspend Governor: experimental change
+ad7cdf6 Suspend Governor: don't use a pointer
+32761f4 Added todays changelog and updated full history
 ae1a0f9 Suspend Governor: Fix 'undefined referrence' issues with the old config name ...no idea why this happens..
 2173d03 Suspend Governor: sort changes
 8a32803 Suspend Governor: move the whole function into module
