@@ -52,7 +52,7 @@
 #include <linux/live_oc.h>
 #endif
 
-#if defined(CONFIG_SUSPEND_GOV) && defined(CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF)
+#ifdef CONFIG_SUSPEND_GOV
 #include <linux/suspend_gov.h>
 #endif
 
@@ -325,55 +325,6 @@ static int omap_target(struct cpufreq_policy *policy,
 	return ret;
 }
 
-#if defined(CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF) && defined(CONFIG_SUSPEND_GOV)
-#define MAX_GOV_NAME_LEN 16
-static char cpufreq_default_gov[CONFIG_NR_CPUS][MAX_GOV_NAME_LEN];
-
-static void cpufreq_store_default_gov(void)
-{
-unsigned int cpu;
-struct cpufreq_policy *policy;
-
-	for (cpu = 0; cpu < CONFIG_NR_CPUS; cpu++) {
-			policy = cpufreq_cpu_get(cpu);
-		if (policy) {
-			sprintf(cpufreq_default_gov[cpu], "%s",
-			policy->governor->name);
-			cpufreq_cpu_put(policy);
-			}
-		}
-	}
-
-static int cpufreq_change_gov(char *target_gov)
-	{
-	unsigned int cpu = 0;
-	for_each_online_cpu(cpu)
-	return cpufreq_set_gov(target_gov, cpu);
-	}
-
-static int cpufreq_restore_default_gov(void)
-	{
-int ret = 0;
-unsigned int cpu;
-
-	for (cpu = 0; cpu < CONFIG_NR_CPUS; cpu++) {
-		if (strlen((const char *)&cpufreq_default_gov[cpu])) {
-			ret = cpufreq_set_gov(cpufreq_default_gov[cpu], cpu);
-		if (ret < 0)
-	/* Unable to restore gov for the cpu as
-	* It was online on suspend and becomes
-	* offline on resume.
-	*/
-		pr_info("Unable to restore gov:%s for cpu:%d,"
-		, cpufreq_default_gov[cpu]
-		, cpu);
-								}
-		cpufreq_default_gov[cpu][0] = '\0';
-	}
-			return ret;
-}
-#endif
-
 static void omap_cpu_early_suspend(struct early_suspend *h)
 {
 	unsigned int cur;
@@ -384,17 +335,17 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 	lmf_screen_state = false;
 #endif
 
-#if defined(CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF) && defined(CONFIG_SUSPEND_GOV)
+#ifdef CONFIG_SUSPEND_GOV
 
 // Change to defined suspend governor
 
 		cpufreq_store_default_gov();
 		pr_info("Suspend Governor: Stored default governor\n");
-	if (cpufreq_change_gov(governor))
+	if (cpufreq_change_gov(sgovernor))
 			pr_err("Suspend Governor: Error changing governor to %s\n",
-			governor);
+			sgovernor);
 	else
-		pr_info("Suspend Governor: Governor successfully set to %s\n", governor);
+		pr_info("Suspend Governor: Governor successfully set to %s\n", sgovernor);
 #endif
 #ifdef CONFIG_BATTERY_FRIEND
 // Bring CPU1 down
@@ -442,7 +393,7 @@ unsigned int cur;
         }
  }   
 #endif
-#if defined(CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF) && defined(CONFIG_SUSPEND_GOV)
+#ifdef CONFIG_SUSPEND_GOV
 // Restore prior governor
 	{
 	if (cpufreq_restore_default_gov())

@@ -5,8 +5,16 @@
 
 #include <linux/suspend_gov.h>
 #include <linux/input.h>
+#include <linux/cpufreq.h>
 
-// extern int suspend_gov_init(void); 
-extern char governor;
+// extern int suspend_gov_init(void);
+#define MAX_GOV_NAME_LEN 16
+extern char cpufreq_default_gov[CONFIG_NR_CPUS][MAX_GOV_NAME_LEN];
+extern void cpufreq_store_default_gov(void);
+extern int cpufreq_change_gov(char *target_gov);
+static int cpufreq_restore_default_gov(void);
+extern int cpufreq_restore_default_gov(void);
+
+extern char *sgovernor;
 
 #endif
