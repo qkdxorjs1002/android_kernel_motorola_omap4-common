@@ -22,7 +22,7 @@ lunch cm_spyder-userdebug
 # built kernel & modules
 echo "Building kernel and modules..."
 echo " "
-export LOCALVERSION="-JBX-1.0-Hybrid-4.3"
+export LOCALVERSION="-JBX-1.1-Hybrid-4.3"
 make -j4 TARGET_KERNEL_SOURCE=/home/dtrail/android/android_kernel_motorola_omap4-common/ TARGET_KERNEL_CONFIG=mapphone_OCE_defconfig $OUT/boot.img
 
 # We don't use the kernel but the modules
