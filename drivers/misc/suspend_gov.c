@@ -17,6 +17,7 @@
  *
  */
 
+
 #include <linux/module.h>
 #include <linux/kobject.h>
 #include <linux/sysfs.h>
@@ -79,8 +80,8 @@ return count;
 
 }
 
-char cpufreq_default_gov[CONFIG_NR_CPUS][MAX_GOV_NAME_LEN];
 #define MAX_GOV_NAME_LEN 16
+char cpufreq_default_gov[CONFIG_NR_CPUS][MAX_GOV_NAME_LEN];
 
 void cpufreq_store_default_gov(void)
 {
@@ -96,6 +97,7 @@ struct cpufreq_policy *policy;
 			}
 		}
 	}
+EXPORT_SYMBOL(cpufreq_store_default_gov);
 
 int cpufreq_change_gov(char *target_gov)
 	{
@@ -104,6 +106,7 @@ int cpufreq_change_gov(char *target_gov)
 	return cpufreq_set_gov(target_gov, cpu);
 	pr_info("Suspend Governor: Set");
 	}
+EXPORT_SYMBOL(cpufreq_change_gov);
 
 int cpufreq_restore_default_gov(void)
 	{
@@ -131,6 +134,7 @@ unsigned int cpu;
 	}
 			return ret;
 }
+EXPORT_SYMBOL(cpufreq_restore_default_gov);
 
 static ssize_t suspend_gov_version_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
@@ -184,12 +188,12 @@ static int suspend_gov_init(void)
 }
 EXPORT_SYMBOL(suspend_gov_init);
 
-static void suspend_gov_exit(void)
+/* static void suspend_gov_exit(void)
 {
 
 	if (suspend_gov_kobj != NULL)
 		kobject_put(suspend_gov_kobj);
-}
+} */
 
 module_init(suspend_gov_init);
-module_exit(suspend_gov_exit);
+// module_exit(suspend_gov_exit);
