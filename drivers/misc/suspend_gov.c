@@ -123,14 +123,14 @@ unsigned int cpu;
 	* It was online on suspend and becomes
 	* offline on resume.
 	*/
-		pr_info("Unable to restore gov:%s for cpu:%d,"
+		pr_info("Unable to restore gov:%s for cpu:%d\n,"
 		, cpufreq_default_gov[cpu]
 		, cpu);
 	else
-		pr_info("Suspend Governor: Restored default governor");
+		pr_info("Suspend Governor: Restored default governor\n");
 								}
 		cpufreq_default_gov[cpu][0] = '\0';
-		pr_info("Suspend Governor: Restored default governor");
+		pr_info("Suspend Governor: Restored default governor\n");
 	}
 			return ret;
 }
