@@ -662,7 +662,7 @@ static ssize_t store_screen_off_freq(struct cpufreq_policy *policy,
 #ifdef CONFIG_BATTERY_FRIEND
 if (likely(battery_friend_active))
 	{
-	screen_off_max_freq = 500000;
+	screen_off_max_freq = 300000;
 	}
 else 
 	screen_off_max_freq = freq_table[index].frequency;
