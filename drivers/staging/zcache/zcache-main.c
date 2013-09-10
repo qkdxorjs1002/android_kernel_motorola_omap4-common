@@ -31,6 +31,7 @@
 #include <linux/math64.h>
 #include <linux/crypto.h>
 #include <linux/string.h>
+#include <../drivers/staging/zram/xvmalloc.h>
 #include "tmem.h"
 
 #include "../zram/xvmalloc.h" /* if built in drivers/staging */

@@ -27,6 +27,7 @@
 #define SUSPEND_GOV_VERSION_MAJOR 1
 #define SUSPEND_GOV_VERSION_MINOR 1
 
+#define MAX_GOV_NAME_LEN 16
 
 static DEFINE_MUTEX(suspend_mutex);
 
@@ -80,7 +81,6 @@ return count;
 
 }
 
-#define MAX_GOV_NAME_LEN 16
 char cpufreq_default_gov[CONFIG_NR_CPUS][MAX_GOV_NAME_LEN];
 
 void cpufreq_store_default_gov(void)
