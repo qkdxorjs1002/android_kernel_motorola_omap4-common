@@ -1,0 +1,76 @@
+338ecc6 raise version
+bdaaa7b Cleanup from all prior commits and updates..
+8743572 Revert "zram: backport zram from 3.7 kernel"
+918f851 Revert "drivers/staging/zram: adapt to 3.0 kernel"
+3820f3e Revert "staging: zram: add Crypto API support"
+5f9270c Revert "staging: zram: add per-cpu support to Crypto"
+1caaaa3 Revert "drivers/staging/zram: change compressor from lzo to lz4"
+0e942a4 Revert "Revert "Revert "Revert "Revert "Revert "Revert "Revert "Revert "OMAPDSS: DSSCOMP: support of MEM2MEM mode with blanked pannel"""""""""
+d65b739 hsmmc: Fix some stuff from prior commits
+d1d94c8 opp4xxx_data: Fix from prior commit
+da8dc5a some minor fixes
+41b37a4 cpuidle44xx: small additions
+23fe42b omap2plus-cpufreq: Add rule for min_capped
+ca4cb6a omap2plus-cpufreq: Some fixes for screen on/off freqs
+d4a8352 OMAPDSS: DISPC: more precise scale limits checking
+a7c5139  OMAPDSS: DISPC: fix pclk divisor limits According to TRM, minimal pixel clock divisor value can be 1. Fix corresponding checks, as high resolution panels use undivided pixel clock frequency.
+a4e4674 Revert "OMAPDSS: DISPC: more precise scale limits checking"
+bb08952 OMAPDSS: DISPC: more precise scale limits checking
+5f776fb ARMv7: Flush the vectors page using the base address
+ed7b64f Revert "Revert "omap-hsmmc: Implementation of i761 errata""
+1ceb566 mmc: omap: Increase number of blks we can handle
+aff222c mmc: omap: align adma and dma table entries
+1f939eb Revert "omap-hsmmc: Implementation of i761 errata"
+c5b303c omap-hsmmc: Implementation of i761 errata Errata description: Due to a bad behavior of an internal signal, the Card Error interrupt bit MMCHS_STAT[28] CERR may not be set sometimes when an error occurred in the card response.
+51c3bf8 defconfig updates
+939e6f7 arch/arm: introduce Tuna optimized VMSPLIT of 2.5G/1.5G
+914c440 lib/lzo: huge LZO decompression speedup on ARM by using unaligned access
+d3090f3 lib/lzo: Rename lzo1x_decompress.c to lzo1x_decompress_safe.c
+c5d9ef5 mm/oom_kill.c (affects lowmemorykiller): prevent changing oom_adj if its value is -17
+99489c2 cgroup/timer_slack: fix cgroup permission errors
+08e7bfa  fs/dache.c / mm/page-writeback.c: allow modification of dirty_-values…
+4fe6272 fs/dcache.c: adaptive vfs_cache_pressure on suspend / resume
+e536cc0 nohz: Fix update_ts_time_stat idle accounting
+58ec94b ARM: OMAP4: l2x0: Set optimized value for prefetch offset
+31c676e ARM: OMAP4: l2x0: Cleanup prefetch offset register setting
+a90afc8 OMAP4: cpuidle: don't touch mpu and core state until CPU1 is off
+58a9922 mm/oom_kill.c (affects lowmemorykiller): prevent changing oom_score_adj if its value is -1000
+43baa5a mm/oom_kill.c (affects lowmemorykiller): make tasks with oom_score_adj = -1000 unkillable
+3fe13f2 fs/proc/base.c (affects lowmemorykiller): oom_adj -17 triggers oom_score_adj of -1000
+5c01628 Backport of Lowmemorykiller from 3.4 kernel
+a6d584b omap2plus-cpufreq.c: Add several options: Screen_on_min_freq, gpu_clock, use of max OC freq when the requested target freq is higher than the usual stock freq...
+687d96e [PATCH 2/3] Optimize copy_page for modern ARM platforms
+848a576 [PATCH 3/3] Optimize ARM memset and memzero functions
+4820e26 ARM: 7670/1: fix the memset fix
+43058dc ARM: 7668/1: fix memset-related crashes caused by recent GCC (4.7.2) optimizations
+264c49d [PATCH 1/3] Rename ARM assembler push/pull macros The ARM assembler library functions use a macro called push that along with a macro called pull is used to shift bytes around in a word in an endian-independent way. However, the modern unified ARM assembler syntax also defines the instruction push to push data onto the stack, which has specific encodings in the Thumb2 instruction set. For prevent possible conflicts going forward, and to allow the use of the more transparent push instruction along with the modern unified assembler syntax, this patch renames all occurrences of the push macro to pushbits, as well as renaming the macro argument, when also called push, to pushshift.
+204184d Enable RCU Boost again
+f18514f drivers/staging/zram: change compressor from lzo to lz4
+042913c1 staging: zram: add per-cpu support to Crypto
+8ec3711 staging: zram: add Crypto API support
+390c72f drivers/staging/zram: adapt to 3.0 kernel
+770c86f zram: backport zram from 3.7 kernel
+41244e2 drivers/staging/zsmalloc: adapt to 3.0 kernel
+b2a38ef Zsmalloc: Backport from 3.7 Kernel
+f44f533 Disable unalligned access default
+f02d7d6 ARM: 7723/1: crypto: sha1-armv4-large.S: fix SP handling
+0785af0 ARM: 7626/1: arm/crypto: Make asm SHA-1 and AES code Thumb-2 compatible
+5a321d4 Suspend Governor: export some symbols and remove module_exit to keep it in memory - hope that works..
+ce5204c UKSM: Enable it as an option - is disabled by default
+2e13887 Suspend Governor: Move the whole function into the older feature of screen_off governor....
+70fd8a6 omap2plus_cpufreq.c: decrease screen_off_max_freq to 300mhz
+9a08aad opp4xx_data.c: Remove battery friend uV for stability. I think that the hot reboots might be cause by too low voltage
+af05324 GPU OC: Added new OPP and reduced base frequency + core voltage for low-power GPU mode
+1b2d33c Revert "Revert "Revert "Revert "Revert "Revert "i2c-algo-bit: Generate correct i2c address sequence for 10-bit target""""""
+613c105 Revert "Revert "Revert "Revert "Revert "Revert "Revert "Revert "OMAPDSS: DSSCOMP: support of MEM2MEM mode with blanked pannel""""""""
+705ac65 Revert "Revert "Board: DSSCOMP: Try to avoid screen flickering/artifacts during shutdown""
+8d855cb Added todays changelog and updated full history
+154176d Suspend Governor: Remove init call from cpufreq file
+a7407b8 Suspend Governor: Some last fixes
+965e353 Suspend Governor: It doesn't want to work...
+d47e2e7 Suspend Governor: experimental change
+ad7cdf6 Suspend Governor: don't use a pointer
+32761f4 Added todays changelog and updated full history
+ae1a0f9 Suspend Governor: Fix 'undefined referrence' issues with the old config name ...no idea why this happens..
+2173d03 Suspend Governor: sort changes
+8a32803 Suspend Governor: move the whole function into module
