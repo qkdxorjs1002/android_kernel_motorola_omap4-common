@@ -33,7 +33,7 @@
 
 #define FREQ_INCREASE_STEP 100000
 
-#define MAX_GPU_PERFORMANCE 2
+#define MAX_GPU_PERFORMANCE 3
 
 #define PRESSPOWER_DELAY 100
 #define SUSPEND_DELAY 200
@@ -48,7 +48,7 @@ static bool device_suspended, screen_on;
 
 static struct wake_lock liveoc_wake_lock;
 
-static const long unsigned gpu_freqs[] = {307200000, 384000000, 416000000};
+static const long unsigned gpu_freqs[] = {153600000, 307200000, 384000000, 416000000};
 
 static unsigned int mpu_ocvalue = 100, core_ocvalue = 100, gpu_performance = 0,
     num_mpufreqs, num_l3freqs, new_coreocvalue = 100, new_gpuperformance = 0;

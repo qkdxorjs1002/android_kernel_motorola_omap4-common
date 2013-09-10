@@ -793,10 +793,10 @@ static ssize_t store_gpu_oc(struct cpufreq_policy *policy, const char *buf, size
 {
 	int prev_oc, ret1, ret2; 
         struct device *dev;
-	unsigned long gpu_freqs[3] = {307200000,384000000,416000000};
+	unsigned long gpu_freqs[4] = {153600000,307200000,384000000,416000000};
 
 	prev_oc = oc_val;
-	if (prev_oc < 0 || prev_oc > 2) {
+	if (prev_oc < 0 || prev_oc > 3) {
 		// shouldn't be here
 		pr_info("[dtrail] gpu_oc error - bailing\n");	
 		return size;
@@ -805,18 +805,18 @@ static ssize_t store_gpu_oc(struct cpufreq_policy *policy, const char *buf, size
 	sscanf(buf, "%d\n", &oc_val);
 
 	if (oc_val < 0 ) oc_val = 0;
-	if (oc_val > 2 ) oc_val = 2;
+	if (oc_val > 3 ) oc_val = 3;
 	if (prev_oc == oc_val) return size;
 
         dev = omap_hwmod_name_get_dev("gpu");
 
 #ifdef CONFIG_PVR_GOVERNOR
-  if (prev_oc < 2 && oc_val == 2) {
+  if (prev_oc < 3 && oc_val == 3) {
     ret1 = opp_disable(dev, gpu_freqs[1]);
     ret2 = opp_enable(dev, gpu_freqs[oc_val]);
     pr_info("[imoseyon] gpu top speed changed from %lu to %lu (%d,%d)\n", 
       gpu_freqs[prev_oc], gpu_freqs[oc_val], ret1, ret2);
-  } else if (prev_oc == 2) {
+  } else if (prev_oc == 3) {
     ret1 = opp_disable(dev, gpu_freqs[prev_oc]);
     ret2 = opp_enable(dev, gpu_freqs[1]);
     pr_info("[imoseyon] gpu top speed changed from %lu to %lu (%d,%d)\n", 
