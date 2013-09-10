@@ -44,7 +44,7 @@
 #define OMAP4_STATE_C2		1
 /* C3 - CPU0 OFF + CPU1 OFF + MPU CSWR + CORE CSWR */
 #define OMAP4_STATE_C3		2
-/* C4 - CPU0 OFF + CPU1 OFF + MPU CSWR/OSWR + CORE OSWR */ 
+/* C4 - CPU0 OFF + CPU1 OFF + MPU OSWR + CORE OSWR */
 #define OMAP4_STATE_C4		3
 
 #define OMAP4_MAX_STATES	4
@@ -675,7 +675,7 @@ void omap4_init_power_states(void)
 	omap4_power_states[OMAP4_STATE_C3].desc = "CPUs OFF, MPU + CORE CSWR";
 
 	/*
-	 * C4 - CPU0 OFF + CPU1 OFF + MPU CSWR/OSWR + CORE OSWR 
+	 * C4 - CPU0 OFF + CPU1 OFF + MPU OSWR + CORE OSWR 
 	 */
 	omap4_power_states[OMAP4_STATE_C4].valid =
 			cpuidle_params_table[OMAP4_STATE_C4].valid;
