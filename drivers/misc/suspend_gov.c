@@ -32,7 +32,7 @@ static DEFINE_MUTEX(suspend_mutex);
 unsigned int suspend_gov;
 int gov_val = 2;
 
-char *cpufreq_conservative_gov = "conservative";
+char *cpufreq_conservative_gov;
 
 static ssize_t suspend_gov_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
@@ -78,8 +78,6 @@ return count;
 
 
 }
-
-#ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
 
 char cpufreq_default_gov[CONFIG_NR_CPUS][MAX_GOV_NAME_LEN];
 #define MAX_GOV_NAME_LEN 16
@@ -133,7 +131,6 @@ unsigned int cpu;
 	}
 			return ret;
 }
-#endif
 
 static ssize_t suspend_gov_version_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)

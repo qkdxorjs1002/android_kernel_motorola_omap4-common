@@ -52,7 +52,7 @@
 #include <linux/live_oc.h>
 #endif
 
-#ifdef CONFIG_SUSPEND_GOV
+#ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
 #include <linux/suspend_gov.h>
 #endif
 
@@ -336,7 +336,6 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 #endif
 
 #ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
-#ifdef CONFIG_SUSPEND_GOV
 
 // Change to defined suspend governor
 
@@ -348,7 +347,7 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 	else
 		pr_info("Suspend Governor: Governor successfully set to %s\n", cpufreq_conservative_gov);
 #endif
-#endif
+
 #ifdef CONFIG_BATTERY_FRIEND
 // Bring CPU1 down
     if (likely(battery_friend_active))
@@ -396,7 +395,6 @@ unsigned int cur;
  }   
 #endif
 #ifdef CONFIG_CONSERVATIVE_GOV_WHILE_SCREEN_OFF
-#ifdef CONFIG_SUSPEND_GOV
 // Restore prior governor
 	{
 	if (cpufreq_restore_default_gov())
@@ -406,7 +404,7 @@ unsigned int cur;
 	}
 		pr_info("Suspend Governor: Restored user governor\n");
 #endif
-#endif
+
 	if (max_capped) {
 		max_capped = 0;
 

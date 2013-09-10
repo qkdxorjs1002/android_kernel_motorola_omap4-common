@@ -736,7 +736,7 @@ config BATTERY_FRIEND
         help
           Say Y here to enable Battery Friend Feature 
 
-config CONFIG_SUSPEND_GOV
+config CONSERVATIVE_GOV_WHILE_SCREEN_OFF
         bool "Support for suspend governor control"
 	depends on CONSERVATIVE_GOV_WHILE_SCREEN_OFF
         default y
