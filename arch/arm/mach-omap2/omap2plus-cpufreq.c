@@ -161,6 +161,9 @@ int omap_cpufreq_scale(struct device *req_dev, unsigned int target_freq)
 	if (freqs.new > max_thermal)
 		freqs.new = max_thermal;
 
+	  if (min_capped && freqs.new < min_capped)
+	    freqs.new = min_capped;  
+
 	if (freqs.old == freqs.new)
 		return 0;
 
