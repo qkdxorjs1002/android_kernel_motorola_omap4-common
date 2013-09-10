@@ -74,6 +74,7 @@ static struct device *mpu_dev;
 static DEFINE_MUTEX(omap_cpufreq_lock);
 
 static unsigned int max_thermal;
+static unsigned int min_capped;
 static unsigned int max_capped;
 static unsigned int max_freq;
 static unsigned int current_target_freq;
@@ -370,13 +371,43 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 
 #endif
 // 200mhz min frequency during suspend
-	if (screen_off_max_freq) {
-		max_capped = screen_off_max_freq;
+	if (screen_off_max_freq && min_capped) {
+max_capped = screen_off_max_freq;
 
-		cur = omap_getspeed(0);
-	if (cur > max_capped)
-		omap_cpufreq_scale(max_capped, cur);
-	}
+cur = omap_getspeed(0);
+
+if (cur > max_capped) {
+omap_cpufreq_scale(max_capped, cur);
+}
+
+else if (current_target_freq < min_capped) {
+omap_cpufreq_scale(current_target_freq, cur);
+}
+
+min_capped = 0;
+}
+
+else if (screen_off_max_freq) {
+max_capped = screen_off_max_freq;
+
+cur = omap_getspeed(0);
+
+if (cur > max_capped) {
+omap_cpufreq_scale(max_capped, cur);
+}
+}
+
+else if (min_capped) {
+cur = omap_getspeed(0);
+
+if (current_target_freq < min_capped) {
+omap_cpufreq_scale(current_target_freq, cur);
+}
+min_capped = 0;
+}
+
+
+
 	mutex_unlock(&omap_cpufreq_lock);
 }
 
@@ -413,24 +444,43 @@ unsigned int cur;
 		pr_info("Suspend Governor: Restored user governor\n");
 #endif
 
-	if (screen_on_min_freq) {
+
+    
+
+if (max_capped && screen_on_min_freq) {
+	max_capped = 0;
+	min_capped = screen_on_min_freq;
+
+	cur = omap_getspeed(0);
+
+	if (cur < min_capped) {
+		omap_cpufreq_scale(min_capped, cur);
+	}
+
+	else if (cur != current_target_freq) {
+		omap_cpufreq_scale(current_target_freq, cur);
+		}
+	}
+
+	else if (max_capped) {
+		max_capped = 0;
+
+	cur = omap_getspeed(0);
+	
+	if (cur != current_target_freq) {
+		omap_cpufreq_scale(current_target_freq, cur);
+		}
+	}
+
+	else if (screen_on_min_freq) {
 		min_capped = screen_on_min_freq;
 
-		cur = omap_getspeed(0);
-	if (cur < min_capped)
+	cur = omap_getspeed(0);
+
+	if (cur < min_capped) {
 		omap_cpufreq_scale(min_capped, cur);
-
-	if (max_capped)
-		max_capped = 0;
-	}
-
-	if (max_capped) {
-		max_capped = 0;
-
-		cur = omap_getspeed(0);
-	if (cur != current_target_freq)
-		omap_cpufreq_scale(current_target_freq, cur);
-	}
+		}
+	}	
 	mutex_unlock(&omap_cpufreq_lock);
 }
 
@@ -928,6 +978,7 @@ static struct freq_attr gpu_oc = {
 static struct freq_attr *omap_cpufreq_attr[] = {
 	&cpufreq_freq_attr_scaling_available_freqs,
 	&omap_cpufreq_attr_screen_off_freq,
+	&omap_cpufreq_attr_screen_on_freq, 
 	&omap_uV_mV_table,
 	&gpu_clock,
 	&gpu_oc,
