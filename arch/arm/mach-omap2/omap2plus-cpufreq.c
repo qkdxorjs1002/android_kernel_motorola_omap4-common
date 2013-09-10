@@ -80,7 +80,9 @@ static unsigned int current_target_freq;
 static unsigned int current_cooling_level;
 static bool omap_cpufreq_ready;
 static bool omap_cpufreq_suspended;
-static unsigned int screen_off_max_freq;
+unsigned int screen_off_max_freq;
+unsigned int screen_on_min_freq;
+static unsigned int stock_freq_max; 
 
 unsigned int dyn_hotplug = 1;
 module_param(dyn_hotplug, int, 0755);
@@ -316,6 +318,12 @@ static int omap_target(struct cpufreq_policy *policy,
 
 	current_target_freq = freq_table[i].frequency;
 
+	if (current_target_freq > stock_freq_max) {
+	   current_target_freq = policy->max;
+	if (current_target_freq == policy->cur)
+	   current_target_freq = stock_freq_max;
+  }
+
 	if (!omap_cpufreq_suspended)
 		ret = omap_cpufreq_scale(mpu_dev, current_target_freq);
 
@@ -404,6 +412,17 @@ unsigned int cur;
 	}
 		pr_info("Suspend Governor: Restored user governor\n");
 #endif
+
+	if (screen_on_min_freq) {
+		min_capped = screen_on_min_freq;
+
+		cur = omap_getspeed(0);
+	if (cur < min_capped)
+		omap_cpufreq_scale(min_capped, cur);
+
+	if (max_capped)
+		max_capped = 0;
+	}
 
 	if (max_capped) {
 		max_capped = 0;
@@ -572,16 +591,16 @@ if (likely(battery_friend_active))
 	{
 	policy->min = policy->cpuinfo.min_freq;
 	if (policy->max > polmax)
-	policy->max = polmax;
+	policy->max = stock_freq_max = polmax;
 	policy->cur = omap_getspeed(policy->cpu);
 	}
 else
 	policy->min = policy->cpuinfo.min_freq;
-	policy->max = policy->cpuinfo.max_freq;
+	policy->max = stock_freq_max = policy->cpuinfo.max_freq;
 	policy->cur = omap_getspeed(policy->cpu);
 #else
 	policy->min = policy->cpuinfo.min_freq;
-	policy->max = policy->cpuinfo.max_freq;
+	policy->max = stock_freq_max = policy->cpuinfo.max_freq;
 	policy->cur = omap_getspeed(policy->cpu);
 #endif
 
@@ -681,6 +700,64 @@ struct freq_attr omap_cpufreq_attr_screen_off_freq = {
 	.show = show_screen_off_freq,
 	.store = store_screen_off_freq,
 };
+
+static ssize_t show_screen_on_freq(struct cpufreq_policy *policy, char *buf)
+{
+return sprintf(buf, "%u\n", screen_on_min_freq);
+}
+
+static ssize_t store_screen_on_freq(struct cpufreq_policy *policy,
+const char *buf, size_t count)
+				{
+unsigned int freq = 0;
+int ret;
+int index;
+
+	if (!freq_table)
+		return -EINVAL;
+
+			ret = sscanf(buf, "%u", &freq);
+	if (ret != 1)
+		return -EINVAL;
+
+mutex_lock(&omap_cpufreq_lock);	
+
+	ret = cpufreq_frequency_table_target(policy, freq_table, freq,
+		CPUFREQ_RELATION_H, &index);
+	if (ret)
+		goto out;
+
+	screen_on_min_freq = freq_table[index].frequency;
+
+	ret = count;
+	
+	min_capped = screen_on_min_freq;
+
+out:
+	mutex_unlock(&omap_cpufreq_lock);
+	return ret;
+}
+
+	struct freq_attr omap_cpufreq_attr_screen_on_freq = {
+	.attr = { .name = "screen_on_min_freq",
+	.mode = 0644,
+	},
+		.show = show_screen_on_freq,
+		.store = store_screen_on_freq,
+};
+
+static ssize_t show_gpu_clock(struct cpufreq_policy *policy, char *buf) {
+struct clk *clk = clk_get(NULL, "dpll_per_m7x2_ck");	
+return sprintf(buf, "%lu Mhz\n", clk->rate/1000000);
+}
+
+static struct freq_attr gpu_clock = {
+    .attr = {.name = "gpu_clock",
+	     .mode=0644,
+				    },
+	     .show = show_gpu_clock,
+};
+
 /* OMAP4 MPU Voltage Control struct opp is defined elsewhere, but not in any accessible header files */
 struct opp {
         struct list_head node;
@@ -852,6 +929,7 @@ static struct freq_attr *omap_cpufreq_attr[] = {
 	&cpufreq_freq_attr_scaling_available_freqs,
 	&omap_cpufreq_attr_screen_off_freq,
 	&omap_uV_mV_table,
+	&gpu_clock,
 	&gpu_oc,
 	NULL,
 };
