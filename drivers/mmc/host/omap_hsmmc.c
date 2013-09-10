@@ -1245,7 +1245,8 @@ static void omap_hsmmc_do_irq(struct omap_hsmmc_host *host, int status)
 			OMAP_HSMMC_READ(host->base, PSTATE));
 
 	}
-
+  /* Errata i761 */
+  if ((host->errata & OMAP_HSMMC_ERRATA_I761) && host->cmd 
       && omap_hsmmc_errata_i761(host, host->cmd)) {
     /* Do the same as for CARD_ERR case */
     dev_dbg(mmc_dev(host->mmc),
