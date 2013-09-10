@@ -188,12 +188,12 @@ static int suspend_gov_init(void)
 }
 EXPORT_SYMBOL(suspend_gov_init);
 
-/* static void suspend_gov_exit(void)
+static void suspend_gov_exit(void)
 {
 
 	if (suspend_gov_kobj != NULL)
 		kobject_put(suspend_gov_kobj);
-} */
+}
 
 module_init(suspend_gov_init);
-// module_exit(suspend_gov_exit);
+module_exit(suspend_gov_exit);
