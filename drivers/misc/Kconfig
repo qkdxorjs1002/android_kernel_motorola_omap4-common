@@ -738,7 +738,6 @@ config BATTERY_FRIEND
 
 config CONSERVATIVE_GOV_WHILE_SCREEN_OFF
         bool "Support for suspend governor control"
-	depends on CONSERVATIVE_GOV_WHILE_SCREEN_OFF
         default y
         help
           Say Y here to enable Suspend Governor Control 
