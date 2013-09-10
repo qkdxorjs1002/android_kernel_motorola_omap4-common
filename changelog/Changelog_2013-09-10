@@ -1,3 +1,12 @@
+92a58c6 Suspend Governor: Fix formatted output in kernel log
+512029d Raise localversion
+84d616e JBX-Kernel 1.2: Disable EMU_UART_DEBUG, set config.
+74a34b6 Revert "arch/arm: introduce Tuna optimized VMSPLIT of 2.5G/1.5G"
+2678611 Revert "ARM: 7668/1: fix memset-related crashes caused by recent GCC (4.7.2) optimizations"
+da126d4 Revert "ARM: 7670/1: fix the memset fix"
+dbe5f52 Revert "[PATCH 3/3] Optimize ARM memset and memzero functions"
+f3c5df0 Revert "[PATCH 2/3] Optimize copy_page for modern ARM platforms"
+ac8bb3e Added todays changelog and updated full history
 338ecc6 raise version
 bdaaa7b Cleanup from all prior commits and updates..
 8743572 Revert "zram: backport zram from 3.7 kernel"
