@@ -50,19 +50,19 @@ static ssize_t suspend_gov_store(struct kobject *kobj,
 	sscanf(buf, "%d\n", &gov_val);
 	
 	if (gov_val == 0) {
-		char *cpufreq_conservative_gov = "ondemand";
+		cpufreq_conservative_gov = "ondemand";
 			pr_info("Suspend Governor: %s\n", cpufreq_conservative_gov);
 
 	} else if (gov_val == 1) {
-		char *cpufreq_conservative_gov = "interactive";
+		cpufreq_conservative_gov = "interactive";
 			pr_info("Suspend Governor: %s\n", cpufreq_conservative_gov);
 
 	} else if (gov_val == 2) {
-		char *cpufreq_conservative_gov = "conservative";
+		cpufreq_conservative_gov = "conservative";
 			pr_info("Suspend Governor: %s\n", cpufreq_conservative_gov);
 
 	} else if (gov_val == 3) {
-		char *cpufreq_conservative_gov = "ondemandx";		
+		cpufreq_conservative_gov = "ondemandx";		
 			pr_info("Suspend Governor: %s\n", cpufreq_conservative_gov);
 
 	} else if (gov_val < 0) {
@@ -97,7 +97,7 @@ struct cpufreq_policy *policy;
 			}
 		}
 	}
-EXPORT_SYMBOL(cpufreq_store_default_gov);
+// EXPORT_SYMBOL(cpufreq_store_default_gov);
 
 int cpufreq_change_gov(char *target_gov)
 	{
@@ -106,7 +106,7 @@ int cpufreq_change_gov(char *target_gov)
 	return cpufreq_set_gov(target_gov, cpu);
 	pr_info("Suspend Governor: Set");
 	}
-EXPORT_SYMBOL(cpufreq_change_gov);
+// EXPORT_SYMBOL(cpufreq_change_gov);
 
 int cpufreq_restore_default_gov(void)
 	{
@@ -134,7 +134,7 @@ unsigned int cpu;
 	}
 			return ret;
 }
-EXPORT_SYMBOL(cpufreq_restore_default_gov);
+// EXPORT_SYMBOL(cpufreq_restore_default_gov);
 
 static ssize_t suspend_gov_version_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
@@ -186,7 +186,7 @@ static int suspend_gov_init(void)
 	}
 	return sysfs_result;
 }
-EXPORT_SYMBOL(suspend_gov_init);
+// EXPORT_SYMBOL(suspend_gov_init);
 
 static void suspend_gov_exit(void)
 {
