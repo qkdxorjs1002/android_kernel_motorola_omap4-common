@@ -54,6 +54,11 @@
 
 #ifdef CONFIG_SUSPEND_GOV
 #include <linux/suspend_gov.h>
+
+/*struct cpufreq_governor *__find_governor(const char *str_governor);
+int __cpufreq_set_policy(struct cpufreq_policy *data,
+				struct cpufreq_policy *policy);*/
+
 #endif
 
 #ifdef CONFIG_SMP

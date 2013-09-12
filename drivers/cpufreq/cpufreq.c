@@ -303,7 +303,7 @@ void cpufreq_notify_utilization(struct cpufreq_policy *policy,
  *                          SYSFS INTERFACE                          *
  *********************************************************************/
 
-static struct cpufreq_governor *__find_governor(const char *str_governor)
+struct cpufreq_governor *__find_governor(const char *str_governor)
 {
 	struct cpufreq_governor *t;
 
@@ -387,7 +387,7 @@ show_one(scaling_max_freq, max);
 show_one(scaling_cur_freq, cur);
 show_one(cpu_utilization, util);
 
-static int __cpufreq_set_policy(struct cpufreq_policy *data,
+int __cpufreq_set_policy(struct cpufreq_policy *data,
 				struct cpufreq_policy *policy);
 
 /**
@@ -1653,7 +1653,7 @@ EXPORT_SYMBOL(cpufreq_get_policy);
  * data   : current policy.
  * policy : policy to be set.
  */
-static int __cpufreq_set_policy(struct cpufreq_policy *data,
+int __cpufreq_set_policy(struct cpufreq_policy *data,
 				struct cpufreq_policy *policy)
 {
 	int ret = 0;
@@ -1738,6 +1738,7 @@ static int __cpufreq_set_policy(struct cpufreq_policy *data,
 error_out:
 	return ret;
 }
+EXPORT_SYMBOL(__cpufreq_set_policy);
 
 #ifdef CONFIG_CPUFREQ_LIMIT_MAX_FREQ // limit max freq
 enum {
