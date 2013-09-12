@@ -162,11 +162,11 @@ struct omap_volt_data omap443x_vdd_iva_volt_data[] = {
 };
 #endif
 /* We define two more GPU scaling steps and adjust voltages */
-#define OMAP4430_VDD_CORE_OPP50_UV		 892000
-#define OMAP4430_VDD_CORE_OPP50A_UV		 907000
-#define OMAP4430_VDD_CORE_OPP100_UV		 972000
-#define OMAP4430_VDD_CORE_OPP100A_UV		1132000
-#define OMAP4430_VDD_CORE_OPP100B_UV		1150000
+#define OMAP4430_VDD_CORE_OPP50_UV		 882000
+#define OMAP4430_VDD_CORE_OPP50A_UV		 897000
+#define OMAP4430_VDD_CORE_OPP100_UV		 962000
+#define OMAP4430_VDD_CORE_OPP100A_UV		1122000
+#define OMAP4430_VDD_CORE_OPP100B_UV		1130000
 
 #ifdef CONFIG_OMAP_SMARTREFLEX_CUSTOM_SENSOR
 struct omap_volt_data omap443x_vdd_core_volt_data[] = {
@@ -321,7 +321,7 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", true, 500000000, OMAP4430_VDD_IVA_OPPNITRO_UV),
 #endif
 	/* SGX OPP1 - OPP50 */
-	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 125300000, OMAP4430_VDD_CORE_OPP50_UV),
+	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 100300000, OMAP4430_VDD_CORE_OPP50_UV),
 	/* SGX OPP1 - OPP50 */
 	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 153600000, OMAP4430_VDD_CORE_OPP50A_UV),
 	/* SGX OPP2 - OPP100 */
