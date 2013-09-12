@@ -363,8 +363,9 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 		if (policy->governor->name != good_governor) {
 			strcpy(def_governor, policy->governor->name);
 			set_governor(policy, good_governor);
-			change = true;
+			change_g = true;
 			pr_info("Suspend Governor : Change governor to : %s\n", policy->governor->name);
+		}
 
 #endif
 
@@ -454,9 +455,10 @@ unsigned int cur;
 	else
 		pr_info("Suspend Governor: Restored user governor\n");
 	}   */
-
+		if (change_g) {
 			set_governor(policy, def_governor);
 			pr_info("Suspend Governor : Restore default governor : %s\n", policy->governor->name);
+			}
 #endif
 
 

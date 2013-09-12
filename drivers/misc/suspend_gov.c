@@ -34,14 +34,6 @@ static DEFINE_MUTEX(suspend_mutex);
 char def_governor[16];
 char good_governor[16];
 
-static struct cpufreq_policy *policy;
-static struct cpufreq_governor *__find_governor(const char *str_governor);
-static int __cpufreq_set_policy(struct cpufreq_policy *data,
-				struct cpufreq_policy *policy);
-
-
-bool change;
-
 // static char *sgov;
 int gov_val = 2;
 // static char *cpufreq_sysfs_place_holder="/sys/devices/system/cpu/cpu%i/cpufreq/scaling_governor";
@@ -199,24 +191,6 @@ int set_governor(struct cpufreq_policy *policy, char str_governor[16]) {
 	policy->user_policy.governor = policy->governor;
 	return ret;
 }
-
-
-
-
-/* int cpufreq_put_gov(void)
-{
-		pr_info("Suspend Governor : Current governor is : %s\n", policy->governor->name);
-		if (policy->governor->name != good_governor) {
-			strcpy(def_governor, policy->governor->name);
-			set_governor(policy, good_governor);
-			change = true;
-			pr_info("Suspend Governor : Change governor to : %s\n", policy->governor->name);
-} */
-
-
-
-
-
 
 
 
