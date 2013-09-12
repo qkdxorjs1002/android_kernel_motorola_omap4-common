@@ -71,6 +71,7 @@ static atomic_t freq_table_users = ATOMIC_INIT(0);
 static struct clk *mpu_clk;
 static char *mpu_clk_name;
 static struct device *mpu_dev;
+static struct device *iva_dev;
 static DEFINE_MUTEX(omap_cpufreq_lock);
 
 static unsigned int max_thermal;
@@ -906,15 +907,6 @@ static struct freq_attr omap_uV_mV_table = {
 };
 
 /* OMAP4 IVA Voltage Control struct opp is defined elsewhere, but not in any accessible header files */
-struct opp {
-        struct list_head node;
-
-        bool available;
-        unsigned long rate;
-        unsigned long u_volt;
-
-        struct device_opp *dev_opp;
-};
 
 static ssize_t show_Iva_mV_table(struct cpufreq_policy *policy, char *buf)
 {
@@ -951,7 +943,7 @@ int ret;
 char size_cur[16];
 struct opp *opp_cur;
 struct voltagedomain *iva_voltdm;
-mpu_voltdm = voltdm_lookup("iva");
+iva_voltdm = voltdm_lookup("iva");
 
 while(freq_table[i].frequency != CPUFREQ_TABLE_END)
 i++;
