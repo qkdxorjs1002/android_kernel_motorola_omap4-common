@@ -358,7 +358,7 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 			pr_err("Suspend Governor: Error changing governor to %s\n",
 			cpufreq_conservative_gov);
 	else
-		pr_info("Suspend Governor: Governor successfully set to %s\n", cpufreq_conservative_gov);
+		pr_info("Suspend Governor: Governor successfully set to %s\n",cpufreq_conservative_gov);
 #endif
 
 #ifdef CONFIG_BATTERY_FRIEND
@@ -732,7 +732,7 @@ static ssize_t store_screen_off_freq(struct cpufreq_policy *policy,
 #ifdef CONFIG_BATTERY_FRIEND
 if (likely(battery_friend_active))
 	{
-	screen_off_max_freq = 300000;
+	screen_off_max_freq = 400000;
 	}
 else 
 	screen_off_max_freq = freq_table[index].frequency;
@@ -779,9 +779,17 @@ mutex_lock(&omap_cpufreq_lock);
 		CPUFREQ_RELATION_H, &index);
 	if (ret)
 		goto out;
+#ifdef CONFIG_BATTERY_FRIEND
 
+if (likely(battery_friend_active))
+	{
+	screen_on_min_freq = polmin;
+	}
+else
+      	screen_on_min_freq = freq_table[index].frequency;
+#else
 	screen_on_min_freq = freq_table[index].frequency;
-
+#endif
 	ret = count;
 	
 	min_capped = screen_on_min_freq;
@@ -809,6 +817,30 @@ static struct freq_attr gpu_clock = {
 	     .mode=0644,
 				    },
 	     .show = show_gpu_clock,
+};
+
+static ssize_t show_iva_clock(struct cpufreq_policy *policy, char *buf) {
+struct clk *clk = clk_get(NULL, "dpll_iva_m5x2_ck");	
+return sprintf(buf, "%lu Mhz\n", clk->rate/1000000);
+}
+
+static struct freq_attr iva_clock = {
+    .attr = {.name = "iva_clock",
+	     .mode=0644,
+				    },
+	     .show = show_iva_clock,
+};
+
+static ssize_t show_core_clock(struct cpufreq_policy *policy, char *buf) {
+struct clk *clk = clk_get(NULL, "virt_l3_ck");	
+return sprintf(buf, "%lu Mhz\n", clk->rate/1000000);
+}
+
+static struct freq_attr core_clock = {
+    .attr = {.name = "core_clock",
+	     .mode=0644,
+				    },
+	     .show = show_core_clock,
 };
 
 /* OMAP4 MPU Voltage Control struct opp is defined elsewhere, but not in any accessible header files */
@@ -904,11 +936,13 @@ static struct freq_attr omap_uV_mV_table = {
 .attr = {.name = "UV_mV_table", .mode=0644,},
 .show = show_uV_mV_table,
 .store = store_uV_mV_table,
+
 };
+
 
 /* OMAP4 IVA Voltage Control struct opp is defined elsewhere, but not in any accessible header files */
 
-static ssize_t show_Iva_mV_table(struct cpufreq_policy *policy, char *buf)
+static ssize_t show_iva_mV_table(struct cpufreq_policy *policy, char *buf)
 {
 int i = 0;
 unsigned long volt_cur;
@@ -923,7 +957,7 @@ while(freq_table[i].frequency != CPUFREQ_TABLE_END)
 for(i--; i >= 0; i--) {
 if(freq_table[i].frequency != CPUFREQ_ENTRY_INVALID) {
 /* Find the opp for this frequency */
-opp_cur = opp_find_freq_exact(iva_dev,
+opp_cur = opp_find_freq_exact(mpu_dev,
 freq_table[i].frequency*1000, true);
 /* sprint the voltage (mV)/frequency (MHz) pairs */
 volt_cur = opp_cur->u_volt;
@@ -934,7 +968,7 @@ freq_table[i].frequency/1000, volt_cur/1000);
         return out-buf;
 }
 
-static ssize_t store_Iva_mV_table(struct cpufreq_policy *policy,
+static ssize_t store_iva_mV_table(struct cpufreq_policy *policy,
 const char *buf, size_t count)
 {
 int i = 0;
@@ -956,7 +990,7 @@ return -EINVAL;
 }
 
 /* Alter voltage. First do it in our opp */
-opp_cur = opp_find_freq_exact(iva_dev,
+opp_cur = opp_find_freq_exact(mpu_dev,
 freq_table[i].frequency*1000, true);
 opp_cur->u_volt = volt_cur*1000;
 
@@ -986,10 +1020,10 @@ __func__, freq_table[i].frequency);
 return count;
 }
 
-static struct freq_attr omap_Iva_mV_table = {
-.attr = {.name = "IVA_mV_table", .mode=0644,},
-.show = show_Iva_mV_table,
-.store = store_Iva_mV_table,
+static struct freq_attr omap_iva_mV_table = {
+.attr = {.name = "iva_mV_table", .mode=0644,},
+.show = show_iva_mV_table,
+.store = store_iva_mV_table,
 };
 
 /*
