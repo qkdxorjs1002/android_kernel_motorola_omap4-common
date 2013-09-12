@@ -1053,6 +1053,7 @@ static struct freq_attr *omap_cpufreq_attr[] = {
 	&omap_cpufreq_attr_screen_off_freq,
 	&omap_cpufreq_attr_screen_on_freq, 
 	&omap_uV_mV_table,
+	&omap_Iva_mV_table,
 	&gpu_clock,
 	&gpu_oc,
 	NULL,
