@@ -351,14 +351,21 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 #ifdef SUSPEND_GOV
 
 // Change to defined suspend governor
-
+/*
 		cpufreq_store_default_gov();
 		pr_info("Suspend Governor: Stored default governor\n");
-	if (cpufreq_change_gov(cpufreq_conservative_gov))
-			pr_err("Suspend Governor: Error changing governor to %s\n",
-			cpufreq_conservative_gov);
-	else
-		pr_info("Suspend Governor: Governor successfully set to %s\n",cpufreq_conservative_gov);
+		
+	cpufreq_set_user_governor();
+		// else
+		pr_info("Suspend Governor: Governor successfully set to %s\n", sgov); */
+
+		pr_info("Suspend Governor : Current governor is : %s\n", policy->governor->name);
+		if (policy->governor->name != good_governor) {
+			strcpy(def_governor, policy->governor->name);
+			set_governor(policy, good_governor);
+			change = true;
+			pr_info("Suspend Governor : Change governor to : %s\n", policy->governor->name);
+
 #endif
 
 #ifdef CONFIG_BATTERY_FRIEND
@@ -438,13 +445,18 @@ unsigned int cur;
  }   
 #endif
 #ifdef CONFIG_SUSPEND_GOV
+
+/*
 // Restore prior governor
 	{
 	if (cpufreq_restore_default_gov())
 		pr_err("Suspend Governor: Unable to restore governor\n");
 	else
 		pr_info("Suspend Governor: Restored user governor\n");
-	}
+	}   */
+
+			set_governor(policy, def_governor);
+			pr_info("Suspend Governor : Restore default governor : %s\n", policy->governor->name);
 #endif
 
 
@@ -940,91 +952,7 @@ static struct freq_attr omap_uV_mV_table = {
 };
 
 
-/* OMAP4 IVA Voltage Control struct opp is defined elsewhere, but not in any accessible header files */
 
-static ssize_t show_iva_mV_table(struct cpufreq_policy *policy, char *buf)
-{
-int i = 0;
-unsigned long volt_cur;
-char *out = buf;
-struct opp *opp_cur;
-
-/* Reverse order sysfs entries for consistency */
-while(freq_table[i].frequency != CPUFREQ_TABLE_END)
-                i++;
-
-/* For each entry in the cpufreq table, print the voltage */
-for(i--; i >= 0; i--) {
-if(freq_table[i].frequency != CPUFREQ_ENTRY_INVALID) {
-/* Find the opp for this frequency */
-opp_cur = opp_find_freq_exact(mpu_dev,
-freq_table[i].frequency*1000, true);
-/* sprint the voltage (mV)/frequency (MHz) pairs */
-volt_cur = opp_cur->u_volt;
-out += sprintf(out, "%umhz: %lu mV\n",
-freq_table[i].frequency/1000, volt_cur/1000);
-}
-}
-        return out-buf;
-}
-
-static ssize_t store_iva_mV_table(struct cpufreq_policy *policy,
-const char *buf, size_t count)
-{
-int i = 0;
-unsigned long volt_cur, volt_old;
-int ret;
-char size_cur[16];
-struct opp *opp_cur;
-struct voltagedomain *iva_voltdm;
-iva_voltdm = voltdm_lookup("iva");
-
-while(freq_table[i].frequency != CPUFREQ_TABLE_END)
-i++;
-
-for(i--; i >= 0; i--) {
-if(freq_table[i].frequency != CPUFREQ_ENTRY_INVALID) {
-ret = sscanf(buf, "%lu", &volt_cur);
-if(ret != 1) {
-return -EINVAL;
-}
-
-/* Alter voltage. First do it in our opp */
-opp_cur = opp_find_freq_exact(mpu_dev,
-freq_table[i].frequency*1000, true);
-opp_cur->u_volt = volt_cur*1000;
-
-/* Then we need to alter voltage domains */
-/* Save our old voltage */
-volt_old = iva_voltdm->vdd->volt_data[i].volt_nominal;
-/* Change our main and dependent voltage tables */
-iva_voltdm->vdd->
-volt_data[i].volt_nominal = volt_cur*1000;
-iva_voltdm->vdd->dep_vdd_info->
-dep_table[i].main_vdd_volt = volt_cur*1000;
-
-/* Alter current voltage in voltdm, if appropriate */
-if(volt_old == iva_voltdm->curr_volt) {
-iva_voltdm->curr_volt = volt_cur*1000;
-}
-
-/* Non-standard sysfs interface: advance buf */
-ret = sscanf(buf, "%s", size_cur);
-buf += (strlen(size_cur)+1);
-}
-else {
-pr_err("%s: frequency entry invalid for %u\n",
-__func__, freq_table[i].frequency);
-}
-}
-return count;
-}
-
-static struct freq_attr omap_iva_mV_table = {
-.attr = {.name = "iva_mV_table", .mode=0644,},
-.show = show_iva_mV_table,
-.store = store_iva_mV_table,
-};
 
 /*
  * Variable GPU OC - sysfs interface for cycling through different GPU top speeds
@@ -1087,8 +1015,9 @@ static struct freq_attr *omap_cpufreq_attr[] = {
 	&omap_cpufreq_attr_screen_off_freq,
 	&omap_cpufreq_attr_screen_on_freq, 
 	&omap_uV_mV_table,
-	&omap_Iva_mV_table,
 	&gpu_clock,
+	&iva_clock,
+	&core_clock,
 	&gpu_oc,
 	NULL,
 };
