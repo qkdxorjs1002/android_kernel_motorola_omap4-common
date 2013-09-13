@@ -1,4 +1,4 @@
 #Module
 
-obj-y += symsearch.o
+obj-m += symsearch.o
 symsearch-y := search.o hijack.o

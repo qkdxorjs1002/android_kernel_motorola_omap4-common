@@ -352,28 +352,6 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 #ifdef CONFIG_CPU_FREQ_GOV_INTELLIDEMAND
 	lmf_screen_state = false;
 #endif
-
-#ifdef SUSPEND_GOV
-
-// Change to defined suspend governor
-/*
-		cpufreq_store_default_gov();
-		pr_info("Suspend Governor: Stored default governor\n");
-		
-	cpufreq_set_user_governor();
-		// else
-		pr_info("Suspend Governor: Governor successfully set to %s\n", sgov); */
-
-		pr_info("Suspend Governor : Current governor is : %s\n", policy->governor->name);
-		if (policy->governor->name != good_governor) {
-			strcpy(def_governor, policy->governor->name);
-			set_governor(policy, good_governor);
-			change_g = true;
-			pr_info("Suspend Governor : Change governor to : %s\n", policy->governor->name);
-		}
-
-#endif
-
 #ifdef CONFIG_BATTERY_FRIEND
 // Bring CPU1 down
     if (likely(battery_friend_active))
@@ -450,24 +428,6 @@ unsigned int cur;
         }
  }   
 #endif
-#ifdef CONFIG_SUSPEND_GOV
-
-/*
-// Restore prior governor
-	{
-	if (cpufreq_restore_default_gov())
-		pr_err("Suspend Governor: Unable to restore governor\n");
-	else
-		pr_info("Suspend Governor: Restored user governor\n");
-	}   */
-		if (change_g) {
-			set_governor(policy, def_governor);
-			pr_info("Suspend Governor : Restore default governor : %s\n", policy->governor->name);
-			}
-#endif
-
-
-    
 
 if (max_capped && screen_on_min_freq) {
 	max_capped = 0;
