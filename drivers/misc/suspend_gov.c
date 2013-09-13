@@ -23,6 +23,10 @@
 #include <linux/sysfs.h>
 #include <linux/mutex.h>
 #include <linux/suspend_gov.h>
+#include "../symsearch/symsearch.h"
+// cpufreq.c
+SYMSEARCH_DECLARE_FUNCTION_STATIC(struct cpufreq_governor *, __find_governor_s, const char *str_governor);
+SYMSEARCH_DECLARE_FUNCTION_STATIC(int, __cpufreq_set_policy_s, struct cpufreq_policy *data, struct cpufreq_policy *policy);
 
 #define SUSPEND_GOV_VERSION_MAJOR 1
 #define SUSPEND_GOV_VERSION_MINOR 1
@@ -180,14 +184,14 @@ int set_governor(struct cpufreq_policy *policy, char str_governor[16]) {
 
 	memcpy(&new_policy, policy, sizeof(struct cpufreq_policy));
 	cpufreq_get_policy(&new_policy, policy->cpu);
-	t = __find_governor(str_governor);
+	t = __find_governor_s(str_governor);
 	if (t != NULL) {
 		new_policy.governor = t;
 	} else {
 		return ret;
 	}
 
-	ret = __cpufreq_set_policy(policy, &new_policy);
+	ret = __cpufreq_set_policy_s(policy, &new_policy);
 
 	policy->user_policy.policy = policy->policy;
 	policy->user_policy.governor = policy->governor;
@@ -278,6 +282,9 @@ static int suspend_gov_init(void)
 {
 	int sysfs_result;
 
+	// cpufreq.c
+	SYMSEARCH_BIND_FUNCTION_TO(cpu_control, __find_governor, __find_governor_s);
+	SYMSEARCH_BIND_FUNCTION_TO(cpu_control, __cpufreq_set_policy, __cpufreq_set_policy_s);
 
 	suspend_gov_kobj = kobject_create_and_add("suspend_gov", kernel_kobj);
 	if (!suspend_gov_kobj) {
