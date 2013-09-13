@@ -303,7 +303,7 @@ void cpufreq_notify_utilization(struct cpufreq_policy *policy,
  *                          SYSFS INTERFACE                          *
  *********************************************************************/
 
-struct cpufreq_governor *__find_governor(const char *str_governor)
+static struct cpufreq_governor *__find_governor(const char *str_governor)
 {
 	struct cpufreq_governor *t;
 
@@ -1653,7 +1653,7 @@ EXPORT_SYMBOL(cpufreq_get_policy);
  * data   : current policy.
  * policy : policy to be set.
  */
-int __cpufreq_set_policy(struct cpufreq_policy *data,
+static int __cpufreq_set_policy(struct cpufreq_policy *data,
 				struct cpufreq_policy *policy)
 {
 	int ret = 0;

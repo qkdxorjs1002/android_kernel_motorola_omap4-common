@@ -13,9 +13,9 @@ extern char good_governor[16];
 
 extern bool change_g;
 
-/*static struct cpufreq_governor *__find_governor(const char *str_governor);
+static struct cpufreq_governor *__find_governor(const char *str_governor);
 static int __cpufreq_set_policy(struct cpufreq_policy *data,
-				struct cpufreq_policy *policy); */
+				struct cpufreq_policy *policy);
 
 //extern char cpufreq_default_gov[CONFIG_NR_CPUS][MAX_GOV_NAME_LEN];
 //extern void cpufreq_store_default_gov(void);
