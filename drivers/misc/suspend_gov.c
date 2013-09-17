@@ -55,28 +55,67 @@ char good_governor[16] = "conservative";
 
 bool change_g;
 
-// Prototypes
-
-static int __cpufreq_governor(struct cpufreq_policy *policy,
-		unsigned int event);
-static unsigned int __cpufreq_get(unsigned int cpu);
-static void handle_update(struct work_struct *work);
-
-
 static struct srcu_notifier_head cpufreq_transition_notifier_list;
 
 static bool init_cpufreq_transition_notifier_list_called;
 static int __init init_cpufreq_transition_notifier_list(void)
 {
-	srcu_init_notifier_head(&cpufreq_transition_notifier_list);
-	init_cpufreq_transition_notifier_list_called = true;
-	return 0;
+srcu_init_notifier_head(&cpufreq_transition_notifier_list);
+init_cpufreq_transition_notifier_list_called = true;
+return 0;
 }
 pure_initcall(init_cpufreq_transition_notifier_list);
 
+int __cpufreq_governor(struct cpufreq_policy *policy,
+		unsigned int event);
 
+int __cpufreq_governor(struct cpufreq_policy *policy,
+					unsigned int event)
+{
+	int ret;
 
-// cpufreq.c
+	/* Only must be defined when default governor is known to have latency
+	   restrictions, like e.g. conservative or ondemand.
+	   That this is the case is already ensured in Kconfig
+	*/
+#ifdef CONFIG_CPU_FREQ_GOV_PERFORMANCE
+	struct cpufreq_governor *gov = &cpufreq_gov_performance;
+#else
+	struct cpufreq_governor *gov = NULL;
+#endif
+
+	if (policy->governor->max_transition_latency &&
+	    policy->cpuinfo.transition_latency >
+	    policy->governor->max_transition_latency) {
+		if (!gov)
+			return -EINVAL;
+		else {
+			printk(KERN_WARNING "%s governor failed, too long"
+			       " transition latency of HW, fallback"
+			       " to %s governor\n",
+			       policy->governor->name,
+			       gov->name);
+			policy->governor = gov;
+		}
+	}
+
+	if (!try_module_get(policy->governor->owner))
+		return -EINVAL;
+
+	pr_debug("__cpufreq_governor for CPU %u, event %u\n",
+						policy->cpu, event);
+	ret = policy->governor->governor(policy, event);
+
+	/* we keep one module reference alive for
+			each CPU governed by this CPU */
+	if ((event != CPUFREQ_GOV_START) || ret)
+		module_put(policy->governor->owner);
+	if ((event == CPUFREQ_GOV_STOP) && !ret)
+		module_put(policy->governor->owner);
+
+	return ret;
+}
+
 
 static struct cpufreq_governor *__find_governor_s(const char *str_governor)
 {
