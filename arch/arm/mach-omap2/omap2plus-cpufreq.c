@@ -352,20 +352,7 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 #ifdef CONFIG_CPU_FREQ_GOV_INTELLIDEMAND
 	lmf_screen_state = false;
 #endif
-#ifdef CONFIG_BATTERY_FRIEND
-// Bring CPU1 down
-    if (likely(battery_friend_active))
-	{
-        if (dyn_hotplug) {
-                if (cpu_online(1))
-                        cpu_down(1);
 
-	pr_info("Battery Friend: CPU1 down due to device suspend\n");
-        	}
-	}  
-
-#endif
-// 200mhz min frequency during suspend
 	if (screen_off_max_freq && min_capped) {
 max_capped = screen_off_max_freq;
 
@@ -400,9 +387,19 @@ omap_cpufreq_scale(current_target_freq, cur);
 }
 min_capped = 0;
 }
+#ifdef CONFIG_BATTERY_FRIEND
+// Bring CPU1 down
+    if (likely(battery_friend_active))
+	{
+        if (dyn_hotplug) {
+                if (cpu_online(1))
+                        cpu_down(1);
 
+	pr_info("Battery Friend: CPU1 down due to device suspend\n");
+        	}
+	}  
 
-
+#endif
 	mutex_unlock(&omap_cpufreq_lock);
 }
 
