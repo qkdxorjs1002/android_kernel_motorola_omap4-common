@@ -1,0 +1,6 @@
+9f43a70 OMAP: CPU: Move dynamic hotplug. CPU1 shouldn't be turned off before the calculation of scaling driver has een finished. Let it finish the freuqnecy scaling, then turn off CPU1.
+20ee9de Suspend Governor: Disable for now
+b608baf Suspend Gov: Fix early suspend
+fa8f943 Suspend Governor: Move all related functions into the module, added early suspend handler
+1d28628 Suspend Governor: Added symsearch (unexported symbol finder) to bind an exisiting function into suspend_gov module - this prevents any conflicts with sgx-sources - or linker errors in kernel source.
+8cf6193 Suspend Governor: prepare for use of symsearch as we get conflicting types with sgx sources.
