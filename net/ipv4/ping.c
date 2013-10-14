@@ -458,13 +458,8 @@ void ping_err(struct sk_buff *skb, int offset, u32 info)
 	int family;
 	struct icmphdr *icmph;
 	struct inet_sock *inet_sock;
-<<<<<<< HEAD
-	int type = icmph->type;
-	int code = icmph->code;
-=======
 	int type;
 	int code;
->>>>>>> 3c6815f... net: ipv6: Add IPv6 support to the ping socket.
 	struct net *net = dev_net(skb->dev);
 	struct sock *sk;
 	int harderr;
