@@ -705,16 +705,16 @@ static ssize_t store_screen_off_freq(struct cpufreq_policy *policy,
 		CPUFREQ_RELATION_H, &index);
 	if (ret)
 		goto out;
-#ifdef CONFIG_BATTERY_FRIEND
+/*#ifdef CONFIG_BATTERY_FRIEND
 if (likely(battery_friend_active))
 	{
 	screen_off_max_freq = 400000;
 	}
 else 
 	screen_off_max_freq = freq_table[index].frequency;
-#else
+#else */
 	screen_off_max_freq = freq_table[index].frequency;
-#endif
+//#endif
 	ret = count;
 
 out:
@@ -755,7 +755,7 @@ mutex_lock(&omap_cpufreq_lock);
 		CPUFREQ_RELATION_H, &index);
 	if (ret)
 		goto out;
-#ifdef CONFIG_BATTERY_FRIEND
+/* #ifdef CONFIG_BATTERY_FRIEND
 
 if (likely(battery_friend_active))
 	{
@@ -763,9 +763,9 @@ if (likely(battery_friend_active))
 	}
 else
       	screen_on_min_freq = freq_table[index].frequency;
-#else
+#else */
 	screen_on_min_freq = freq_table[index].frequency;
-#endif
+// #endif
 	ret = count;
 	
 	min_capped = screen_on_min_freq;
