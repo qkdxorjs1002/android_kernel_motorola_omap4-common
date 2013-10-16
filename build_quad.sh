@@ -23,7 +23,11 @@ lunch cm_spyder-userdebug
 # built kernel & modules
 echo "Building kernel and modules..."
 echo " "
-export CROSS_COMPILE=/home/dtrail/android/4.3/prebuilt/linux-x86/toolchain/arm-unknown-linux-gnueabi-standard_4.7.2/bin/arm-unknown-linux-gnueabi-
+export PATH=/home/dtrail/android/4.3/prebuilt/linux-x86/toolchain/arm-unknown-linux-gnueabi-standard_4.7.2/bin:$PATH
+export ARCH=arm
+export SUBARCH=arm
+export CROSS_COMPILE=arm-unknown-linux-gnueabi-
+export TARGET_KERNEL_CUSTOM_TOOLCHAIN=arm-unknown-linux-gnueabi-standard_4.7.2
 export LOCALVERSION="-JBX-1.4-Hybrid-4.3"
 make -j4 TARGET_KERNEL_SOURCE=/home/dtrail/android/android_kernel_motorola_omap4-common/ TARGET_KERNEL_CONFIG=mapphone_OCE_defconfig $OUT/boot.img
 
