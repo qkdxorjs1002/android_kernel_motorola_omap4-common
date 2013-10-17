@@ -246,7 +246,7 @@ void liveoc_init(void)
 
     i = 0;
 
-    list_for_each_entry(temp_opp, &dev_opp->opp_list, node)
+ /*   list_for_each_entry(temp_opp, &dev_opp->opp_list, node)
 	{
 	    if (temp_opp->available)
 		{
@@ -259,7 +259,7 @@ void liveoc_init(void)
 
     temp_opp = opp_find_freq_exact(gpu_device, gpu_freqs[0], true);
 
-    gpu_freq = &(temp_opp->rate);
+    gpu_freq = &(temp_opp->rate); */
 
     return;
 }
