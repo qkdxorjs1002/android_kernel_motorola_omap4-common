@@ -933,10 +933,10 @@ static ssize_t store_gpu_oc(struct cpufreq_policy *policy, const char *buf, size
 {
 	int prev_oc, ret1, ret2; 
         struct device *dev;
-	unsigned long gpu_freqs[3] = {307200000,384000000,416000000};
+	unsigned long gpu_freqs[4] = {307200000,384000000,416000000};
 
 	prev_oc = oc_val;
-	if (prev_oc < 0 || prev_oc > 3) {
+	if (prev_oc < 0 || prev_oc > 4) {
 		// shouldn't be here
 		pr_info("[dtrail] gpu_oc error - bailing\n");	
 		return size;
@@ -945,7 +945,7 @@ static ssize_t store_gpu_oc(struct cpufreq_policy *policy, const char *buf, size
 	sscanf(buf, "%d\n", &oc_val);
 
 	if (oc_val < 0 ) oc_val = 0;
-	if (oc_val > 3 ) oc_val = 3;
+	if (oc_val > 4 ) oc_val = 4;
 	if (prev_oc == oc_val) return size;
 
         dev = omap_hwmod_name_get_dev("gpu");
