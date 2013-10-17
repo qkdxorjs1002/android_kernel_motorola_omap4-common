@@ -94,7 +94,7 @@ static unsigned int stock_freq_max;
 unsigned int dyn_hotplug = 1;
 module_param(dyn_hotplug, int, 0755);
 
-int oc_val = 0;
+// int oc_val = 0;
 
 #ifdef CONFIG_BATTERY_FRIEND
 struct cpufreq_policy *policy;
