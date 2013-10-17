@@ -924,7 +924,7 @@ static struct freq_attr omap_uV_mV_table = {
  *
 */
 
-static ssize_t show_gpu_oc(struct cpufreq_policy *policy, char *buf)
+/*static ssize_t show_gpu_oc(struct cpufreq_policy *policy, char *buf)
 {
 	return sprintf(buf, "%d\n", oc_val);
 }
@@ -973,7 +973,8 @@ static struct freq_attr gpu_oc = {
 	.attr = {.name = "gpu_oc", .mode=0666,},
 	.show = show_gpu_oc,
 	.store = store_gpu_oc,
-};
+}; */
+
 static struct freq_attr *omap_cpufreq_attr[] = {
 	&cpufreq_freq_attr_scaling_available_freqs,
 	&omap_cpufreq_attr_screen_off_freq,
@@ -982,7 +983,7 @@ static struct freq_attr *omap_cpufreq_attr[] = {
 	&gpu_clock,
 	&iva_clock,
 	&core_clock,
-	&gpu_oc,
+//	&gpu_oc,
 	NULL,
 };
 
