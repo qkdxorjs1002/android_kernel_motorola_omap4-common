@@ -14,6 +14,6 @@ extern void liveoc_register_maxfreq(unsigned int * max_freq);
 extern void liveoc_register_oppdevice(struct device * dev, char * dev_name);
 extern void liveoc_init(void);
 extern int liveoc_core_ocvalue(void);
-extern unsigned long liveoc_gpu_freq(void);
+//extern unsigned long liveoc_gpu_freq(void);
 extern void liveoc_register_powerkey(struct input_dev * input_device);
 #endif

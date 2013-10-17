@@ -33,7 +33,7 @@
 
 #define FREQ_INCREASE_STEP 100000
 
-#define MAX_GPU_PERFORMANCE 3
+// #define MAX_GPU_PERFORMANCE 3
 
 #define PRESSPOWER_DELAY 100
 #define SUSPEND_DELAY 200
@@ -48,10 +48,10 @@ static bool device_suspended, screen_on;
 
 static struct wake_lock liveoc_wake_lock;
 
-static const long unsigned gpu_freqs[] = {153600000, 307200000, 384000000, 416000000};
+//static const long unsigned gpu_freqs[] = {153600000, 307200000, 384000000, 416000000};
 
-static unsigned int mpu_ocvalue = 100, core_ocvalue = 100, gpu_performance = 0,
-    num_mpufreqs, num_l3freqs, new_coreocvalue = 100, new_gpuperformance = 0;
+static unsigned int mpu_ocvalue = 100, core_ocvalue = 100, // gpu_performance = 0,
+    num_mpufreqs, num_l3freqs, new_coreocvalue = 100; /* new_gpuperformance = 0; */
 
 static struct cpufreq_frequency_table * frequency_table = NULL;
 
@@ -82,9 +82,9 @@ static struct clk * dpll_corex2_clock = NULL;
 
 static unsigned long original_core_freq;
 
-static struct device * gpu_device = NULL;
+//static struct device * gpu_device = NULL;
 
-static unsigned long * gpu_freq;
+// static unsigned long * gpu_freq;
 
 static unsigned int * maximum_thermal = NULL;
 static unsigned int * maximum_freq = NULL;
@@ -174,11 +174,11 @@ void liveoc_register_oppdevice(struct device * dev, char * dev_name)
 	    if (!l3_device)
 		l3_device = dev;
 	}
-    else if (!strcmp(dev_name, "gpu"))
+  /*  else if (!strcmp(dev_name, "gpu"))
 	{
 	    if (!gpu_device)
 		gpu_device = dev;
-	}
+	} */
 
     return;
 }
@@ -271,11 +271,11 @@ int liveoc_core_ocvalue(void)
 }
 EXPORT_SYMBOL(liveoc_core_ocvalue);
 
-unsigned long liveoc_gpu_freq(void)
+/*unsigned long liveoc_gpu_freq(void)
 {
     return gpu_freqs[gpu_performance];
 }
-EXPORT_SYMBOL(liveoc_gpu_freq);
+EXPORT_SYMBOL(liveoc_gpu_freq); */
 
 static void liveoc_mpu_update(void)
 {
@@ -511,7 +511,7 @@ static ssize_t core_ocvalue_write(struct device * dev, struct device_attribute *
     return size;
 }
 
-static void liveoc_gpu_update(void)
+/*static void liveoc_gpu_update(void)
 {
     mutex_lock(frequency_mutex);
     mutex_lock(dvfs_mutex);
@@ -575,7 +575,7 @@ else
 	}
 
     return size;
-}
+} */
 
 static ssize_t liveoc_version(struct device * dev, struct device_attribute * attr, char * buf)
 {
@@ -584,14 +584,14 @@ static ssize_t liveoc_version(struct device * dev, struct device_attribute * att
 
 static DEVICE_ATTR(mpu_ocvalue, S_IRUGO | S_IWUGO, mpu_ocvalue_read, mpu_ocvalue_write);
 static DEVICE_ATTR(core_ocvalue, S_IRUGO | S_IWUGO, core_ocvalue_read, core_ocvalue_write);
-static DEVICE_ATTR(gpu_performance, S_IRUGO | S_IWUGO, gpu_performance_read, gpu_performance_write);
+//static DEVICE_ATTR(gpu_performance, S_IRUGO | S_IWUGO, gpu_performance_read, gpu_performance_write);
 static DEVICE_ATTR(version, S_IRUGO , liveoc_version, NULL);
 
 static struct attribute *liveoc_attributes[] = 
     {
 	&dev_attr_mpu_ocvalue.attr,
 	&dev_attr_core_ocvalue.attr,
-	&dev_attr_gpu_performance.attr,
+//	&dev_attr_gpu_performance.attr,
 	&dev_attr_version.attr,
 	NULL
     };
