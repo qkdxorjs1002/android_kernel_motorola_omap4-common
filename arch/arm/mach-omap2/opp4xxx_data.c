@@ -309,15 +309,15 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 	/* IVA OPP5 - OPP-Nitro SpeedBin*/
 	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", false, 500000000, OMAP4430_VDD_IVA_OPPNITRO_UV),
 	/* SGX OPP1 - OPP50 */
-	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 100300000, OMAP4430_VDD_CORE_OPP25_UV),
+//	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 100300000, OMAP4430_VDD_CORE_OPP25_UV),
 	/* SGX OPP1 - OPP50 */
-	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 153600000, OMAP4430_VDD_CORE_OPP25_UV),
+	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 153600000, OMAP4430_VDD_CORE_OPP50_UV),
 	/* SGX OPP2 - OPP100 */
-	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 307200000, OMAP4430_VDD_CORE_OPP50_UV),
+	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 307200000, OMAP4430_VDD_CORE_OPP100_UV),
 	/* SGX OPP3 - OPPOV  dtrail: Added third GPU OPP and overclocked to factory default */
-	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", false, 384000000, OMAP4430_VDD_CORE_OPP100_UV),
+//	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", false, 384000000, OMAP4430_VDD_CORE_OPP100_UV),
 	/* SGX OPP4 - OPPOV  dtrail: Added fourth GPU OPP and overclocked to 416mhz */
-//	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 412000000, OMAP4430_VDD_CORE_OPP100_OV_UV),
+	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 512000000, OMAP4430_VDD_CORE_OPP100_OV_UV),
 	/* FDIF OPP1 - OPP25 */
 	OPP_INITIALIZER("fdif", "fdif_fck", "core", true, 32000000, OMAP4430_VDD_CORE_OPP50_UV),
 	/* FDIF OPP2 - OPP50 */
@@ -540,6 +540,28 @@ static void __init omap4_mpu_opp_enable(unsigned long freq)
 }
 
 /**
+ * omap4_gpu_opp_enable() - helper to enable the OPP
+ * @freq:	frequency to enable
+ */
+static void __init omap4_gpu_opp_enable(unsigned long freq)
+{
+	struct device *gpu_dev;
+	int r;
+
+	gpu_dev = omap2_get_gpu_device();
+	if (!gpu_dev) {
+		pr_err("%s: no gpu_dev, did not enable f=%ld\n", __func__,
+			freq);
+		return;
+	}
+
+	r = opp_enable(gpu_dev, freq);
+	if (r < 0)
+		dev_err(gpu_dev, "%s: opp_enable failed(%d) f=%ld\n", __func__,
+			r, freq);
+}
+
+/**
  * omap4_opp_init() - initialize omap4 opp table
  */
 int __init omap4_opp_init(void)
@@ -570,6 +592,13 @@ int __init omap4_opp_init(void)
 		if (omap4_has_mpu_1_5ghz() && trimmed)
 			omap4_mpu_opp_enable(1500000000); 
 	}
+
+	/*struct device *dev;
+
+        dev = omap_hwmod_name_get_dev("gpu");
+	opp_enable(dev, 512000000); */
+
+			omap4_gpu_opp_enable(512000000);
 
 #ifdef CONFIG_CUSTOM_VOLTAGE
 	customvoltage_init();
