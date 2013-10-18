@@ -584,6 +584,10 @@ int __init omap4_opp_init(void)
 		if (omap4_has_mpu_1_5ghz() && trimmed)
 			omap4_mpu_opp_enable(1500000000); 
 	}
+	
+	// GPU_OC
+        omap4_opp_enable("gpu", 416000000);
+     //   omap4_opp_enable("gpu", 512000000);
 
 #ifdef CONFIG_CUSTOM_VOLTAGE
 	customvoltage_init();
