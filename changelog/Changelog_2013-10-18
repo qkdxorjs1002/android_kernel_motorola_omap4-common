@@ -1,0 +1,125 @@
+ea2d00a omap: gpu: remove wrong fuse defintion
+13a1f4d omap_ gpu_ fix missing OC freq
+893832d omap: gpu: remove sysfs interface. We use a modified PVR-SOURCE, but this driver was moved into CM sources, so we cannot commit the change here. The common OMAP SGX sysfs interface originally provides read-only entries. These entries are getting modified for rw access which allows us to dynamically overclock the GPU frequency. Trickster Mod supports this interface for GPU settings change and we can use modified frequency_limit entry for OC.
+b16fbf4 omap: cpufreq: gpu: Re-arrange OPPs and fix the fuse location def
+1e4ac33 omap: cpufreq: gpu: Remove one OPP and revert GPU_OC back to 3 freqs
+1bfd4cb omap: cpufreq: gpu_oc: enable GPU OC for trsting
+96dcf23 omap: opp: gpu: only enable two freqs by default to prevent crashes.
+b3e47fb live_oc: Remove leftover gpu_ov definitions
+be9249c omap: gpu: live_oc: gpu_oc: Remove all gpu_oc code. We use the common omap sgx interface for overclocking
+c7590d1 omap: opp: gpu: limit the frequencies to 3 to avoid black screen on boot
+f074836 omap: omap2plus-cpufreq.c: Comment out some gpu_oc code
+166262c omap: opp: gpu: gpu_oc: Fix frequency and voltage entries and disable gpu oc - we can use the common omap gpu sysfs interface to toggle the max frequencies including overclocking.
+d8162cf omap: opp: gpu: Add missing frequency voltage definition
+a955a33 build script update
+a125ab9 Added todays changelog and updated full history
+58addb5 Revert "Revert "sync: clean up compiler warnings""
+7677a86 defconfig: enable DEEPIDLE
+70680ed Revert "omap: mailbox: enable mailbox irq per instance"
+27a3974 Revert "omap: mailbox: add pm constraint field to mbox structure"
+38fbd9a Revert "omap: mailbox: relax constraint to allow powerdomain to go to CSWR"
+ce13e19 Revert "omap: iommu: apply latency constraint based on power domain"
+e6914fc Revert "omap: iommu: program constraints based on platform data"
+9d60ddf Revert "omap: iommu: relax constraint value to allow CSWR"
+6fb20fe Revert "softirq: reduce latencies"
+e82452e Added todays changelog and updated full history
+b21915b staging: xvmalloc: removed
+0f0636d staging: zcache: rename main driver file
+e8ac114 staging: zcache: replace with driver backport from 3.7
+0161755 Enable XVMALLOC for our modifed ZCACHE driver
+dcce651 Battery Friend: Remove any frequency locks
+bb7ab39 defconfig: disable xvmalloc
+1a9d32f Revert "Revert "drivers/staging/zram: change compressor from lzo to lz4""
+3eb4155 Revert "Revert "staging: zram: add per-cpu support to Crypto""
+7f41345 Revert "Revert "staging: zram: add Crypto API support""
+ce51b0d Revert "Revert "drivers/staging/zram: adapt to 3.0 kernel""
+389aa07 Revert "Revert "zram: backport zram from 3.7 kernel""
+c46bdad Revert "staging: zram: change default selection of LZO compression to LZ4 as we don't use LZO compression anymore"
+de7929b staging: zram: change default selection of LZO compression to LZ4 as we don't use LZO compression anymore
+10882bc Revert "Revert "enable CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS""
+0edbaf8 Revert "sync: clean up compiler warnings"
+79a4733 defconfig: disable DEEPIDLE DEEPIDLE is conflicting with current idle state comnfiguration.
+8feba53 Added todays changelog and updated full history
+f2f8066 net: ipv4: Fix some code
+bb1d082 JBX-Kernel 1.4
+66f80a7 sync: don't block the flusher thread waiting on IO
+df621ea softirq: reduce latencies
+9f6de9e swap: allow swap readahead to be merged
+5c867ce mm: make swapin readahead skip over holes
+e873dff omap: iommu: relax constraint value to allow CSWR
+42de426 omap: iommu: program constraints based on platform data IOMMU driver requests and releases constraints in iommu_get and iommu_put respectively. These constraints are actually needed only on OMAP4 and beyond for sub-systems that have an AMMU. The current driver code has these values hard-coded for all the chips.
+f8cd8de omap: iommu: apply latency constraint based on power domain When the iommu is taken out of reset, a latency constraint is set to avoid its power domain going to retention/off. The iommus for DSP and M3 reside in DSP and Core power domains respectively, and therefore the API for setting the constraints is different. This patch uses the appropriate API depending on the iommu (power domain) the latency constraint is being applied on.
+769c789 omap: mailbox: relax constraint to allow powerdomain to go to CSWR
+8eee59a omap: mailbox: add pm constraint field to mbox structure By adding this field, the pm qos apis can be selectively applied only if the pm constraint is set to a +ve value.
+9b7b9ca omap: mailbox: enable mailbox irq per instance
+fc897d8 defconfig add SW_SYNC
+8057b9f net: ipv6: fix wrong ping_v6_sendmsg return value
+7a2c1a5 net: ipv6: add missing lock in ping_v6_sendmsg
+3c14622 ping: always initialize ->sin6_scope_id and ->sin6_flowinfo
+789be9f net: ipv6: Add IPv6 support to the ping socket.
+5f5e4ba ipv6: introdcue __ipv6_addr_needs_scope_id and ipv6_iface_scope_id helper functions
+4a2bc7c misc: uidstat: avoid create_stat() race and blockage.
+749c3ea trace/events: fix gpu event timestamp formatting
+b98e1e8 sync: fix timeout = 0 wait behavior
+c846890 sync: don't log wait timeouts when timeout = 0
+e90b8a3 sync: Fix race condition between merge and signal
+2c363ff sync: add tracepoint support
+47cec8e sw_sync: convert to new value_str debug ops
+41d05fb sync: refactor sync debug printing
+0ebc489 sync: use proper barriers when waiting indefinitely
+5ebd066 sync: update new fence status with sync_fence_signal_pt
+7c31ab5 sync: protect unlocked access to fence status
+1483200 sync: dump sync state of fence errors
+dc5fad6 sync: improve timeout dumps
+16c8677 sync: use correct signed type when handling SYNC_IOC_WAIT
+4b5a110 sync: dump sync state to console on timeout
+1f01be3 sync: clean up compiler warnings
+2695b64 sync: fix erase-o in sync_fence_wait
+f18388d sync: change wait timeout to mirror poll semantics
+1c04bbf sw_sync: Fix error paths
+2ac58f2 sync: Fix error paths
+30ea157 sync: add reference counting to timelines
+0c1c1a6 sync: add internal refcounting to fences
+89b4f9e sync: optimize fence merges
+8979261 sync: reorder sync_fence_release
+f88cd76 sw_sync: export sw_sync API
+829c555 sync: export sync API symbols
+6f320b4 sync: allow async waits to be canceled
+e7f4a3e Revert "Revert "ARM: 7746/1: mm: lazy cache flushing on non-mapped pages""
+23d2de1 disable RCU_BOOST
+74c3bf3 mm: remove compressed copy from zram in-memory
+6b02b97 ext4: Speed up FITRIM by recording flags in ext4_group_info
+83db037 ARM: keep __my_cpu_offset consistent with generic one
+4c53eec  ARM: implement optimized percpu variable access
+6362cc5 blkdev.h: default nr_requests = 256
+e6c6395 mm.h: read_ahead_kb = 256
+738b0f1 fs/dcache.c: cache pressure = 65
+7c1e30f ARM: assembler.h: use same WRITE_ALIGN_BYTES on omap4 as on armv6 platforms
+fd6ac42 Revert "ARM: 7746/1: mm: lazy cache flushing on non-mapped pages"
+cecbce8 Revert "enable CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS"
+6208982 Revert "Revert "DSS: Implement workaround for Errata ID:i733.""
+2a54da4 ARM: 7746/1: mm: lazy cache flushing on non-mapped pages
+0bfe56d defconfig: Add LZ4 compression and crpyto API
+27a0b63 LZ4: compression/decompression signedness mismatch (v2)
+5498a15 lib/lz4/lz4_compress: fix macro usage error
+abb0ecb crypto: Add lz4 Cryptographic API
+1726dbc lib: Add lz4 compressor module
+e3cb7f4 lib: LZ4 Kconfig / Makefile entries
+524343c decompressor: Add LZ4 decompressor module
+58dd1a6 [PATCH 3/3] Optimize ARM memset and memzero functions
+ca8353b ARM: 7670/1: fix the memset fix
+3cc485e Linaro 4.7.2 changes
+e600c55 move export command
+6943576 experimental changes for linaro 4.7.2
+644f5e6 Makefile: change build flags
+d889536 ARM: 7668/1: fix memset-related crashes caused by recent GCC (4.7.2) optimizations
+91907be ARM: 7301/1: Rename the T() macro to TUSER() to avoid namespace conflicts
+10e3d75 Revert "DSS: Implement workaround for Errata ID:i733."
+b327b3a ARM: 7449/1: use generic strnlen_user and strncpy_from_user functions
+c0abc11 lib: add generic strnlen_user() function
+7b72f6d lib: Sparc's strncpy_from_user is generic enough, move under lib/
+9547b4f [PATCH 2/3] Optimize copy_page for modern ARM platforms
+f926663 enable CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+20b6f5a Revert "Input: Send events one packet at a time"
+9df293b Input: Send events one packet at a time
+fbea5cc block: recursive merge requests
