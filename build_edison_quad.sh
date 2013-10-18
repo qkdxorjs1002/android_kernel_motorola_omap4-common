@@ -33,8 +33,8 @@ make -j4 TARGET_BOOTLOADER_BOARD_NAME=edison TARGET_KERNEL_SOURCE=/home/dtrail/a
 # We don't use the kernel but the modules
 echo "Copying modules to package folder"
 echo " "
-cp -r /home/dtrail/android/4.3/out/target/product/spyder/system/lib/modules/* /home/dtrail/android/built/rls/system/lib/modules/
-cp /home/dtrail/android/4.3/out/target/product/spyder/kernel /home/dtrail/android/built/rls/system/etc/kexec/
+cp -r /home/dtrail/android/4.3/out/target/product/spyder/system/lib/modules/* /home/dtrail/android/built/edison/rls/system/lib/modules/
+cp /home/dtrail/android/4.3/out/target/product/spyder/kernel /home/dtrail/android/built/edison/rls/system/etc/kexec/
 
 echo "------------- "
 echo "Done building"
@@ -56,7 +56,7 @@ cd /home/dtrail/android/android_kernel_motorola_omap4-common
 while true; do
     read -p "Do you wish to push the latest changelog?" yn
     case $yn in
-        [Yy]* ) echo "Exporting changelog to file: '/built/Changelog-[date]'"; echo " "; git log --oneline --since="4 day ago" > /home/dtrail/android/android_kernel_motorola_omap4-common/changelog/Changelog_$(date +"%Y-%m-%d"); git log --oneline  > /home/dtrail/android/android_kernel_motorola_omap4-common/changelog/Full_History_Changelog; git add changelog/ .; git commit -m "Added todays changelog and updated full history"; git push origin EDISON_4.3; echo " "; echo "done"; break;;
+        [Yy]* ) echo "Exporting changelog to file: '/built/Changelog-[date]'"; echo " "; git log --oneline --since="4 day ago" > /home/dtrail/android/android_kernel_motorola_omap4-common/changelog/Changelog_$(date +"%Y-%m-%d"); git log --oneline  > /home/dtrail/android/android_kernel_motorola_omap4-common/changelog/Full_History_Changelog; git add changelog/ .; git commit -m "Added todays changelog and updated full history"; git push origin JBX_4.3; echo " "; echo "done"; break;;
         [Nn]* ) exit;;
         * ) echo "Please answer yes or no.";;
     esac
