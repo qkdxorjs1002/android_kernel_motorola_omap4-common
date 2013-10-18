@@ -163,8 +163,7 @@ struct omap_volt_data omap443x_vdd_iva_volt_data[] = {
 #endif
 /* We define two more GPU scaling steps and adjust voltages */
 #define OMAP4430_VDD_CORE_OPP50_UV		 892000
-#define OMAP4430_VDD_CORE_OPP75_UV		 947000
-#define OMAP4430_VDD_CORE_OPP100_UV		1065000
+#define OMAP4430_VDD_CORE_OPP100_UV	         997000
 #define OMAP4430_VDD_CORE_OPP100A_UV		1172000
 #define OMAP4430_VDD_CORE_OPP100B_UV		1210000
 
@@ -324,8 +323,6 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 #endif
 	/* SGX OPP1 - OPP50 */
 	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 100300000, OMAP4430_VDD_CORE_OPP50_UV),
-	/* SGX OPP1 - OPP50 */
-	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", false, 153600000, OMAP4430_VDD_CORE_OPP75_UV),
 	/* SGX OPP2 - OPP100 */
 	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 307200000, OMAP4430_VDD_CORE_OPP100_UV),
 	/* SGX OPP3 - OPPOV  dtrail: Added third GPU OPP and overclocked to factory default */
@@ -584,10 +581,6 @@ int __init omap4_opp_init(void)
 		if (omap4_has_mpu_1_5ghz() && trimmed)
 			omap4_mpu_opp_enable(1500000000); 
 	}
-	
-	// GPU_OC
-        omap4_opp_enable("gpu", 416000000);
-     //   omap4_opp_enable("gpu", 512000000);
 
 #ifdef CONFIG_CUSTOM_VOLTAGE
 	customvoltage_init();
