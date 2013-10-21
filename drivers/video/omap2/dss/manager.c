@@ -406,10 +406,7 @@ static ssize_t manager_gamma_store(
     return -EINVAL;
 
   mgr->get_manager_info(mgr, &info);
-#ifdef CONFIG_BATTERY_FRIEND
-if (likely(battery_friend_active))
-	gamma_value = 6;
-#endif
+
   info.gamma = gamma_value;
 
   r = mgr->set_manager_info(mgr, &info);
