@@ -1,0 +1,33 @@
+43ec48f defconfig: set default selinux config
+7ebbd65 Makefile: Remove Linaro related flags
+6853fe3 omap: dss: gamma: disable battery friend gamma lock
+d7301fa Revert " ARM: implement optimized percpu variable access"
+781e410 Revert "ARM: keep __my_cpu_offset consistent with generic one"
+2f0f4ba Revert "disable RCU_BOOST"
+b080777 defconfig: disable SW_SYNC
+7e96fdb Revert "trace/events: fix gpu event timestamp formatting"
+329bcf6 Revert "Revert "Revert "Revert "sync: clean up compiler warnings""""
+bec4f2d Revert "misc: uidstat: avoid create_stat() race and blockage."
+cda3203 Revert "Revert "Revert "sync: clean up compiler warnings"""
+3613de8 Revert "Revert "omap: dss: add earlysuspend handler.""
+bc28bdc Revert "omap: dss: add earlysuspend handler."
+c3b222a build script: edison: fix
+7ee0d5d build scripts updates for edison
+5994b61 Added todays changelog and updated full history
+5913577 omap: dss: add earlysuspend handler. This potentially fixes the screen flickering after the CRC animation - if not, just fine tune the suspend value
+bd20762 drivers: add exfat driver
+8dcaddb omap: gpu: opp: core: enable all gpu OPPs to make them available and adjust higher core voltages
+cc8d6e7 omap: gpu: opp: set only two OPPs to be active - SGX doesn't scale other frequencies than 2
+3cd435b omap: gpu: Enable all GPU OPPs and disable CORE_OPP100OV to prevent log from spamming.
+be0eb47 omap: gpu: Add OPP enabler macro 'omap2_get_gpu_device' to enable high OC OPP for SGX freqs
+0ed30af omap: gpu: fix fuse definitions, reduce/raise core voltages, revert back to gpu max freq 384
+f24d6d9 omap: gpu: final GPU frequency setting
+0b27cc3 omap: gpu: fix another mistake...
+4d05379 omap: gpu: Fix wrong efuse setting for CORE OPP100OV
+303c0f0 omap: gpu: trying to enabel OC opp...
+1e7a2fb omap: gpu: Set core OV for OV request of SGX OC. Disable some IVA nitrosb OPPs for power savings
+b506247 omap: gpu: remove third opp to allow 416 mhz oc
+be0b646 Added todays changelog and updated full history
+ea2d00a omap: gpu: remove wrong fuse defintion
+13a1f4d omap_ gpu_ fix missing OC freq
+893832d omap: gpu: remove sysfs interface. We use a modified PVR-SOURCE, but this driver was moved into CM sources, so we cannot commit the change here. The common OMAP SGX sysfs interface originally provides read-only entries. These entries are getting modified for rw access which allows us to dynamically overclock the GPU frequency. Trickster Mod supports this interface for GPU settings change and we can use modified frequency_limit entry for OC.
