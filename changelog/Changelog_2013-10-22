@@ -1,0 +1,33 @@
+d8be453 defconfig: Set options for non-experimental kernel version
+3c42cd6 Suspend Governor: Don't know if this hleps - but it compiles :D
+b100e1a Suspend Governor: Fix missing referrences
+95cac28 Suspend Governor: add header file to omap2plus-cpufreq.c
+eab0f77 omap: dss: core: reduce early suspend level to avoid screen flocker after CRC animation
+c46350c Suspend Governor: Move the main process into omap2plus-cpufreq.c
+dc3702a defconfig: enable OMAP_DIE_TEMP_SENSOR
+085f44a Suspend Governor: use of predefined function cpufreq_set_gov and clean up unused stuff
+5deb2ea drivers: gpu: ion: fix compile warning
+dcb240b drivers_ exfat: add missing file exfat_upcase.c
+c520f3d omap: temp_sensor: add module param to toggle thermal throttle
+da6af3f Suspend Governor: Move the set_governor function to the top
+9571ea52 Suspeng Governor: Try to call the scaling_governor sysfs interface for idle mode governor change
+05b1a12 defconfig: edison: update configuration
+06b8d87 Battery Friend: Remove gamma value lock
+8de1638 Added todays changelog and updated full history
+43ec48f defconfig: set default selinux config
+7ebbd65 Makefile: Remove Linaro related flags
+6853fe3 omap: dss: gamma: disable battery friend gamma lock
+d7301fa Revert " ARM: implement optimized percpu variable access"
+781e410 Revert "ARM: keep __my_cpu_offset consistent with generic one"
+2f0f4ba Revert "disable RCU_BOOST"
+b080777 defconfig: disable SW_SYNC
+7e96fdb Revert "trace/events: fix gpu event timestamp formatting"
+329bcf6 Revert "Revert "Revert "Revert "sync: clean up compiler warnings""""
+bec4f2d Revert "misc: uidstat: avoid create_stat() race and blockage."
+cda3203 Revert "Revert "Revert "sync: clean up compiler warnings"""
+3613de8 Revert "Revert "omap: dss: add earlysuspend handler.""
+bc28bdc Revert "omap: dss: add earlysuspend handler."
+c3b222a build script: edison: fix
+7ee0d5d build scripts updates for edison
+5994b61 Added todays changelog and updated full history
+5913577 omap: dss: add earlysuspend handler. This potentially fixes the screen flickering after the CRC animation - if not, just fine tune the suspend value
