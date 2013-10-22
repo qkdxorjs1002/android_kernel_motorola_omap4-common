@@ -47,19 +47,6 @@ bool suspend_gov_early_suspend_active __read_mostly = true;
 
 static int suspend_gov;
 
-	/* Define policy variables */
-
-	struct cpufreq_policy new_policy;
-
-	unsigned int ret = -EINVAL;
-
-	char 	def_governor[16];
-	char	good_governor[16];
-
-	char *envp[3];
-	char buf1[64];
-	char buf2[64];
-
 
 
 bool change_g;
@@ -255,52 +242,6 @@ char *cpufreq_gov_ondemandx = "ondemandx";
 char *cpufreq_gov_conservative = "conservative"; */
 
 
-
-int set_governor(struct cpufreq_policy *policy, char str_governor[16]) {
-
-
-
-
-	/* Interface call */
-	////////////////////////////////////////////////////////////////
-	ret = cpufreq_get_policy(&new_policy, policy->cpu);
-	if (ret)
-		return ret;
-
-	ret = sscanf(buf, "%15s", good_governor);
-	if (ret != 1)
-		return -EINVAL;
-
-	if (cpufreq_parse_governor(good_governor, &new_policy.policy,
-						&new_policy.governor))
-		return -EINVAL;
-
-	/* Do not use cpufreq_set_policy here or the user_policy.max
-	   will be wrongly overridden */
-	ret = __cpufreq_set_policy_s(policy, &new_policy);
-
-	policy->user_policy.policy = policy->policy;
-	policy->user_policy.governor = policy->governor;
-
-	sysfs_notify(&policy->kobj, NULL, "scaling_governor");
-
-	snprintf(buf1, sizeof(buf1), "GOV=%s", policy->governor->name);
-	snprintf(buf2, sizeof(buf2), "CPU=%u", policy->cpu);
-	envp[0] = buf1;
-	envp[1] = buf2;
-	envp[2] = NULL;
-	kobject_uevent_env(cpufreq_global_kobject, KOBJ_ADD, envp);
-
-	if (ret)
-		return ret;
-	else
-		return count;
-
-	////////////////////////////////////////////////////////////////
-}
-EXPORT_SYMBOL(set_governor);
-
-
 static ssize_t suspend_gov_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
 {
@@ -352,6 +293,66 @@ return count;
 
 
 }
+
+
+int set_governor(struct cpufreq_policy *policy, char str_governor[16]) {
+
+
+	/* Define policy variables */
+
+	struct cpufreq_policy new_policy;
+
+	unsigned int ret = -EINVAL;
+
+	char 	def_governor[16];
+	char	good_governor[16];
+
+	char *envp[3];
+	char buf1[64];
+	char buf2[64];
+
+
+
+
+	/* Interface call */
+	////////////////////////////////////////////////////////////////
+	ret = cpufreq_get_policy(&new_policy, policy->cpu);
+	if (ret)
+		return ret;
+
+	ret = sscanf(buf, "%15s", good_governor);
+	if (ret != 1)
+		return -EINVAL;
+
+	if (cpufreq_parse_governor(good_governor, &new_policy.policy,
+						&new_policy.governor))
+		return -EINVAL;
+
+	/* Do not use cpufreq_set_policy here or the user_policy.max
+	   will be wrongly overridden */
+	ret = __cpufreq_set_policy_s(policy, &new_policy);
+
+	policy->user_policy.policy = policy->policy;
+	policy->user_policy.governor = policy->governor;
+
+	sysfs_notify(&policy->kobj, NULL, "scaling_governor");
+
+	snprintf(buf1, sizeof(buf1), "GOV=%s", policy->governor->name);
+	snprintf(buf2, sizeof(buf2), "CPU=%u", policy->cpu);
+	envp[0] = buf1;
+	envp[1] = buf2;
+	envp[2] = NULL;
+	kobject_uevent_env(cpufreq_global_kobject, KOBJ_ADD, envp);
+
+	if (ret)
+		return ret;
+	else
+		return count;
+
+	////////////////////////////////////////////////////////////////
+}
+EXPORT_SYMBOL(set_governor);
+
 
 
 static ssize_t suspend_gov_version_show(struct kobject *kobj,
