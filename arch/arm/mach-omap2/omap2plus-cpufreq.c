@@ -344,6 +344,16 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 	lmf_screen_state = false;
 #endif
 
+#ifdef CONFIG_SUSPEND_GOV
+			pr_info("Suspend Governor : Current governor is : %s\n", policy->governor->name);
+		if (policy->governor->name != good_governor) {
+			strcpy(def_governor, policy->governor->name);
+			cpufreq_set_gov(good_governor, cpu);
+			pr_info("Suspend Governor : Change governor to : %s\n", policy->governor->name);
+			change_g = true;
+		}
+#endif
+
 	if (screen_off_max_freq && min_capped) {
 max_capped = screen_off_max_freq;
 
@@ -415,6 +425,14 @@ unsigned int cur;
 	pr_info("Battery Friend: CPU1 up due to device wakeup\n");
         }
  }   
+#endif
+
+#ifdef CONFIG_SUSPEND_GOV
+	if (change_g) {
+			cpufreq_set_gov(def_governor, cpu);
+			pr_info("Suspend Governor : Restore default governor : %s\n", policy->governor->name);
+			}	
+	suspend_gov_early_suspend_active = false;
 #endif
 
 if (max_capped && screen_on_min_freq) {
