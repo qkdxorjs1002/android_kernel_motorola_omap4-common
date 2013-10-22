@@ -52,6 +52,11 @@
 #include <linux/live_oc.h>
 #endif
 
+#ifdef SUSPEND_GOV
+#include <linux/suspend_gov.h>
+#endif
+
+
 #ifdef CONFIG_SMP
 struct lpj_info {
 	unsigned long	ref;
