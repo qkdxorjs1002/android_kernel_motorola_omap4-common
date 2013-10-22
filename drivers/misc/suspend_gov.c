@@ -46,8 +46,8 @@ bool change_g;
 
 static int gov_val = 2;
 
-char def_governor[16];
-char good_governor[16];
+//char def_governor[16];
+//char good_governor[16];
 
 unsigned int cpu;
 

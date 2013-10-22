@@ -52,7 +52,7 @@
 #include <linux/live_oc.h>
 #endif
 
-#ifdef SUSPEND_GOV
+#ifdef CONFIG_SUSPEND_GOV
 #include <linux/suspend_gov.h>
 #endif
 
@@ -437,7 +437,6 @@ unsigned int cur;
 			cpufreq_set_gov(def_governor, cpu);
 			pr_info("Suspend Governor : Restore default governor : %s\n", policy->governor->name);
 			}	
-	suspend_gov_early_suspend_active = false;
 #endif
 
 if (max_capped && screen_on_min_freq) {

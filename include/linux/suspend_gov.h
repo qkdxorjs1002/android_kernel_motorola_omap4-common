@@ -13,6 +13,10 @@
 extern char good_governor[16];
 extern char def_governor[16];
 
+extern unsigned int cpu;
+
+extern bool change_g;
+
 extern int cpufreq_set_gov(char *target_gov, unsigned int cpu);
 
 #endif
