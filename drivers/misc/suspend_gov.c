@@ -31,23 +31,18 @@
 #define SUSPEND_GOV_VERSION_MAJOR 1
 #define SUSPEND_GOV_VERSION_MINOR 1
 
-#define MAX_GOV_NAME_LEN 16
-
 static DEFINE_MUTEX(suspend_mutex);
 
 bool suspend_gov_early_suspend_active __read_mostly;
 
 static int suspend_gov;
 
-
-
 bool change_g;
-
 
 static int gov_val = 2;
 
-//char def_governor[16];
-//char good_governor[16];
+char def_governor;
+char good_governor;
 
 unsigned int cpu;
 
@@ -104,10 +99,6 @@ return count;
 
 }
 
-
-
-
-
 static ssize_t suspend_gov_version_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
 {
@@ -163,7 +154,7 @@ static void suspend_gov_early_suspend(struct early_suspend *h, struct cpufreq_po
 static void suspend_gov_late_resume(struct early_suspend *h, struct cpufreq_policy *policy)
 {
 	mutex_lock(&suspend_mutex);
-
+		suspend_gov_early_suspend_active = false;
 
 	mutex_unlock(&suspend_mutex);
 }

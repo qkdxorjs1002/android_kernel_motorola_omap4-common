@@ -10,14 +10,14 @@
 
 #define MAX_GOV_NAME_LEN 16
 
-extern char good_governor[16];
-extern char def_governor[16];
+extern char good_governor;
+extern char def_governor;
 
 extern unsigned int cpu;
 
 extern bool change_g;
 
-extern int cpufreq_set_gov(char *target_gov, unsigned int cpu);
+//extern int cpufreq_set_gov(char *target_gov, unsigned int cpu);
 
 #endif
 
