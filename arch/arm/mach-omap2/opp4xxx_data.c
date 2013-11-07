@@ -598,8 +598,7 @@ int __init omap4_opp_init(void)
         dev = omap_hwmod_name_get_dev("gpu");
 	opp_enable(dev, 512000000); */
 
-			omap4_gpu_opp_enable(416000000);
-			omap4_gpu_opp_enable(512000000);
+			omap4_gpu_opp_enable(471000000);
 
 #ifdef CONFIG_CUSTOM_VOLTAGE
 	customvoltage_init();
