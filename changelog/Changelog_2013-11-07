@@ -1,0 +1,3 @@
+aa1c733 omap: cpu: opp: set default omap voltage levels for CORE, IVA to raise stability.
+0aadfc4 Revert "Revert "Revert "enable CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS"""
+3d82125 omap: gpu: opp: Reduce OC OPP to 471mhz
