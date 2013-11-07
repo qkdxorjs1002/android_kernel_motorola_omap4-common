@@ -1,3 +1,6 @@
+90d1e57 omap: gpu: opp: Try to avoid use of max OC opp by default
+eea46a6 omap: gpu: opp: fix OC opp enable
+9a82c2c Added todays changelog and updated full history
 aa1c733 omap: cpu: opp: set default omap voltage levels for CORE, IVA to raise stability.
 0aadfc4 Revert "Revert "Revert "enable CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS"""
 3d82125 omap: gpu: opp: Reduce OC OPP to 471mhz
