@@ -655,12 +655,44 @@ static int ping_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 
 	sock_recv_timestamp(msg, sk, skb);
 
-	/* Copy the address. */
-	if (sin) {
-		sin->sin_family = AF_INET;
-		sin->sin_port = 0 /* skb->h.uh->source */;
-		sin->sin_addr.s_addr = ip_hdr(skb)->saddr;
-		memset(sin->sin_zero, 0, sizeof(sin->sin_zero));
+	/* Copy the address and add cmsg data. */
+	if (family == AF_INET) {
+		sin = (struct sockaddr_in *) msg->msg_name;
+		if (sin) {
+			sin->sin_family = AF_INET;
+			sin->sin_port = 0 /* skb->h.uh->source */;
+			sin->sin_addr.s_addr = ip_hdr(skb)->saddr;
+			memset(sin->sin_zero, 0, sizeof(sin->sin_zero));
+		}
+
+		if (isk->cmsg_flags)
+			ip_cmsg_recv(msg, skb);
+
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+	} else if (family == AF_INET6) {
+		struct ipv6_pinfo *np = inet6_sk(sk);
+		struct ipv6hdr *ip6 = ipv6_hdr(skb);
+		sin6 = (struct sockaddr_in6 *) msg->msg_name;
+
+		if (sin6) {
+			sin6->sin6_family = AF_INET6;
+			sin6->sin6_port = 0;
+			sin6->sin6_addr = ip6->saddr;
+			sin6->sin6_flowinfo = 0;
+			if (np->sndflow)
+				sin6->sin6_flowinfo =
+					*(__be32 *)ip6 & IPV6_FLOWINFO_MASK;
+			sin6->sin6_scope_id =
+				ipv6_iface_scope_id(&sin6->sin6_addr,
+						    IP6CB(skb)->iif);
+		}
+
+		if (inet6_sk(sk)->rxopt.all)
+			pingv6_ops.datagram_recv_ctl(sk, msg, skb);
+#endif
+	} else {
+		BUG();
+>>>>>>> 3bbeb0b... ping: prevent NULL pointer dereference on write to msg_name
 	}
 	if (isk->cmsg_flags)
 		ip_cmsg_recv(msg, skb);
