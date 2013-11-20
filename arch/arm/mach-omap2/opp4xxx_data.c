@@ -317,7 +317,7 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 	/* SGX OPP3 - OPPOV  dtrail: Added third GPU OPP and overclocked to factory default */
 	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 384000000, OMAP4430_VDD_CORE_OPP100_UV),
 	/* SGX OPP4 - OPPOV  dtrail: Added fourth GPU OPP and overclocked to 416mhz */
-	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 441000000, OMAP4430_VDD_CORE_OPP100_OV_UV),
+	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", false, 441000000, OMAP4430_VDD_CORE_OPP100_OV_UV),
 	/* FDIF OPP1 - OPP25 */
 	OPP_INITIALIZER("fdif", "fdif_fck", "core", true, 32000000, OMAP4430_VDD_CORE_OPP50_UV),
 	/* FDIF OPP2 - OPP50 */
@@ -600,7 +600,7 @@ int __init omap4_opp_init(void)
 
 			omap4_gpu_opp_enable(153600000);
 			omap4_gpu_opp_enable(384000000);
-			omap4_gpu_opp_enable(441000000);
+		//	omap4_gpu_opp_enable(441000000);
 
 #ifdef CONFIG_CUSTOM_VOLTAGE
 	customvoltage_init();
