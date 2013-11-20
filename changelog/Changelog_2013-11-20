@@ -1,3 +1,5 @@
+d1f7f19 Build Script: Edison: Remove Bootloader CMD line from build script - it's obsolete here. This entries are probably responsible for the bad power consumption on Edison devices.
+53bfb65 Added todays changelog and updated full history
 306ad37 omap: video: dss: Adjust EARLY_SUSPEND_DISABLE_FB level to keep the flickering screen away on CRT animation (have to try around with these values until I'ff fit the right one)
 4f6c5e5 omap: opp: voltage: Raise voltage up to -5mV under stock and adjust values between each OPP for better stability and battery consumption.
 8bdee0c defconfig: Disable CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
