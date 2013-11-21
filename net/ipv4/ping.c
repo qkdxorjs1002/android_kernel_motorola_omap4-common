@@ -458,8 +458,8 @@ void ping_err(struct sk_buff *skb, int offset, u32 info)
 	int family;
 	struct icmphdr *icmph;
 	struct inet_sock *inet_sock;
-	int type = icmp_hdr(skb)->type;
-	int code = icmp_hdr(skb)->code;
+	int type;
+	int code;
 	struct net *net = dev_net(skb->dev);
 	struct sock *sk;
 	int harderr;
@@ -894,13 +894,13 @@ int ping_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 		sin6->sin6_port = 0;
 		sin6->sin6_addr = ip6->saddr;
 
-		sin6->sin6_flowinfo = 0;
 		if (np->sndflow)
 			sin6->sin6_flowinfo =
 				*(__be32 *)ip6 & IPV6_FLOWINFO_MASK;
 
-		sin6->sin6_scope_id = ipv6_iface_scope_id(&sin6->sin6_addr,
-							  IP6CB(skb)->iif);
+		if (__ipv6_addr_needs_scope_id(
+		    ipv6_addr_type(&sin6->sin6_addr)))
+			sin6->sin6_scope_id = IP6CB(skb)->iif;
 
 		if (inet6_sk(sk)->rxopt.all)
 			pingv6_ops.datagram_recv_ctl(sk, msg, skb);
