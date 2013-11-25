@@ -1,0 +1,10 @@
+c981c24 build script updates
+1680ef3 defconfigs: changes for Android 4.4
+42b0ed6 Update defconfig for 4.4
+5a9d594 misc: uidstat: avoid create_stat() race and blockage.
+30daea8 ipv6: fix bad free of addrconf_init_net
+c8f5435 inet: limit length of fragment queue hash table bucket lists
+6a68772 ipv6: stop multicast forwarding to process interface scoped addresses
+9cab36b ping: always initialize ->sin6_scope_id and ->sin6_flowinfo
+9801620 IPv4/IPv6: Some small changes to IPv6 socket
+9f64b73     ipv4: fix a bug in ping_err().
