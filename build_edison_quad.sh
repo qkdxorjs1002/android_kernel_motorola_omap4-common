@@ -28,6 +28,7 @@ export SUBARCH=arm
 export CROSS_COMPILE=arm-unknown-linux-gnueabi-
 # export TARGET_KERNEL_CUSTOM_TOOLCHAIN=arm-unknown-linux-gnueabi-standard_4.7.2
 export LOCALVERSION="-JBX-2.0-Hybrid-Edison-4.4"
+export BOARD_HAS_SDCARD_INTERNAL=false
 make -j4 TARGET_KERNEL_SOURCE=/home/dtrail/android/android_kernel_motorola_omap4-common/ TARGET_KERNEL_CONFIG=mapphone_OCEdison_defconfig $OUT/boot.img
 
 # We don't use the kernel but the modules
