@@ -44,7 +44,6 @@
 #include "dvfs.h"
 #include "omap2plus-cpufreq.h"
 
-#if defined(OMAP4430_IVA_OVERCLOCK) && (OMAP4430_GPU_OVERCLOCK)
 #include "smartreflex.h"
 
 // [antsvx] these shoudl match same in opp4xxx_data.c
@@ -52,8 +51,6 @@
 #define OMAP4430_VDD_CORE_OPP50_UV	         962000
 #define OMAP4430_VDD_CORE_OPP100_UV		1127000
 #define OMAP4430_VDD_CORE_OPP100_OV_UV		1250000
-
-#endif
 
 #ifdef CONFIG_CUSTOM_VOLTAGE
 #include <linux/custom_voltage.h>
@@ -1106,7 +1103,7 @@ static struct freq_attr *omap_cpufreq_attr[] = {
 #endif
 	&omap_cpufreq_attr_screen_off_freq,
 	&omap_cpufreq_attr_screen_on_freq, 
-	&omap_uV_mV_table,
+	&omap_uv_mv_table,
 	&iva_clock,
 	&core_clock,
 	NULL,
