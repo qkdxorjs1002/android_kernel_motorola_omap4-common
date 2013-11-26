@@ -1087,15 +1087,15 @@ static struct freq_attr omap_cpufreq_attr_iva_freq_oc = {
 
 static struct freq_attr *omap_cpufreq_attr[] = {
 	&cpufreq_freq_attr_scaling_available_freqs,
-	&omap_cpufreq_attr_screen_off_freq,
-	&omap_cpufreq_attr_screen_on_freq, 
-	&omap_uV_mV_table,
 #ifdef CONFIG_OMAP4430_GPU_OVERCLOCK
 	&omap_cpufreq_attr_gpu_max_freq,
 #endif
 #ifdef CONFIG_OMAP4430_IVA_OVERCLOCK
 	&omap_cpufreq_attr_iva_freq_oc,
 #endif
+	&omap_cpufreq_attr_screen_off_freq,
+	&omap_cpufreq_attr_screen_on_freq, 
+	&omap_uV_mV_table,
 	&iva_clock,
 	&core_clock,
 	NULL,
