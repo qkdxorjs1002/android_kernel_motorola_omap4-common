@@ -1093,6 +1093,9 @@ static struct freq_attr *omap_cpufreq_attr[] = {
 #ifdef CONFIG_OMAP4430_GPU_OVERCLOCK
 	&omap_cpufreq_attr_gpu_max_freq,
 #endif
+#ifdef CONFIG_OMAP4430_IVA_OVERCLOCK
+	&omap_cpufreq_attr_iva_freq_oc,
+#endif
 	&iva_clock,
 	&core_clock,
 	NULL,
