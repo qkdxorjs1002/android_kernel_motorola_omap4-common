@@ -1,3 +1,8 @@
+0bb95ff Revert "lib: rwsem: Update to 3.10"
+d953302 omap: cpu: iva/gpu: Some code fixes
+5159d44 omap: cpu: iva/gpu: Add missing definitions
+41e0b3e omap: cpu: iva_oc/gpu_oc: move attr definitions
+58e3ba9 Added todays changelog and updated full history
 4329fce Makefile: Add missing 'endif'
 42988d5 lib: rwsem: Update to 3.10
 bd562a7 usb/core/devio.c: Don't reject control message to endpoint with wrong direction bit
