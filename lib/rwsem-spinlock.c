@@ -9,6 +9,11 @@
 #include <linux/sched.h>
 #include <linux/module.h>
 
+enum rwsem_waiter_type {
+  RWSEM_WAITING_FOR_WRITE,
+  RWSEM_WAITING_FOR_READ
+};
+
 struct rwsem_waiter {
 	struct list_head list;
 	struct task_struct *task;
@@ -262,8 +267,8 @@ int __down_write_trylock(struct rw_semaphore *sem)
 
 	spin_lock_irqsave(&sem->wait_lock, flags);
 
-	if (sem->activity == 0 && list_empty(&sem->wait_list)) {
-		/* granted */
+	if (sem->activity == 0) {
+	    /* got the lock */
 		sem->activity = -1;
 		ret = 1;
 	}

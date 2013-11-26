@@ -2,6 +2,7 @@
  *
  * Written by David Howells (dhowells@redhat.com).
  * Derived from arch/i386/kernel/semaphore.c
+ * and Michel Lespinasse <walken@google.com>
  */
 #include <linux/rwsem.h>
 #include <linux/sched.h>
@@ -60,7 +61,7 @@ __rwsem_do_wake(struct rw_semaphore *sem, int wake_type)
 	struct rwsem_waiter *waiter;
 	struct task_struct *tsk;
 	struct list_head *next;
-	signed long oldcount, woken, loop, adjustment;
+	long oldcount, woken, loop, adjustment;
 
 	waiter = list_entry(sem->wait_list.next, struct rwsem_waiter, list);
 	if (!(waiter->flags & RWSEM_WAITING_FOR_WRITE))
@@ -224,17 +225,107 @@ rwsem_down_failed_common(struct rw_semaphore *sem,
  */
 struct rw_semaphore __sched *rwsem_down_read_failed(struct rw_semaphore *sem)
 {
-	return rwsem_down_failed_common(sem, RWSEM_WAITING_FOR_READ,
-					-RWSEM_ACTIVE_READ_BIAS);
+        long count, adjustment = -RWSEM_ACTIVE_READ_BIAS;
+        struct rwsem_waiter waiter;
+        struct task_struct *tsk = current;
+
+        /* set up my own style of waitqueue */
+        waiter.task = tsk;
+        waiter.type = RWSEM_WAITING_FOR_READ;
+        get_task_struct(tsk);
+
+        raw_spin_lock_irq(&sem->wait_lock);
+        if (list_empty(&sem->wait_list))
+                adjustment += RWSEM_WAITING_BIAS;
+        list_add_tail(&waiter.list, &sem->wait_list);
+
+        /* we're now waiting on the lock, but no longer actively locking */
+        count = rwsem_atomic_update(adjustment, sem);
+
+        /* If there are no active locks, wake the front queued process(es).
+         *
+         * If there are no writers and we are first in the queue,
+         * wake our own waiter to join the existing active readers !
+         */
+        if (count == RWSEM_WAITING_BIAS ||
+         (count > RWSEM_WAITING_BIAS &&
+         adjustment != -RWSEM_ACTIVE_READ_BIAS))
+                sem = __rwsem_do_wake(sem, RWSEM_WAKE_ANY);
+
+        raw_spin_unlock_irq(&sem->wait_lock);
+
+        /* wait to be given the lock */
+        while (true) {
+                set_task_state(tsk, TASK_UNINTERRUPTIBLE);
+                if (!waiter.task)
+                        break;
+                schedule();
+        }
+
+        tsk->state = TASK_RUNNING;
+
+        return sem;
 }
+
+
 
 /*
  * wait for the write lock to be granted
  */
 struct rw_semaphore __sched *rwsem_down_write_failed(struct rw_semaphore *sem)
 {
-	return rwsem_down_failed_common(sem, RWSEM_WAITING_FOR_WRITE,
-					-RWSEM_ACTIVE_WRITE_BIAS);
+        long count, adjustment = -RWSEM_ACTIVE_WRITE_BIAS;
+        struct rwsem_waiter waiter;
+        struct task_struct *tsk = current;
+
+        /* set up my own style of waitqueue */
+        waiter.task = tsk;
+        waiter.type = RWSEM_WAITING_FOR_WRITE;
+
+        raw_spin_lock_irq(&sem->wait_lock);
+        if (list_empty(&sem->wait_list))
+                adjustment += RWSEM_WAITING_BIAS;
+        list_add_tail(&waiter.list, &sem->wait_list);
+
+        /* we're now waiting on the lock, but no longer actively locking */
+        count = rwsem_atomic_update(adjustment, sem);
+
+        /* If there were already threads queued before us and there are no
+         * active writers, the lock must be read owned; so we try to wake
+         * any read locks that were queued ahead of us. */
+        if (count > RWSEM_WAITING_BIAS &&
+         adjustment == -RWSEM_ACTIVE_WRITE_BIAS)
+                sem = __rwsem_do_wake(sem, RWSEM_WAKE_READERS);
+
+        /* wait until we successfully acquire the lock */
+        set_task_state(tsk, TASK_UNINTERRUPTIBLE);
+        while (true) {
+                if (!(count & RWSEM_ACTIVE_MASK)) {
+                        /* Try acquiring the write lock. */
+                        count = RWSEM_ACTIVE_WRITE_BIAS;
+                        if (!list_is_singular(&sem->wait_list))
+                                count += RWSEM_WAITING_BIAS;
+                        if (cmpxchg(&sem->count, RWSEM_WAITING_BIAS, count) ==
+                                                        RWSEM_WAITING_BIAS)
+                                break;
+                }
+
+                raw_spin_unlock_irq(&sem->wait_lock);
+
+                /* Block until there are no active lockers. */
+                do {
+                        schedule();
+                        set_task_state(tsk, TASK_UNINTERRUPTIBLE);
+                } while ((count = sem->count) & RWSEM_ACTIVE_MASK);
+
+                raw_spin_lock_irq(&sem->wait_lock);
+        }
+
+        list_del(&waiter.list);
+        raw_spin_unlock_irq(&sem->wait_lock);
+        tsk->state = TASK_RUNNING;
+
+        return sem;
 }
 
 /*
