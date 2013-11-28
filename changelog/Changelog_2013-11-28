@@ -1,0 +1,30 @@
+debb402 Battery Friend / Default Governor: Enable Battery_friend by default, Updated Interactive Governor is default now.
+6e41bc3 defconfig: Edison: Insert new features
+dda3bd4 build script: Edison: set BOARD_HAS_SDCARD_INTERNAL=false
+413cc2b omap: gpu: Set the max default OPP to 384 to avoid black screen on boot
+15b6ffd Added todays changelog and updated full history
+0bb95ff Revert "lib: rwsem: Update to 3.10"
+d953302 omap: cpu: iva/gpu: Some code fixes
+5159d44 omap: cpu: iva/gpu: Add missing definitions
+41e0b3e omap: cpu: iva_oc/gpu_oc: move attr definitions
+58e3ba9 Added todays changelog and updated full history
+4329fce Makefile: Add missing 'endif'
+42988d5 lib: rwsem: Update to 3.10
+bd562a7 usb/core/devio.c: Don't reject control message to endpoint with wrong direction bit
+206763f block: make register_disk() static
+2d426fc block: fix blk_queue_end_tag()
+3cc91c7 block: blk-map: re-use existing 'reading' variable instead of checking direction
+2de5c0b kernel: power: fbearlysuspend: add draw delay sysfs control interface
+7b408ba defconfig: Add new options
+9c6acff omap: cpu/gpu: kconfig: add new options to kconfig file
+6df4d1c omap: cpu: iva oc: Add missing attr
+a290d45 omap: cpu: voltage: replace voltage sysfs interface with an updated version.
+038a773 omap: cpu/gpu: added IVA OC and new GPU OC interface
+2ca78fc omap: cpufreq: interactive: Update to 3.4
+c76caa6 defconfig: update for size optimization
+af88f76 init/Kconfig: Add options for size optimization
+0eee360 Makefile: Add options for size optimization
+b6f64b4 defconfig: Remove entry
+42ff54e build script updates
+2570974 Added todays changelog and updated full history
+c981c24 build script updates
