@@ -1,0 +1,3 @@
+ef677c1 defconfig: io: set VR to default IO-Scheduler.
+9a7e329 cpufreq: interactive/ktoonservative: adjust CPU load configuration for better performance and less power consumption
+dba3761 omap: cpufreq: interactive: raise go_highspeedload to provide better performance.
