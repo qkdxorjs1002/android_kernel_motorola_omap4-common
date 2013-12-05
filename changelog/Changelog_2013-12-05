@@ -1,0 +1,5 @@
+4b2a895 defconfig: Lazy governor is now default
+803cf4f defconfig: edison: take over latest changes
+18aeaaf Added todays changelog and updated full history
+ef677c1 defconfig: io: set VR to default IO-Scheduler.
+9a7e329 cpufreq: interactive/ktoonservative: adjust CPU load configuration for better performance and less power consumption
