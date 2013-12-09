@@ -1,0 +1,6 @@
+2ce8816 Input: omap-keypad: remove double definition of omap4_keypad_pm_ops
+0e3ed50 Input: omap-keypad: fix 'redefinition of omap4_keypad_suspend/resume'
+a30c15c Input: omap-keypad: Remove typo
+641c4f0 Input: omap-keypad: Enable wakeup capability for keypad.
+855b583 build script: add flag to prevent from 'wrong java version warning'
+c8ad19b Added todays changelog and updated full history
