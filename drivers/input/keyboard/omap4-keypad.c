@@ -83,6 +83,7 @@ struct omap4_keypad {
 	struct input_dev *input;
 
 	void __iomem *base;
+	bool irq_wake_enabled; 
 	int irq;
 
 	unsigned int rows;
@@ -382,6 +383,7 @@ static int __devinit omap4_keypad_probe(struct platform_device *pdev)
 		dev_err(&pdev->dev, "failed to register interrupt\n");
 		goto err_free_input;
 	}
+	device_init_wakeup(&pdev->dev, true); 
 	enable_irq_wake(OMAP44XX_IRQ_KBD_CTL);
 
 	pm_runtime_enable(&pdev->dev);
@@ -397,6 +399,7 @@ static int __devinit omap4_keypad_probe(struct platform_device *pdev)
 
 err_pm_disable:
 	pm_runtime_disable(&pdev->dev);
+	device_init_wakeup(&pdev->dev, false); 
 	free_irq(keypad_data->irq, keypad_data);
 err_free_input:
 	input_free_device(input_dev);
@@ -417,6 +420,8 @@ static int __devexit omap4_keypad_remove(struct platform_device *pdev)
 	free_irq(keypad_data->irq, keypad_data);
 
 	pm_runtime_disable(&pdev->dev);
+
+	device_init_wakeup(&pdev->dev, false); 
 
 	input_unregister_device(keypad_data->input);
 
@@ -455,6 +460,43 @@ static const struct dev_pm_ops omap4_keypad_pm_ops = {
 	.resume = omap4_keypad_resume,
 };
 
+#ifdef CONFIG_PM_SLEEP
+static int omap4_keypad_suspend(struct device *dev)
+{
+	struct platform_device *pdev = to_platform_device(dev);
+	struct omap4_keypad *keypad_data = platform_get_drvdata(pdev);
+ int error;
+
+ if (device_may_wakeup(&pdev->dev)) {
+	 error = enable_irq_wake(keypad_data->irq);
+ if (!error)
+	 keypad_data->irq_wake_enabled = true;
+ }
+
+ return 0;
+}
+
+static int omap4_keypad_resume(struct device *dev)
+{
+	struct platform_device *pdev = to_platform_device(dev);
+	struct omap4_keypad *keypad_data = platform_get_drvdata(pdev);
+
+ if (device_may_wakeup(&pdev->dev) && keypad_data->irq_wake_enabled) {
+	disable_irq_wake(keypad_data->irq);
+	keypad_data->irq_wake_enabled = false;
+ }
+
+ return 0;
+}
+
+static SIMPLE_DEV_PM_OPS(omap4_keypad_pm_ops, omap4_keypad_suspend,
+ omap4_keypad_resume);
+
+#define OMAP4_KEYPAD_PM_OPS (&omap4_keypad_pm_ops)
+#else
+#define OMAP4_KEYPAD_PM_OPS NULL
+#endif
+
 static struct platform_driver omap4_keypad_driver = {
 	.probe		= omap4_keypad_probe,
 	.remove		= __devexit_p(omap4_keypad_remove),
@@ -480,4 +522,4 @@ module_exit(omap4_keypad_exit);
 MODULE_AUTHOR("Texas Instruments");
 MODULE_DESCRIPTION("OMAP4 Keypad Driver");
 MODULE_LICENSE("GPL");
-MODULE_ALIAS("platform:omap4-keypad");
+MODULE_ALIAS("platform:omap4-keypad");deaktiviert
