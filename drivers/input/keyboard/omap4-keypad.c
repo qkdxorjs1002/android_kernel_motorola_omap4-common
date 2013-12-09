@@ -439,6 +439,13 @@ static int omap4_keypad_suspend(struct device *dev)
 {
 	struct platform_device *pdev = to_platform_device(dev);
 	struct omap4_keypad *keypad_data = platform_get_drvdata(pdev);
+	int error;
+	
+	if (device_may_wakeup(&pdev->dev)) {
+		error = enable_irq_wake(keypad_data->irq);
+	if (!error)
+		keypad_data->irq_wake_enabled = true;
+ }
 
 	if (keypad_data->keypad_pad_wkup)
 		keypad_data->keypad_pad_wkup(1);
@@ -450,45 +457,18 @@ static int omap4_keypad_resume(struct device *dev)
 	struct platform_device *pdev = to_platform_device(dev);
 	struct omap4_keypad *keypad_data = platform_get_drvdata(pdev);
 
-	if (keypad_data->keypad_pad_wkup)
-		keypad_data->keypad_pad_wkup(0);
-
-	return 0;
-}
-static const struct dev_pm_ops omap4_keypad_pm_ops = {
-	.suspend = omap4_keypad_suspend,
-	.resume = omap4_keypad_resume,
-};
-
-#ifdef CONFIG_PM_SLEEP
-static int omap4_keypad_suspend(struct device *dev)
-{
-	struct platform_device *pdev = to_platform_device(dev);
-	struct omap4_keypad *keypad_data = platform_get_drvdata(pdev);
- int error;
-
- if (device_may_wakeup(&pdev->dev)) {
-	 error = enable_irq_wake(keypad_data->irq);
- if (!error)
-	 keypad_data->irq_wake_enabled = true;
- }
-
- return 0;
-}
-
-static int omap4_keypad_resume(struct device *dev)
-{
-	struct platform_device *pdev = to_platform_device(dev);
-	struct omap4_keypad *keypad_data = platform_get_drvdata(pdev);
-
  if (device_may_wakeup(&pdev->dev) && keypad_data->irq_wake_enabled) {
 	disable_irq_wake(keypad_data->irq);
 	keypad_data->irq_wake_enabled = false;
  }
 
- return 0;
+	if (keypad_data->keypad_pad_wkup)
+		keypad_data->keypad_pad_wkup(0);
+
+	return 0;
 }
 
+#ifdef CONFIG_PM_SLEEP
 static SIMPLE_DEV_PM_OPS(omap4_keypad_pm_ops, omap4_keypad_suspend,
  omap4_keypad_resume);
 
@@ -496,6 +476,11 @@ static SIMPLE_DEV_PM_OPS(omap4_keypad_pm_ops, omap4_keypad_suspend,
 #else
 #define OMAP4_KEYPAD_PM_OPS NULL
 #endif
+
+static const struct dev_pm_ops omap4_keypad_pm_ops = {
+	.suspend = omap4_keypad_suspend,
+	.resume = omap4_keypad_resume,
+};
 
 static struct platform_driver omap4_keypad_driver = {
 	.probe		= omap4_keypad_probe,
