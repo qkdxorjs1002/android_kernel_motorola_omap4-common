@@ -1,0 +1,14 @@
+0920f09 OMAP4: CPUIDLE: Fix mistake
+3a86e9e hold bt/gps chip in reset for a longer time
+6c3b55d USB: OHCI: do not poll root hub status if HC is not running
+cac8405 ARM: OMAP: HS USB Host: fix unbalanced pm calls
+bb6a613 usb: ehci: fix the host wakeup state machine.
+3888d23 OMAP4430: USB Host: Implement workaround for Errata i687
+3e85f33 ARM: OMAP4: USB: Update workaround for USB errata i719
+e5e1eaf ST_Wakelock needs 5s timeout at least
+d102841 Revert "usb: ehci: fix the host wakeup state machine."
+c5f9647 usb: ehci: fix the host wakeup state machine.
+f01101b OMAP4430: USB Host: Implement workaround for Errata i719
+2207a79 Backport ipv6 addrconf.c and dependencies from 3.0.101 Fixes kernel nonstop spamming on ipv6 networks, preventing the device from entering in standby and generating ipv6 traffic affecting phone performance
+83c441f omap: cpu: cpuidle: correct idle states for exit latency and tresholds
+7424225 defconfig: default governor: revert to ktoonservative
