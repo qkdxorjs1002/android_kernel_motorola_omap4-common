@@ -824,7 +824,7 @@ int __init omap4_idle_init(void)
 	core_pd = pwrdm_lookup("core_pwrdm");
 	BUG_ON(!core_pd);
 
-	+  if (cpu_is_omap443x())
+	if (cpu_is_omap443x())
 
     idle_params = omap443x_cpuidle_params_table;
   else if (cpu_is_omap446x())
