@@ -1,3 +1,7 @@
+737827a Battery Friend: Fix syntax
+27efa4d Battery Friend: final fixes for now
+af7bfe8 cpufreq: ktoonservative: adjust values for less CPU boost
+e101ba4 Added todays changelog and updated full history
 6d86af4 Battery Friend: Fix scaling options
 322ac63 defconfig: disable ANDROID_PMEM
 9f734f0 defconfig: enable ANDROID_PMEM
