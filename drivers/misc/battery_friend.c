@@ -72,15 +72,16 @@ static ssize_t battery_friend_screen_on_min_freq_store(struct kobject *kobj,
 {
 	unsigned int data;
 
-	if(sscanf(buf, "%u\n", &data) < 100000) || (buf, "%u\n", &data) > 1000000) {
+		if(sscanf(buf, "%u\n", &data) < 100000) {
 			pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 			}
+	   		if (sscanf(buf, "%u\n", &data) > 1000000) {
+				pr_info("%s: bad value: %u\n", __FUNCTION__, data);
+				}
 		else {
 			pr_info("%s: battery friend screen_on_min_freq set to: %u\n", __FUNCTION__, data);
 			scr_on_min = data;
 		}
-	    else
-		pr_info("%s: unknown input!\n", __FUNCTION__);
 
 	return count;
 }
@@ -97,15 +98,16 @@ static ssize_t battery_friend_screen_off_max_freq_store(struct kobject *kobj,
 {
 	unsigned int data;
 
-	if(sscanf(buf, "%u\n", &data) < 300000) || (buf, "%u\n", &data) > 1000000) {
+		if(sscanf(buf, "%u\n", &data) < 300000) {
 			pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 			}
+			if (sscanf(buf, "%u\n", &data) > 1000000) {
+				pr_info("%s: bad value: %u\n", __FUNCTION__, data);
+				}
 		else {
 			pr_info("%s: battery friend screen_off_max_freq set to: %u\n", __FUNCTION__, data);
 			scr_off_max = data;
 		}
-	    else
-		pr_info("%s: unknown input!\n", __FUNCTION__);
 
 	return count;
 }
@@ -122,15 +124,16 @@ static ssize_t battery_friend_min_freq_store(struct kobject *kobj,
 {
 	unsigned int data;
 
-	if(sscanf(buf, "%u\n", &data) < 100000) || (buf, "%u\n", &data) > 1000000) {
+		if(sscanf(buf, "%u\n", &data) < 100000) {
 			pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 			}
+			if (sscanf(buf, "%u\n", &data) > 1000000) {
+				pr_info("%s: bad value: %u\n", __FUNCTION__, data);
+				}
 		else {
 			pr_info("%s: battery friend min_freq set to: %u\n", __FUNCTION__, data);
 			scr_min = data;
 		}
-	    else
-		pr_info("%s: unknown input!\n", __FUNCTION__);
 
 	return count;
 }
@@ -147,16 +150,17 @@ static ssize_t battery_friend_max_freq_store(struct kobject *kobj,
 {
 	unsigned int data;
 
-	if(sscanf(buf, "%u\n", &data) < 300000) || (buf, "%u\n", &data) > 1300000) {
+		if(sscanf(buf, "%u\n", &data) < 300000) {
 			pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 			}
+			if (sscanf(buf, "%u\n", &data) > 1300000) {
+				pr_info("%s: bad value: %u\n", __FUNCTION__, data);
+				}
 		else {
 			pr_info("%s: battery friend max_freq set to: %u\n", __FUNCTION__, data);
 			scr_max = data;
 		}
-	    else
-		pr_info("%s: unknown input!\n", __FUNCTION__);
-
+	
 	return count;
 }
 
@@ -195,8 +199,8 @@ static struct kobj_attribute battery_friend_min_freq_attribute =
 		battery_friend_min_freq_store);
 
 static struct kobj_attribute battery_friend_max_freq_attribute = 
-	__ATTR(battery_friend_max_freq_freq, 0666,
-		battery_friend_max_freq_freq_show,
+	__ATTR(battery_friend_max_freq, 0666,
+		battery_friend_max_freq_show,
 		battery_friend_max_freq_store);
 
 static struct kobj_attribute battery_friend_version_attribute = 
