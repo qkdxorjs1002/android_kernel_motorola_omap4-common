@@ -662,11 +662,12 @@ if (omap_cpufreq_suspended) {
 		if (policy->min > scr_min || policy->min < scr_min) {
 			policy->min = scr_min;
 			pr_info("Battery Friend: Min: freq locked at %u\n", scr_min);
+			}
 
 		if (policy->max > scr_max || policy->max < scr_max) {
 			policy->max = scr_max;
 			pr_info("Battery Friend: Max: freq locked at %u\n", scr_max);
-
+			}
 			policy->cur = omap_getspeed(policy->cpu);
     	 }
  }
