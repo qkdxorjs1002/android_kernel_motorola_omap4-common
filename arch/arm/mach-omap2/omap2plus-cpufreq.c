@@ -69,13 +69,13 @@
 #endif
 
 #ifdef CONFIG_BATTERY_FRIEND
-static unsigned int fr_min;
+int fr_min;
 module_param(fr_min, int, 0755);
-static unsigned int fr_max;
+int fr_max;
 module_param(fr_max, int, 0755);
-static unsigned int fr_sc_min;
+int fr_sc_min;
 module_param(fr_sc_min, int, 0755);
-static unsigned int fr_sc_max;
+int fr_sc_max;
 module_param(fr_sc_max, int, 0755);
 #endif
 
@@ -612,8 +612,8 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 	int result = 0;
 	int i;
 
-	fr_min = policy->min;
-	fr_max = policy->max;
+	fr_min = policy->cpuinfo.min_freq;
+	fr_max = policy->cpuinfo.max_freq;
 
 	mpu_clk = clk_get(NULL, mpu_clk_name);
 	if (IS_ERR(mpu_clk))
@@ -661,18 +661,12 @@ if (omap_cpufreq_suspended) {
     	 {
 		if (policy->min > scr_min || policy->min < scr_min) {
 			policy->min = scr_min;
-			pr_info("Battery Friend: min freq locked at %u\n", scr_min);
-		  } else {
-			policy->min = scr_min;
-			pr_info("Battery Friend: min freq locked at %u\n", scr_min);
-			 }
+			pr_info("Battery Friend: Min: freq locked at %u\n", scr_min);
+
 		if (policy->max > scr_max || policy->max < scr_max) {
 			policy->max = scr_max;
-			pr_info("Battery Friend: max freq locked at %u\n", scr_max);
-		  } else {
-			policy->max = scr_max;
-			pr_info("Battery Friend: max freq locked at %u\n", scr_max);
-			 }
+			pr_info("Battery Friend: Max: freq locked at %u\n", scr_max);
+
 			policy->cur = omap_getspeed(policy->cpu);
     	 }
  }
@@ -680,19 +674,19 @@ else
 #ifdef CONFIG_BATTERY_FRIEND
 	if (likely(battery_friend_active))
    	  {
-		if ((policy->min > scr_min || policy->min < scr_min) && (fr_min != scr_min)) {
+		if (fr_min != scr_min) {
 			policy->min = fr_min;
-			pr_info("Battery Friend: Restored stock frequency\n");
+			pr_info("Battery Friend: Min: Restored stock frequency\n");
 		  } else {
 			policy->min = scr_min;
-			pr_info("Battery Friend: min freq locked at %u\n", scr_min);
+			pr_info("Battery Friend: Min: freq locked at %u\n", scr_min);
 			 }
-		if ((policy->max > scr_max || policy->max < scr_max) && (fr_max != scr_max)) {
+		if (fr_max != scr_max) {
 			policy->max = fr_max;
-			pr_info("Battery Friend: Restored stock frequency instead\n");
+			pr_info("Battery Friend: Max: Restored stock frequency\n");
 		  } else {
 			policy->max = scr_max;
-			pr_info("Battery Friend: max freq locked at %u\n", scr_max);
+			pr_info("Battery Friend: Max: freq locked at %u\n", scr_max);
 			 }
 			policy->cur = omap_getspeed(policy->cpu);
    	  }
