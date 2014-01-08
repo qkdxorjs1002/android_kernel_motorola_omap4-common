@@ -839,12 +839,11 @@ static ssize_t store_screen_off_freq(struct cpufreq_policy *policy,
 	{
 
         screen_off_max_freq = scr_off_max;
-
 	pr_info("Battery Friend: Screen_off_max_freq limited to %u\n", scr_off_max);
-        	}
-	}  
-    else
-	screen_off_max_freq = freq_table[index].frequency;
+        }
+     else {
+	screen_off_max_freq = freq_table[index].frequency; 
+	   }
 #else
 	screen_off_max_freq = freq_table[index].frequency;
 #endif
@@ -897,13 +896,11 @@ mutex_lock(&omap_cpufreq_lock);
 	{
 
         screen_on_min_freq = scr_on_min;
-
-
 	pr_info("Battery Friend: Screen_on_min_freq limited to %u\n", scr_on_min);
-        	}
-	}  
-    else
+        }
+    else {
 	screen_on_min_freq = freq_table[index].frequency;
+	 }
 #else
 	screen_on_min_freq = freq_table[index].frequency;
 #endif
