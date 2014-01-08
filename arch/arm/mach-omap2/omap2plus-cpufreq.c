@@ -99,10 +99,10 @@ unsigned int screen_off_max_freq;
 unsigned int screen_on_min_freq;
 static unsigned int stock_freq_max; 
 
+#ifdef CONFIG_DYN_HOTPLUG
 unsigned int dyn_hotplug = 1;
 module_param(dyn_hotplug, int, 0755);
-
-// int oc_val = 1;
+#endif
 
 #ifdef CONFIG_OMAP4430_GPU_OVERCLOCK
 static const int gpu_max_freqs[] = { 153600000, 307200000, 384000000, 416000000 }; // [antsvx]: must match opp4xxx_data.c:omap443x_opp_def_list gpu table high frequencies
@@ -413,7 +413,7 @@ omap_cpufreq_scale(current_target_freq, cur);
 }
 min_capped = 0;
 }
-
+#ifdef CONFIG_DYN_HOTPLUG
 // Bring CPU1 down
         if (dyn_hotplug) {
                 if (cpu_online(1))
@@ -434,6 +434,7 @@ unsigned int cur;
 	lmf_screen_state = true;
 #endif
 
+#ifdef CONFIG_DYN_HOTPLUG
 // Bring CPU1 up
         if (dyn_hotplug) {
                 if (cpu_online(1) == false)

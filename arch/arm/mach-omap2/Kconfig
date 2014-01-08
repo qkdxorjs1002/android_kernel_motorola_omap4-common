@@ -562,6 +562,11 @@ config OMAP4430_IVA_OVERCLOCK
 	depends on ARCH_OMAP4
 	default n
 
+config DYN_HOTPLUG
+	bool "Enabled dynamic hotplug to turn off CPU1 during suspend, independant from selected governor"
+	depends on ARCH_OMAP4
+	default n
+
 endmenu
 
 config RQ_STATS
