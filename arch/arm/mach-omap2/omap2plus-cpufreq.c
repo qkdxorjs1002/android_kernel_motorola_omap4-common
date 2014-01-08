@@ -68,6 +68,16 @@
 #include <linux/battery_friend.h>
 #endif
 
+#ifdef CONFIG_BATTERY_FRIEND
+static unsigned int fr_min;
+module_param(fr_min, int, 0755);
+static unsigned int fr_max;
+module_param(fr_max, int, 0755);
+static unsigned int fr_sc_min;
+module_param(fr_sc_min, int, 0755);
+static unsigned int fr_sc_max;
+module_param(fr_sc_max, int, 0755);
+#endif
 
 #ifdef CONFIG_SMP
 struct lpj_info {
@@ -602,16 +612,8 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 	int result = 0;
 	int i;
 
-#ifdef CONFIG_BATTERY_FRIEND
-static unsigned int fr_min = policy->min;
-module_param(fr_min, int, 0755);
-static unsigned int fr_max = policy->max;
-module_param(fr_max, int, 0755);
-static unsigned int fr_sc_min = screen_on_min_freq;
-module_param(fr_sc_min, int, 0755);
-static unsigned int fr_sc_max = screen_off_max_freq;
-module_param(fr_sc_max, int, 0755);
-#endif
+	fr_min = policy->min;
+	fr_max = policy->max;
 
 	mpu_clk = clk_get(NULL, mpu_clk_name);
 	if (IS_ERR(mpu_clk))
@@ -678,14 +680,14 @@ else
 #ifdef CONFIG_BATTERY_FRIEND
 	if (likely(battery_friend_active))
    	  {
-		if (policy->min > scr_min || policy->min < scr_min) && (sr_min != scr_min) {
+		if ((policy->min > scr_min || policy->min < scr_min) && (fr_min != scr_min)) {
 			policy->min = fr_min;
 			pr_info("Battery Friend: Restored stock frequency\n");
 		  } else {
 			policy->min = scr_min;
 			pr_info("Battery Friend: min freq locked at %u\n", scr_min);
 			 }
-		if (policy->max > scr_max || policy->max < scr_max) && (sr_max != scr_max) {
+		if ((policy->max > scr_max || policy->max < scr_max) && (fr_max != scr_max)) {
 			policy->max = fr_max;
 			pr_info("Battery Friend: Restored stock frequency instead\n");
 		  } else {
@@ -700,10 +702,7 @@ else
 		policy->cur = omap_getspeed(policy->cpu);
 #else
 		policy->min = policy->cpuinfo.min_freq;
-		// Store value into variable for later restore
-			fr_min = policy->min;
 		policy->max = stock_freq_max = policy->cpuinfo.max_freq;
-			fr_max = policy->max;
 		policy->cur = omap_getspeed(policy->cpu);
 #endif
 
