@@ -154,7 +154,7 @@
 #include "pm.h"
 
 /* Maximum microseconds to wait for OMAP module to softreset */
-#define MAX_MODULE_SOFTRESET_WAIT	10000
+#define MAX_MODULE_SOFTRESET_WAIT	100000
 
 /* Name of the OMAP hwmod for the MPU */
 #define MPU_INITIATOR_NAME		"mpu"
