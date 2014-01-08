@@ -136,12 +136,21 @@ static __initdata struct cpuidle_params omap443x_cpuidle_params_table[] = {
     .target_residency = 10000,
     .valid = 1,
   },
+#ifdef CONFIG_OMAP_ALLOW_OSWR
+  /* C4 - CPU0 OFF + CPU1 OFF + MPU CSWR/OSWR + CORE OSWR */ 
+  {
+    .exit_latency = 4942,
+    .target_residency = 34000,
+    .valid = 1
+  },
+#else
   /* C4 - CPUx OFF + MPU CSWR + CORE OSWR */
   {
     .exit_latency = 5200,
     .target_residency = 35000,
     .valid = CPU_IDLE_ALLOW_OSWR,
   },
+#endif
 };
 
 static __initdata struct cpuidle_params omap446x_cpuidle_params_table[] = {
@@ -769,12 +778,10 @@ static void omap4_init_power_states(const struct cpuidle_params *cpuidle_params_
 	omap4_power_states[OMAP4_STATE_C4].core_state = PWRDM_POWER_RET;
 	omap4_power_states[OMAP4_STATE_C4].core_logic_state = PWRDM_POWER_OFF;
 #ifdef CONFIG_OMAP_C4_MPUOSWR
-	omap4_power_states[OMAP4_STATE_C4].desc =
-          "CPUs OFF, MPU OSWR + CORE OSWR";
+	omap4_power_states[OMAP4_STATE_C4].desc = "CPUs OFF, MPU OSWR + CORE OSWR";
 #else
 	omap4_power_states[OMAP4_STATE_C4].desc = "CPUs OFF, MPU CSWR + CORE OSWR";
 #endif 
-
 }
 
 struct cpuidle_driver omap4_idle_driver = {
