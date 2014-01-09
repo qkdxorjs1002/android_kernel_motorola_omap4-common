@@ -1,0 +1,98 @@
+0175e2e Battery Friend: Fix syntax - again
+95691bb Battery Friend: Fix several stuff the stock frequencies were not stored into our variables. Change from integer to unsigned integer and fix the storing rule
+f68af9b defconfig: disable bad options
+73a1a10 Battery Friend: Fix userspace input value definition
+267b7cc OMAP4: CPUIDLE: Set correct OSWR config
+3b50feb arch/arm: Makefile: Add tunables again
+6f987f9 Added todays changelog and updated full history
+737827a Battery Friend: Fix syntax
+27efa4d Battery Friend: final fixes for now
+af7bfe8 cpufreq: ktoonservative: adjust values for less CPU boost
+e101ba4 Added todays changelog and updated full history
+6d86af4 Battery Friend: Fix scaling options
+322ac63 defconfig: disable ANDROID_PMEM
+9f734f0 defconfig: enable ANDROID_PMEM
+f6eabf9 defconfig: enable thermal framework
+bab8955 OMAP: omap_hwmod: Increase maximum microseconds to wait for OMAP module to softreset
+f535851 Battery Friend: Added variables to store stock frequencies before BF changes them during suspend. On device resume BF restores the stored stock frequencies, so users don't have to perform it manually
+834678e Battery Friend: Fix syntax
+cd03d0c OMAP: omap2plus-copufreq: Fix mistakes
+aae3885 defconfig: enable Cleancache
+75c9542 Dynamic Hotplug: Enable dyn_hotplug as an extra option
+b09f553 OMAP: CPUFREQ: omap2plus-cpufreq: Implement the latest Battery_Friend settings
+d943d4b drivers: misc: battery_friend: Added new dynamic userspace interface for mpu frequency control
+5387ee9 defconfig: disable cleancache
+785d08b arch/arm: Makefile: Tune for armv7 on RAZR
+e66424e Revert "zcache-main: enable zcache by default"
+9427b0b OMAP4: CPUIDLE: Fix CONFIG_OMAP_ALLOW_OSWR in idle states / defconfig updates
+cb94708 Added todays changelog and updated full history
+8da3b04 driver: cpufreq: ktoonservative: set for balanced performance and battery life
+40cdfa5 mm: vmalloc: fix mistakes
+05072e9 mm: vmscan: fix: move declaration of 'batch_size' to the correct position
+9d6fe21 Revert "[PATCHv2 1/2] sched: Folding nohz load accounting more accurate"
+fec2f5b Revert "timekeeping: fix derp"
+8044ded timekeeping: fix derp
+493011e defconfig updates
+8bdd538 [PATCHv2 1/2] sched: Folding nohz load accounting more accurate
+cce2c78 mutex: Make more scalable by doing less atomic operations
+bbc75cf  random: Statically compute poolbitshift, poolbytes, poolbits Use a macro to statically compute poolbitshift (will be used in a subsequent patch), poolbytes, and poolbits.  On virtually all architectures the cost of a memory load with an offset is the same as the one of a memory load.
+d686ad1 cpuidle: Remove CPUIDLE_FLAG_IGNORE and dev->prepare()
+687d9af drivers: governors: add module.h ressource files (required)
+627b4e2 drivers: governors: menu: decrease nr_iowait_cpu to 2
+6103f5c Fix merge
+1e1db19 mm: implement WasActive page flag (for improving cleancache) (Feedback welcome if there is a different/better way to do this
+e65cc2e9 zcache-main: enable zcache by default
+3afdee2 staging: zcache: sync to kernel.org
+7a588d2 lib/decompressors: fix "no limit" output buffer length
+3fc439f selinux: fix problems in netnode when BUG() is compiled out
+4b0a970 SELinux: use a helper function to determine seclabel
+7ccda82 SELinux: pass a superblock to security_fs_use
+1447003 SELinux: do not handle seclabel as a special flag
+8ad166c SELinux: change sbsec->behavior to short
+1301ace SELinux: renumber the superblock options
+11ab274 SELinux: do all flags twiddling in one place
+dd1c8a6 SELinux: rename SE_SBLABELSUPP to SBLABEL_MNT
+32ecca9 SELinux: use define for number of bits in the mnt flags mask
+714c4de SELinux: remove crazy contortions around proc
+732aa69 SELinux: fix selinuxfs policy file on big endian systems
+e3a8c28 staging: zsmalloc: access page->private by using page_private macro
+3b7f746e SELinux: Enable setting security contexts on rootfs inodes.
+8b2a4ed SELinux: Reduce overhead of mls_level_isvalid() function call
+4056db2 Revert "selinux: fix problems in netnode when BUG() is compiled out"
+aa34f62 selinux: fix problems in netnode when BUG() is compiled out
+4bd4d2e mm/vmalloc: use wrapper function get_vm_area_size to caculate size of vm area
+e3248e8 mm, vmalloc: use well-defined find_last_bit() func
+ee00eec sched: reduce the overhead of obtain factor
+5a21551 sched: smart wake-affine foundation
+835ee4a Revert "sched: reduce the overhead of obtain factor"
+ef3e5de sched: reduce the overhead of obtain factor Smart wake-affine is using node-size as the factor, but the overhead of mask operation is high.
+539f017 OMAP4: PM: Fix missed PRCM MPU interrupt events
+c43be49 Revert "Revert "sched: Fix select_fallback_rq() vs cpu_active/cpu_online""
+ffa7296 dm table: set flush capability based on underlying devices DM has always advertised both REQ_FLUSH and REQ_FUA flush capabilities regardless of whether or not a given DM device's underlying devices also advertised a need for them.
+a754886 dm crypt: optionally support discard requests
+85ddb79 dm table: share target argument parsing functions Move multipath target argument parsing code into dm-table so other targets can share it.
+60b1af5 dm: ignore merge_bvec for snapshots when safe Add a new flag DMF_MERGE_IS_OPTIONAL to struct mapped_device to indicate whether the device can accept bios larger than the size its merge function returns.  When set, use this to send large bios to snapshots which can split them if necessary.  Snapshot I/O may be significantly fragmented and this approach seems to improve peformance.
+b3e4c6c dm table: clean dm_get_device and move exports There is no need for __table_get_device to be factored out. Also move the exports to the end of their respective functions.
+8cc6e86 dm: use vzalloc
+74c4f5f dm table: fix discard support Remove 'discards_supported' from the dm_table structure.  The same information can be easily discovered from the table's target(s) in dm_table_supports_discards().
+b781f12  dm: suppress endian warnings
+a5c1c23 vmscan: add customisable shrinker batch size
+a100ba1 dm crypt: always disable discard_zeroes_data
+5a55c29 defconfig: OCE: set recommend Android config settings
+1bb19e0 defconfig: OCE: add IPv6 related security features
+9299dc3 defconfig: OCE: add more compatibitliy for IPv6
+a059cd8 Added todays changelog and updated full history
+0920f09 OMAP4: CPUIDLE: Fix mistake
+3a86e9e hold bt/gps chip in reset for a longer time
+6c3b55d USB: OHCI: do not poll root hub status if HC is not running
+cac8405 ARM: OMAP: HS USB Host: fix unbalanced pm calls
+bb6a613 usb: ehci: fix the host wakeup state machine.
+3888d23 OMAP4430: USB Host: Implement workaround for Errata i687
+3e85f33 ARM: OMAP4: USB: Update workaround for USB errata i719
+e5e1eaf ST_Wakelock needs 5s timeout at least
+d102841 Revert "usb: ehci: fix the host wakeup state machine."
+c5f9647 usb: ehci: fix the host wakeup state machine.
+f01101b OMAP4430: USB Host: Implement workaround for Errata i719
+2207a79 Backport ipv6 addrconf.c and dependencies from 3.0.101 Fixes kernel nonstop spamming on ipv6 networks, preventing the device from entering in standby and generating ipv6 traffic affecting phone performance
+83c441f omap: cpu: cpuidle: correct idle states for exit latency and tresholds
+7424225 defconfig: default governor: revert to ktoonservative
