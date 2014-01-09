@@ -694,12 +694,16 @@ else
 			policy->cur = omap_getspeed(policy->cpu);
    	  }
 else
-		policy->min = fr_min = policy->cpuinfo.min_freq;
-		policy->max = fr_max = stock_freq_max = policy->cpuinfo.max_freq;
+		policy->min = policy->cpuinfo.min_freq;
+		fr_min = policy->min;
+		policy->max = stock_freq_max = policy->cpuinfo.max_freq;
+		fr_max = policy->max;
 		policy->cur = omap_getspeed(policy->cpu);
 #else
-		policy->min = fr_min = policy->cpuinfo.min_freq;
-		policy->max = fr_max = stock_freq_max = policy->cpuinfo.max_freq;
+		policy->min = policy->cpuinfo.min_freq;
+		fr_min = policy->min;
+		policy->max = stock_freq_max = policy->cpuinfo.max_freq;
+		fr_max = policy->max;
 		policy->cur = omap_getspeed(policy->cpu);
 #endif
 
