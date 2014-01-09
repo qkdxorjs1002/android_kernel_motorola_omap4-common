@@ -1,3 +1,9 @@
+5c818c8 sys/kernel/power: Front Buffer Delay: Rename the kobject to 'fbu_delay' to avoid conflict with GAMMA control in Trickster Mod app - only for now until this wil be fixed in TM
+4db82de Battery Friend: possible conflicting setting reverted
+893a1b9 More fixes....
+ddaf13c Fix some stuff
+3f16050 Revert "OMAP: omap_hwmod: Increase maximum microseconds to wait for OMAP module to softreset"
+93d237b Added todays changelog and updated full history
 0175e2e Battery Friend: Fix syntax - again
 95691bb Battery Friend: Fix several stuff the stock frequencies were not stored into our variables. Change from integer to unsigned integer and fix the storing rule
 f68af9b defconfig: disable bad options
