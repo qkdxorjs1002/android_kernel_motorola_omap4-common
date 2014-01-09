@@ -1906,8 +1906,6 @@ int cpufreq_update_policy(unsigned int cpu)
 	pr_debug("updating policy for CPU %u\n", cpu);
 	memcpy(&policy, data, sizeof(struct cpufreq_policy));
 
-	/* Set to 100mhz min unless the user doesn't set something else */
-	// CPU policy is broken in some way related to kexec, therefor we need a special rule here
 	policy.min = data->user_policy.min;
 	policy.max = data->user_policy.max;
 	policy.policy = data->user_policy.policy;
