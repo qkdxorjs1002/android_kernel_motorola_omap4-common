@@ -72,10 +72,11 @@ static ssize_t battery_friend_screen_on_min_freq_store(struct kobject *kobj,
 {
 	unsigned int data;
 
-		if(sscanf(buf, "%u\n", &data) < 100000) {
+		if(sscanf(buf, "%u\n", &data) {
+			if (data < 100000) {
 			pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 			}
-	   		if (sscanf(buf, "%u\n", &data) > 1000000) {
+	   		else if (data > 1000000) {
 				pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 				}
 		else {
@@ -98,10 +99,11 @@ static ssize_t battery_friend_screen_off_max_freq_store(struct kobject *kobj,
 {
 	unsigned int data;
 
-		if(sscanf(buf, "%u\n", &data) < 300000) {
+		if(sscanf(buf, "%u\n", &data) {
+			if (data < 300000) {
 			pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 			}
-			if (sscanf(buf, "%u\n", &data) > 1000000) {
+	   		else if (data > 1000000) {
 				pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 				}
 		else {
@@ -124,10 +126,11 @@ static ssize_t battery_friend_min_freq_store(struct kobject *kobj,
 {
 	unsigned int data;
 
-		if(sscanf(buf, "%u\n", &data) < 100000) {
+		if(sscanf(buf, "%u\n", &data) {
+			if (data < 100000) {
 			pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 			}
-			if (sscanf(buf, "%u\n", &data) > 1000000) {
+	   		else if (data > 1000000) {
 				pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 				}
 		else {
@@ -150,10 +153,11 @@ static ssize_t battery_friend_max_freq_store(struct kobject *kobj,
 {
 	unsigned int data;
 
-		if(sscanf(buf, "%u\n", &data) < 300000) {
+		if(sscanf(buf, "%u\n", &data) {
+			if (data < 300000) {
 			pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 			}
-			if (sscanf(buf, "%u\n", &data) > 1300000) {
+	   		else if (data > 1300000) {
 				pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 				}
 		else {
