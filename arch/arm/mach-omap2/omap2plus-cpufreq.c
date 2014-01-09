@@ -701,9 +701,7 @@ else
 		policy->cur = omap_getspeed(policy->cpu);
 #else
 		policy->min = policy->cpuinfo.min_freq;
-		fr_min = policy->min;
 		policy->max = stock_freq_max = policy->cpuinfo.max_freq;
-		fr_max = policy->max;
 		policy->cur = omap_getspeed(policy->cpu);
 #endif
 
@@ -860,7 +858,7 @@ static ssize_t store_screen_off_freq(struct cpufreq_policy *policy,
 	pr_info("Battery Friend: screen_off_max_freq: restored stock frequency\n");
 	   }
 #else
-	screen_off_max_freq = fr_sc_max = freq_table[index].frequency;
+	screen_off_max_freq = freq_table[index].frequency;
 #endif
 	ret = count;
 
@@ -920,7 +918,7 @@ int index;
 	pr_info("Battery Friend: screen_on_min_freq: restored stock frequency\n");
 	 }
 #else
-	screen_on_min_freq = fr_sc_min = freq_table[index].frequency;
+	screen_on_min_freq = freq_table[index].frequency;
 #endif
 	ret = count;
 	
