@@ -2835,7 +2835,7 @@ CONFIG_MACH_NO_WESTBRIDGE=y
 # Altera FPGA firmware download module
 #
 # CONFIG_ALTERA_STAPL is not set
-CONFIG_THERMAL_FRAMEWORK=y
+# CONFIG_THERMAL_FRAMEWORK is not set
 
 #
 # TTY driver over OMAP4 SPI slave
