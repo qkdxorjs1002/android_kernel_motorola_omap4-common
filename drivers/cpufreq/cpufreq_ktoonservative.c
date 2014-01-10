@@ -30,14 +30,14 @@
  */
 
 #define DEF_FREQUENCY_UP_THRESHOLD		(80)
-#define DEF_FREQUENCY_UP_THRESHOLD_HOTPLUG	(53)
-#define DEF_FREQUENCY_DOWN_THRESHOLD		(52)
+#define DEF_FREQUENCY_UP_THRESHOLD_HOTPLUG	(75)
+#define DEF_FREQUENCY_DOWN_THRESHOLD		(50)
 #define DEF_FREQUENCY_DOWN_THRESHOLD_HOTPLUG	(30)
-#define DEF_CPU_DOWN_BLOCK_CYCLES		(22)
-#define DEF_BOOST_CPU				(1134000)
+#define DEF_CPU_DOWN_BLOCK_CYCLES		(20)
+#define DEF_BOOST_CPU				(1000000)
 #define DEF_BOOST_CPU_TURN_ON_2ND_CORE		(1)
 #define DEF_BOOST_GPU				(450)
-#define DEF_BOOST_HOLD_CYCLES			(22)
+#define DEF_BOOST_HOLD_CYCLES			(8)
 #define DEF_DISABLE_HOTPLUGGING			(1)
 
 /*
@@ -53,7 +53,7 @@
 #define MIN_SAMPLING_RATE_RATIO			(2)
 
 static unsigned int min_sampling_rate;
-static unsigned int stored_sampling_rate = 45000;
+static unsigned int stored_sampling_rate = 40000;
 static unsigned int Lcpu_down_block_cycles = 0;
 static unsigned int Lcpu_up_block_cycles = 0;
 static bool boostpulse_relayf = false;
@@ -138,7 +138,7 @@ static struct dbs_tuners {
 	.disable_hotplugging = DEF_DISABLE_HOTPLUGGING,
 	.no_2nd_cpu_screen_off = 1,
 	.sampling_down_factor = DEF_SAMPLING_DOWN_FACTOR,
-	.sampling_rate_screen_off = 45000,
+	.sampling_rate_screen_off = 40000,
 	.ignore_nice = 0,
 	.freq_step = 5,
 };
