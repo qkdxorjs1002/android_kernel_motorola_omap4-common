@@ -1,3 +1,14 @@
+0ee4888 battery Friend: Fix syntax
+c1c1492 Battery Friend: Use positive comparison instead of negative to prevent cnflicts
+3f30d91 Battery Friend: Fix the input value range
+6bbefdf Battery Friend: Fix syntax again :-D
+fa1cbe2 Battery Friend: fix syntax and remove unused variables
+f926c2a Revert "sys/kernel/power: Front Buffer Delay: Rename the kobject to 'fbu_delay' to avoid conflict with GAMMA control in Trickster Mod app - only for now until this wil be fixed in TM"
+74844bf Battery Friend: Fix value input.
+e25e040 drivers: cpufreq: ktoonservative: tune for being more balanced and save power
+bce520a Battery Friend: Fix checking if battery_friend is active and the related behavior
+2e6b0a1 defconfig: change OPTIMIZE from 'MORE' to 'DEFAULT'
+48d5c75 Added todays changelog and updated full history
 e9711b6 mm: vmscan: Limit flag 'SetPageWasActive' to Cleancache only
 d225b3e Battery Friend: Fix syntax
 f058780 CPUIDLE/defconfig: new config for cpuidle - partly
@@ -94,5 +105,3 @@ a100ba1 dm crypt: always disable discard_zeroes_data
 5a55c29 defconfig: OCE: set recommend Android config settings
 1bb19e0 defconfig: OCE: add IPv6 related security features
 9299dc3 defconfig: OCE: add more compatibitliy for IPv6
-a059cd8 Added todays changelog and updated full history
-0920f09 OMAP4: CPUIDLE: Fix mistake
