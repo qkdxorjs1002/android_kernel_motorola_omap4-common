@@ -68,13 +68,6 @@
 #include <linux/battery_friend.h>
 #endif
 
-#ifdef CONFIG_BATTERY_FRIEND
-unsigned int fr_min = 200000;
-unsigned int fr_max = 1000000;
-unsigned int fr_sc_min = 300000;
-unsigned int fr_sc_max = 700000;
-#endif
-
 #ifdef CONFIG_SMP
 struct lpj_info {
 	unsigned long	ref;
@@ -104,6 +97,13 @@ static bool omap_cpufreq_suspended;
 unsigned int screen_off_max_freq;
 unsigned int screen_on_min_freq;
 static unsigned int stock_freq_max; 
+
+#ifdef CONFIG_BATTERY_FRIEND
+unsigned int fr_min = 200000;
+unsigned int fr_max = 1000000;
+// unsigned int fr_sc_min = 300000;
+unsigned int fr_sc_max = 700000;
+#endif
 
 #ifdef CONFIG_DYN_HOTPLUG
 unsigned int dyn_hotplug = 1;
@@ -376,11 +376,11 @@ static void omap_cpu_early_suspend(struct early_suspend *h)
 #endif
 
 #ifdef CONFIG_SUSPEND_GOV
-			pr_info("Suspend Governor : Current governor is : %s\n", policy->governor->name);
+			pr_info("Suspend_Governor : Current governor is : %s\n", policy->governor->name);
 		if (policy->governor->name != good_governor) {
 			strcpy(def_governor, policy->governor->name);
 			cpufreq_set_gov(good_governor, cpu);
-			pr_info("Suspend Governor : Change governor to : %s\n", policy->governor->name);
+			pr_info("Suspend_Governor : Change governor to : %s\n", policy->governor->name);
 			change_g = true;
 		}
 #endif
@@ -655,47 +655,34 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 if (omap_cpufreq_suspended) {
 	if (likely(battery_friend_active))
     	 {
-		if (policy->min != scr_min) {
-			fr_min = policy->min;
-			}
+		fr_min = policy->min;
 		policy->min = scr_min;
-		pr_info("Battery Friend: Min: freq locked at %u\n", scr_min);
+		pr_info("Battery_Friend: Min: freq locked at %u Mhz\n", scr_min/1000);
 
-		if (policy->max > scr_max || policy->max < scr_max) {
-			fr_max = policy->max;
-			}
+		fr_max = policy->max;
 		policy->max = scr_max;
-		pr_info("Battery Friend: Max: freq locked at %u\n", scr_max);
+		pr_info("Battery_Friend: Max: freq locked at %u Mhz\n", scr_max/1000);
     	 }
 		policy->cur = omap_getspeed(policy->cpu);
  }
 else if (!omap_cpufreq_suspended) {
 #ifdef CONFIG_BATTERY_FRIEND
-	if (likely(battery_friend_active))
-   	  {
-		if (fr_min != scr_min) {
+	if (likely(battery_friend_active)) {
+
 			policy->min = fr_min;
-			pr_info("Battery Friend: Min: Restored stock frequency\n");
-		  } else {
-			policy->min = scr_min;
-			pr_info("Battery Friend: Min: freq locked at %u\n", scr_min);
-			 }
-		if (fr_max != scr_max) {
+			pr_info("Battery_Friend: Min: Restored stock frequency\n");
+
 			policy->max = fr_max;
-			pr_info("Battery Friend: Max: Restored stock frequency\n");
-		  } else {
-			policy->max = scr_max;
-			pr_info("Battery Friend: Max: freq locked at %u\n", scr_max);
-			 }
-   	  }
+			pr_info("Battery_Friend: Max: Restored stock frequency\n");
+		 }
 		policy->cur = omap_getspeed(policy->cpu);
-}
-else
+	else 
 		policy->min = policy->cpuinfo.min_freq;
 		fr_min = policy->min;
 		policy->max = stock_freq_max = policy->cpuinfo.max_freq;
 		fr_max = policy->max;
 		policy->cur = omap_getspeed(policy->cpu);
+	}
 #else
 		policy->min = policy->cpuinfo.min_freq;
 		policy->max = stock_freq_max = policy->cpuinfo.max_freq;
@@ -850,12 +837,12 @@ static ssize_t store_screen_off_freq(struct cpufreq_policy *policy,
     if (likely(battery_friend_active))
 	{
         screen_off_max_freq = scr_off_max;
-	pr_info("Battery Friend: Screen_off_max_freq limited to %u\n", scr_off_max);
+	pr_info("Battery_Friend: Screen_off: Max: limited to %u Mhz\n", scr_off_max/1000);
         }
      else {
 	screen_off_max_freq = fr_sc_max;
-	pr_info("Battery Friend: screen_off_max_freq: restored stock frequency\n");
-	   }
+	pr_info("Battery_Friend: screen_off: Max: restored stock frequency\n");
+	}
 #endif
 	ret = count;
 
@@ -903,6 +890,7 @@ int index;
 		goto out;
 
 	screen_on_min_freq = freq_table[index].frequency;
+/* Disabled: screen_on_min_freq is not necessary for suspend mode
 #ifdef CONFIG_BATTERY_FRIEND
 // Limit active mpu freq to selected userspace value
 	fr_sc_min = screen_on_min_freq;
@@ -910,13 +898,13 @@ int index;
     if (likely(battery_friend_active))
 	{
         screen_on_min_freq = scr_on_min;
-	pr_info("Battery Friend: Screen_on_min_freq limited to %u\n", scr_on_min);
+	pr_info("Battery Friend: Screen_on: Min: limited to %u Mhz\n", scr_on_min/1000);
         }
     else {
 	screen_on_min_freq = fr_sc_min;
-	pr_info("Battery Friend: screen_on_min_freq: restored stock frequency\n");
-	 }
-#endif
+	pr_info("Battery Friend: screen_on: Min: restored stock frequency\n");
+	}
+#endif */
 	ret = count;
 	
 	min_capped = screen_on_min_freq;

@@ -29,7 +29,7 @@ static DEFINE_MUTEX(battery_mutex);
 bool battery_friend_early_suspend_active __read_mostly = true;
 bool battery_friend_active __read_mostly = true;
 
-unsigned int scr_on_min = 300000, scr_off_max = 700000, scr_min = 200000, scr_max = 1000000;
+unsigned int /*scr_on_min = 300000,*/ scr_off_max = 700000, scr_min = 200000, scr_max = 1000000;
 
 
 static ssize_t battery_friend_active_show(struct kobject *kobj,
@@ -60,7 +60,7 @@ static ssize_t battery_friend_active_store(struct kobject *kobj,
 	return count;
 }
 
-// Screen on min freq
+/* // Screen on min freq
 static ssize_t battery_friend_screen_on_min_freq_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
 {
@@ -85,7 +85,7 @@ static ssize_t battery_friend_screen_on_min_freq_store(struct kobject *kobj,
 		}
 
 	return count;
-}
+} */
 
 // Screen off max freq
 static ssize_t battery_friend_screen_off_max_freq_show(struct kobject *kobj,
@@ -187,10 +187,10 @@ static struct kobj_attribute battery_friend_active_attribute =
 		battery_friend_active_show,
 		battery_friend_active_store);
 
-static struct kobj_attribute battery_friend_screen_on_min_freq_attribute = 
+/*static struct kobj_attribute battery_friend_screen_on_min_freq_attribute = 
 	__ATTR(battery_friend_screen_on_min_freq, 0666,
 		battery_friend_screen_on_min_freq_show,
-		battery_friend_screen_on_min_freq_store);
+		battery_friend_screen_on_min_freq_store); */
 
 static struct kobj_attribute battery_friend_screen_off_max_freq_attribute = 
 	__ATTR(battery_friend_screen_off_max_freq, 0666,
@@ -216,7 +216,7 @@ static struct kobj_attribute battery_friend_earlysuspend_attribute =
 static struct attribute *battery_friend_active_attrs[] =
 	{
 		&battery_friend_active_attribute.attr,
-		&battery_friend_screen_on_min_freq_attribute.attr,
+	//	&battery_friend_screen_on_min_freq_attribute.attr,
 		&battery_friend_screen_off_max_freq_attribute.attr,
 		&battery_friend_max_freq_attribute.attr,
 		&battery_friend_min_freq_attribute.attr,
