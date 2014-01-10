@@ -1,3 +1,5 @@
+d3521b6 Battery Friend: Finaly fix syntax
+87f1d3c Added todays changelog and updated full history
 0ee4888 battery Friend: Fix syntax
 c1c1492 Battery Friend: Use positive comparison instead of negative to prevent cnflicts
 3f30d91 Battery Friend: Fix the input value range
