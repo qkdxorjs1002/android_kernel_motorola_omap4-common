@@ -29,7 +29,7 @@ static DEFINE_MUTEX(battery_mutex);
 bool battery_friend_early_suspend_active __read_mostly = true;
 bool battery_friend_active __read_mostly = true;
 
-unsigned int /*scr_on_min = 300000,*/ scr_off_max = 700000, scr_min = 200000, /*scr_max = 1000000;*/
+unsigned int /*scr_on_min = 300000,*/ scr_off_max = 700000, scr_min = 200000; /*scr_max = 1000000;*/
 
 
 static ssize_t battery_friend_active_show(struct kobject *kobj,
@@ -105,7 +105,7 @@ static ssize_t battery_friend_screen_off_max_freq_store(struct kobject *kobj,
 	   	else if (sscanf(buf, "%u\n", &data) > 1300000) {
 				pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 				}
-		} else {
+		else {
 			pr_info("%s: battery friend screen_off_max_freq set to: %u Mhz\n", __FUNCTION__, data/1000);
 			scr_off_max = data;
 		}
@@ -131,7 +131,7 @@ static ssize_t battery_friend_min_freq_store(struct kobject *kobj,
 	   	else if (sscanf(buf, "%u\n", &data) > 1300000) {
 				pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 				}
-		} else {
+		else {
 			pr_info("%s: battery friend min_freq set to: %u Mhz\n", __FUNCTION__, data/1000);
 			scr_min = data;
 		}
