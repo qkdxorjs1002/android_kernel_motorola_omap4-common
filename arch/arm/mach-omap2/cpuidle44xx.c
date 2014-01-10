@@ -132,16 +132,24 @@ static __initdata struct cpuidle_params omap443x_cpuidle_params_table[] = {
   },
   /* C3 - CPUx OFF + MPU CSWR + CORE OSWR */
   {
-    .exit_latency = 5000,
+    .exit_latency = 4746,
     .target_residency = 10000,
     .valid = 1,
   },
-  /* C4 - CPUx OFF + MPU CSWR + CORE OSWR */
+#ifdef CONFIG_OMAP_ALLOW_OSWR
+ 	/* C4 - CPU0 OFF + CPU1 OFF + MPU CSWR + CORE OSWR */
   {
-    .exit_latency = 5200,
-    .target_residency = 35000,
-    .valid = CPU_IDLE_ALLOW_OSWR,
+    .exit_latency = 4942,
+    .target_residency = 34000,
+    .valid = 1
   },
+#else
+  { 
+    .exit_latency = 1500,
+    .target_residency = 1000,
+    .valid = 0
+  },
+#endif
 };
 
 static __initdata struct cpuidle_params omap446x_cpuidle_params_table[] = {
