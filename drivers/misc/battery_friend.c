@@ -115,7 +115,7 @@ static ssize_t battery_friend_screen_off_max_freq_store(struct kobject *kobj,
 
 		(sscanf(buf, "%u\n", &data));
 
-		if (data = freq_1 || data = freq_2 || data = freq_3 || data = freq_4 || data = freq_5 || data = freq_6 || data = freq_7 || data = freq_8 || data = freq_9 || data = freq_10 || data = freq_11 || data = freq_12 || data = freq_13) {
+		if (data == freq_1 || data == freq_2 || data == freq_3 || data == freq_4 || data == freq_5 || data == freq_6 || data == freq_7 || data == freq_8 || data == freq_9 || data == freq_10 || data == freq_11 || data == freq_12 || data == freq_13) {
 			pr_info("%s: screen_off_max_freq set to: %u Mhz\n", __FUNCTION__, data/1000);
 			scr_off_max = data;
 		}
@@ -140,7 +140,7 @@ static ssize_t battery_friend_min_freq_store(struct kobject *kobj,
 
 		(sscanf(buf, "%u\n", &data));
 
-		if (data = freq_1 || data = freq_2 || data = freq_3 || data = freq_4 || data = freq_5 || data = freq_6 || data = freq_7 || data = freq_8 || data = freq_9 || data = freq_10 || data = freq_11 || data = freq_12 || data = freq_13) {
+		if (data == freq_1 || data == freq_2 || data == freq_3 || data == freq_4 || data == freq_5 || data == freq_6 || data == freq_7 || data == freq_8 || data == freq_9 || data == freq_10 || data == freq_11 || data == freq_12 || data == freq_13) {
 			pr_info("%s: min_freq set to: %u Mhz\n", __FUNCTION__, data/1000);
 			scr_off_max = data;
 		}
