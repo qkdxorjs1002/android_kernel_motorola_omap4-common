@@ -43,7 +43,7 @@ static ssize_t battery_friend_active_store(struct kobject *kobj,
 {
 	unsigned int data;
 
-	if(sscanf(buf, "%u\n", &data) == 1) {
+	if (sscanf(buf, "%u\n", &data) == 1) {
 		if (data == 1) {
 			pr_info("%s: battery friend enabled\n", __FUNCTION__);
 			battery_friend_active = true;
@@ -99,15 +99,14 @@ static ssize_t battery_friend_screen_off_max_freq_store(struct kobject *kobj,
 {
 	unsigned int data;
 
-		if(sscanf(buf, "%u\n", &data)) {
-			if (data < 100000) {
+		if (sscanf(buf, "%u\n", &data) < 100000) {
 			pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 			}
-	   		else if (data > 1300000) {
+	   	else if sscanf(buf, "%u\n", &data) > 1300000) {
 				pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 				}
 		} else {
-			pr_info("%s: battery friend screen_off_max_freq set to: %u\n", __FUNCTION__, data);
+			pr_info("%s: battery friend screen_off_max_freq set to: %u Mhz\n", __FUNCTION__, data/1000);
 			scr_off_max = data;
 		}
 
@@ -126,15 +125,14 @@ static ssize_t battery_friend_min_freq_store(struct kobject *kobj,
 {
 	unsigned int data;
 
-		if(sscanf(buf, "%u\n", &data)) {
-			if (data < 100000) {
+		if (sscanf(buf, "%u\n", &data) < 100000) {
 			pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 			}
-	   		else if (data > 1300000) {
+	   	else if sscanf(buf, "%u\n", &data) > 1300000) {
 				pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 				}
 		} else {
-			pr_info("%s: battery friend min_freq set to: %u\n", __FUNCTION__, data);
+			pr_info("%s: battery friend min_freq set to: %u Mhz\n", __FUNCTION__, data/1000);
 			scr_min = data;
 		}
 
@@ -153,15 +151,14 @@ static ssize_t battery_friend_max_freq_store(struct kobject *kobj,
 {
 	unsigned int data;
 
-		if(sscanf(buf, "%u\n", &data)) {
-			if (data < 100000) {
+		if (sscanf(buf, "%u\n", &data) < 100000) {
 			pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 			}
-	   		else if (data > 1300000) {
+	   	else if (sscanf(buf, "%u\n", &data) > 1300000) {
 				pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 				}
 		} else {
-			pr_info("%s: battery friend max_freq set to: %u\n", __FUNCTION__, data);
+			pr_info("%s: battery friend max_freq set to: %u Mhz\n", __FUNCTION__, data/1000);
 			scr_max = data;
 		}
 	
