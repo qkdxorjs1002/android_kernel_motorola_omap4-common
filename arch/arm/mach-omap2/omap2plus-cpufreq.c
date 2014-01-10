@@ -662,8 +662,9 @@ if (omap_cpufreq_suspended) {
 		fr_max = policy->max;
 		policy->max = scr_max;
 		pr_info("Battery_Friend: Max: freq locked at %u Mhz\n", scr_max/1000);
-    	 }
+    	 
 		policy->cur = omap_getspeed(policy->cpu);
+	  }
  }
 else if (!omap_cpufreq_suspended) {
 #ifdef CONFIG_BATTERY_FRIEND
@@ -674,14 +675,16 @@ else if (!omap_cpufreq_suspended) {
 
 			policy->max = fr_max;
 			pr_info("Battery_Friend: Max: Restored stock frequency\n");
-		 }
-		policy->cur = omap_getspeed(policy->cpu);
-	else 
+	
+			policy->cur = omap_getspeed(policy->cpu);
+		}
+	else {
 		policy->min = policy->cpuinfo.min_freq;
 		fr_min = policy->min;
 		policy->max = stock_freq_max = policy->cpuinfo.max_freq;
 		fr_max = policy->max;
 		policy->cur = omap_getspeed(policy->cpu);
+	     }
 	}
 #else
 		policy->min = policy->cpuinfo.min_freq;
