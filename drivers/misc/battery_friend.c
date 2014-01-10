@@ -31,6 +31,20 @@ bool battery_friend_active __read_mostly = true;
 
 unsigned int /*scr_on_min = 300000,*/ scr_off_max = 700000, scr_min = 200000; /*scr_max = 1000000;*/
 
+// temporary frequency table for input range
+unsigned int freq_1 = 100000;
+unsigned int freq_2 = 200000;
+unsigned int freq_3 = 300000;
+unsigned int freq_4 = 400000;
+unsigned int freq_5 = 500000;
+unsigned int freq_6 = 600000;
+unsigned int freq_7 = 700000;
+unsigned int freq_8 = 800000;
+unsigned int freq_9 = 900000;
+unsigned int freq_10 = 1000000;
+unsigned int freq_11 = 1100000;
+unsigned int freq_12 = 1200000;
+unsigned int freq_13 = 1300000;
 
 static ssize_t battery_friend_active_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
@@ -45,11 +59,11 @@ static ssize_t battery_friend_active_store(struct kobject *kobj,
 
 	if (sscanf(buf, "%u\n", &data) == 1) {
 		if (data == 1) {
-			pr_info("%s: battery friend enabled\n", __FUNCTION__);
+			pr_info("%s: Battery_Friend enabled\n", __FUNCTION__);
 			battery_friend_active = true;
 		}
 		else if (data == 0) {
-			pr_info("%s: battery friend disabled\n", __FUNCTION__);
+			pr_info("%s: Battery_Friend disabled\n", __FUNCTION__);
 			battery_friend_active = false;
 		}
 		else
@@ -95,22 +109,21 @@ static ssize_t battery_friend_screen_off_max_freq_show(struct kobject *kobj,
 }
 
 static ssize_t battery_friend_screen_off_max_freq_store(struct kobject *kobj,
-		struct kobj_attribute *attr, const char *buf, size_t count)
+		struct kobj_attribute *attr, const char *buf, size_t size)
 {
 	unsigned int data;
 
-		if (sscanf(buf, "%u\n", &data) < 100000) {
+		(sscanf(buf, "%u\n", &data));
+
+		if (data != freq_1 || data != freq_2 || data != freq_3 || data != freq_4 || data != freq_5 || data != freq_6 || data != freq_7 || data != freq_8 || data != freq_9 || data != freq_10 || data != freq_11 || data != freq_12 || data != freq_13) {
 			pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 			}
-	   	else if (sscanf(buf, "%u\n", &data) > 1300000) {
-				pr_info("%s: bad value: %u\n", __FUNCTION__, data);
-				}
 		else {
-			pr_info("%s: battery friend screen_off_max_freq set to: %u Mhz\n", __FUNCTION__, data/1000);
+			pr_info("%s: Battery_Friend: screen_off_max_freq set to: %u Mhz\n", __FUNCTION__, data/1000);
 			scr_off_max = data;
 		}
 
-	return count;
+	return size;
 }
 
 // min freq
@@ -121,22 +134,21 @@ static ssize_t battery_friend_min_freq_show(struct kobject *kobj,
 }
 
 static ssize_t battery_friend_min_freq_store(struct kobject *kobj,
-		struct kobj_attribute *attr, const char *buf, size_t count)
+		struct kobj_attribute *attr, const char *buf, size_t size)
 {
 	unsigned int data;
 
-		if (sscanf(buf, "%u\n", &data) < 100000) {
+		(sscanf(buf, "%u\n", &data));
+
+		if (data != freq_1 || data != freq_2 || data != freq_3 || data != freq_4 || data != freq_5 || data != freq_6 || data != freq_7 || data != freq_8 || data != freq_9 || data != freq_10 || data != freq_11 || data != freq_12 || data != freq_13) {
 			pr_info("%s: bad value: %u\n", __FUNCTION__, data);
 			}
-	   	else if (sscanf(buf, "%u\n", &data) > 1300000) {
-				pr_info("%s: bad value: %u\n", __FUNCTION__, data);
-				}
 		else {
-			pr_info("%s: battery friend min_freq set to: %u Mhz\n", __FUNCTION__, data/1000);
-			scr_min = data;
+			pr_info("%s: Battery_Friend: min_freq set to: %u Mhz\n", __FUNCTION__, data/1000);
+			scr_off_max = data;
 		}
 
-	return count;
+	return size;
 }
 
 // max freq
