@@ -767,10 +767,9 @@ static int parse_features(struct dm_arg_set *as, struct multipath *m)
 			continue;
 		}
 
-		if (!strnicmp(param_name, MESG_STR("pg_init_delay_msecs")) &&
+		if (!strcasecmp(arg_name, "pg_init_delay_msecs") &&
 		    (argc >= 1)) {
-			r = read_param(_params + 2, shift(as),
-				       &m->pg_init_delay_msecs, &ti->error);
+			r = dm_read_arg(_args + 2, as, &m->pg_init_delay_msecs, &ti->error);
 			argc--;
 			continue;
 		}
@@ -1451,7 +1450,9 @@ static int multipath_message(struct dm_target *ti, unsigned argc, char **argv)
 		if (!strcasecmp(argv[0], "queue_if_no_path")) {
 			r = queue_if_no_path(m, 1, 0);
 			goto out;
+
 		 } else if (!strcasecmp(argv[0], "fail_if_no_path")) {
+
 			r = queue_if_no_path(m, 0, 0);
 			goto out;
 		}
@@ -1521,6 +1522,12 @@ static int multipath_ioctl(struct dm_target *ti, unsigned int cmd,
 		r = -EIO;
 
 	spin_unlock_irqrestore(&m->lock, flags);
+
+	/*
+	 * Only pass ioctls through if the device sizes match exactly.
+	 */
+	if (!r && ti->len != i_size_read(bdev->bd_inode) >> SECTOR_SHIFT)
+		r = scsi_verify_blk_ioctl(NULL, cmd);
 
 	return r ? : __blkdev_driver_ioctl(bdev, mode, cmd, arg);
 }

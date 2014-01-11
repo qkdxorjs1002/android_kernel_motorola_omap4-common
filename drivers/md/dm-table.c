@@ -455,7 +455,8 @@ static int upgrade_mode(struct dm_dev_internal *dd, fmode_t new_mode,
  * it's already present.
  */
 int dm_get_device(struct dm_target *ti, const char *path, fmode_t mode,
-						      struct dm_dev **result)
+						struct dm_dev **result)
+
 {
 	int r;
 	dev_t uninitialized_var(dev);
@@ -540,7 +541,6 @@ int dm_set_device_limits(struct dm_target *ti, struct dm_dev *dev,
 	 * If not we'll force DM to use PAGE_SIZE or
 	 * smaller I/O, just to be safe.
 	 */
-
 	if (dm_queue_merge_is_compulsory(q) && !ti->type->merge)
 		blk_limits_max_hw_sectors(limits,
 					  (unsigned int) (PAGE_SIZE >> 9));
@@ -788,7 +788,9 @@ int dm_table_add_target(struct dm_table *t, const char *type,
 
 	if (!tgt->num_discard_requests && tgt->discards_supported)
 		DMWARN("%s: %s: ignoring discards_supported because num_discard_requests is zero.",
+
 	        dm_device_name(t->md), type);
+
 	return 0;
 
  bad:
@@ -821,6 +823,26 @@ int dm_read_arg(struct dm_arg *arg, struct dm_arg_set *arg_set,
     unsigned *value, char **error)
 {
   return validate_next_arg(arg, arg_set, value, error, 0);
+			     unsigned *value, char **error, unsigned grouped)
+{
+	const char *arg_str = dm_shift_arg(arg_set);
+
+	if (!arg_str ||
+	    (sscanf(arg_str, "%u", value) != 1) ||
+	    (*value < arg->min) ||
+	    (*value > arg->max) ||
+	    (grouped && arg_set->argc < *value)) {
+		*error = arg->error;
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
+int dm_read_arg(struct dm_arg *arg, struct dm_arg_set *arg_set,
+		unsigned *value, char **error)
+{
+	return validate_next_arg(arg, arg_set, value, error, 0);
 }
 EXPORT_SYMBOL(dm_read_arg);
 
@@ -828,21 +850,22 @@ int dm_read_arg_group(struct dm_arg *arg, struct dm_arg_set *arg_set,
           unsigned *value, char **error)
 {
   return validate_next_arg(arg, arg_set, value, error, 1);
+
 }
 EXPORT_SYMBOL(dm_read_arg_group);
 
 const char *dm_shift_arg(struct dm_arg_set *as)
 {
-  char *r;
+	char *r;
 
-  if (as->argc) {
-    as->argc--;
-    r = *as->argv;
-    as->argv++;
-    return r;
-  }
+	if (as->argc) {
+		as->argc--;
+		r = *as->argv;
+		as->argv++;
+		return r;
+	}
 
-  return NULL;
+	return NULL;
 }
 EXPORT_SYMBOL(dm_shift_arg);
 
@@ -1297,6 +1320,56 @@ static bool dm_table_supports_flush(struct dm_table *t, unsigned flush)
   }
 
   return 0;
+
+static int device_flush_capable(struct dm_target *ti, struct dm_dev *dev,
+				sector_t start, sector_t len, void *data)
+{
+	unsigned flush = (*(unsigned *)data);
+	struct request_queue *q = bdev_get_queue(dev->bdev);
+
+	return q && (q->flush_flags & flush);
+}
+
+static bool dm_table_supports_flush(struct dm_table *t, unsigned flush)
+{
+	struct dm_target *ti;
+	unsigned i = 0;
+
+	/*
+	 * Require at least one underlying device to support flushes.
+	 * t->devices includes internal dm devices such as mirror logs
+	 * so we need to use iterate_devices here, which targets
+	 * supporting flushes must provide.
+	 */
+	while (i < dm_table_get_num_targets(t)) {
+		ti = dm_table_get_target(t, i++);
+
+		if (!ti->num_flush_requests)
+			continue;
+
+		if (ti->type->iterate_devices &&
+		    ti->type->iterate_devices(ti, device_flush_capable, &flush))
+			return 1;
+	}
+
+	return 0;
+}
+
+static bool dm_table_discard_zeroes_data(struct dm_table *t)
+{
+	struct dm_target *ti;
+	unsigned i = 0;
+
+	/* Ensure that all targets supports discard_zeroes_data. */
+	while (i < dm_table_get_num_targets(t)) {
+		ti = dm_table_get_target(t, i++);
+
+		if (ti->discard_zeroes_data_unsupported)
+			return 0;
+	}
+
+	return 1;
+>>>>>>> 77ff5a8... [WIP] Merge to 3.0.101 dhacker29's git kernel-tuna, part6
 }
 
 void dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
@@ -1316,6 +1389,7 @@ void dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
 
 	if (dm_table_supports_flush(t, REQ_FLUSH)) {
 		flush |= REQ_FLUSH;
+
 	if (dm_table_supports_flush(t, REQ_FUA))
 		flush |= REQ_FUA;
 	}
@@ -1324,7 +1398,6 @@ void dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
 
 	if (!dm_table_discard_zeroes_data(t))
 	        q->limits.discard_zeroes_data = 0;
-
 
 	dm_table_set_integrity(t);
 

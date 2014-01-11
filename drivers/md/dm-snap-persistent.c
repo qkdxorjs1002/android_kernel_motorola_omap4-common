@@ -256,7 +256,7 @@ static int chunk_io(struct pstore *ps, void *area, chunk_t chunk, int rw,
 	 */
 	INIT_WORK_ONSTACK(&req.work, do_metadata);
 	queue_work(ps->metadata_wq, &req.work);
-	flush_work(&req.work);
+	flush_workqueue(ps->metadata_wq);
 
 	return req.result;
 }
@@ -466,6 +466,7 @@ static int insert_exceptions(struct pstore *ps,
 		 * Keep track of the start of the free chunks.
 		 */
 		if (ps->next_free <= e.new_chunk)
+
 		     	ps->next_free = e.new_chunk + 1;
 
 		/*
@@ -741,6 +742,7 @@ static int persistent_prepare_merge(struct dm_exception_store *store,
 	             &ce);
 	    if (ce.old_chunk != *last_old_chunk - nr_consecutive ||
 	        ce.new_chunk != *last_new_chunk - nr_consecutive)
+
 			break;
 	}
 
