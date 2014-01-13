@@ -1,0 +1,26 @@
+bd16bca ARM: OMAP: HS USB Host: fix unbalanced pm calls
+e6da66e usb: ehci: fix the host wakeup state machine and fix the overall USB host logic
+1af5623 ARM: OMAP4: USB: Update workaround for USB errata i719
+750bda5 OMAP4430: USB Host: Implement workaround for Errata i719 OMAP4430: USB Host: Implement workaround for Errata i719
+1becc94 OMAP: DSS: dispc: Re-implement workarounds for Errataxxx
+3b57ea8 Revert "OMAP: DSS: DISPC: Add workaround for L3_1/L3_2 clock domains"
+2e43d8f OMAP: DSS: DISPC: Add workaround for L3_1/L3_2 clock domains
+7542f70 Battery Friend: Fix scr_min
+39aafae Added todays changelog and updated full history
+d3521b6 Battery Friend: Finaly fix syntax
+87f1d3c Added todays changelog and updated full history
+0ee4888 battery Friend: Fix syntax
+c1c1492 Battery Friend: Use positive comparison instead of negative to prevent cnflicts
+3f30d91 Battery Friend: Fix the input value range
+6bbefdf Battery Friend: Fix syntax again :-D
+fa1cbe2 Battery Friend: fix syntax and remove unused variables
+f926c2a Revert "sys/kernel/power: Front Buffer Delay: Rename the kobject to 'fbu_delay' to avoid conflict with GAMMA control in Trickster Mod app - only for now until this wil be fixed in TM"
+74844bf Battery Friend: Fix value input.
+e25e040 drivers: cpufreq: ktoonservative: tune for being more balanced and save power
+bce520a Battery Friend: Fix checking if battery_friend is active and the related behavior
+2e6b0a1 defconfig: change OPTIMIZE from 'MORE' to 'DEFAULT'
+48d5c75 Added todays changelog and updated full history
+e9711b6 mm: vmscan: Limit flag 'SetPageWasActive' to Cleancache only
+d225b3e Battery Friend: Fix syntax
+f058780 CPUIDLE/defconfig: new config for cpuidle - partly
+ce4abaf Battery Friend: remove calculation of stock frequencies / remove scr_on_min
