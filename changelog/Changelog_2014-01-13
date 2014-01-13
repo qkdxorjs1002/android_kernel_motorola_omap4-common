@@ -1,3 +1,6 @@
+f871096 Raise version
+69ac122 Revert "OMAP: DSS: dispc: Re-implement workarounds for Errataxxx"
+aa62637 Added todays changelog and updated full history
 bd16bca ARM: OMAP: HS USB Host: fix unbalanced pm calls
 e6da66e usb: ehci: fix the host wakeup state machine and fix the overall USB host logic
 1af5623 ARM: OMAP4: USB: Update workaround for USB errata i719
