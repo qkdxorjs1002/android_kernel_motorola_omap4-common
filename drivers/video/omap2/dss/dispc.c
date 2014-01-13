@@ -22,7 +22,6 @@
 
 #define DSS_SUBSYS_NAME "DISPC"
 
-#include <linux/gpio.h>
 #include <linux/kernel.h>
 #include <linux/dma-mapping.h>
 #include <linux/vmalloc.h>
@@ -98,8 +97,6 @@ static struct {
 	void __iomem    *base;
 
 	int		ctx_loss_cnt;
-    struct mutex    runtime_lock;
-    int             runtime_count;
 
 	int irq;
 	struct clk *dss_clk;
@@ -463,175 +460,42 @@ void dispc_restore_context(void)
 #undef SR
 #undef RR
 
-    static u32 dispc_calculate_threshold(enum omap_plane plane, u32 paddr,
-                                    u32 puv_addr, u16 width, u16 height,
-                                    s32 row_inc, s32 pix_inc)
-    {
-            int shift;
-            u32 channel_no = plane;
-            u32 val, burstsize, doublestride;
-            u32 rotation, bursttype, color_mode;
-            struct dispc_config dispc_reg_config;
-
-            if (width >= 1920)
-                    return 1500;
-
-            /* Get the burst size */
-            shift = (plane == OMAP_DSS_GFX) ? 6 : 14;
-            val = dispc_read_reg(DISPC_OVL_ATTRIBUTES(plane));
-            burstsize = FLD_GET(val, shift + 1, shift);
-            doublestride = FLD_GET(val, 22, 22);
-            rotation = FLD_GET(val, 13, 12);
-            bursttype = FLD_GET(val, 29, 29);
-            color_mode = FLD_GET(val, 4, 1);
-
-            /* base address for frame (Luma frame in case of YUV420) */
-            dispc_reg_config.ba = paddr;
-            /* base address for Chroma frame in case of YUV420 */
-            dispc_reg_config.bacbcr = puv_addr;
-            /* OrgSizeX for frame */
-            dispc_reg_config.sizex = width - 1;
-            /* OrgSizeY for frame */
-            dispc_reg_config.sizey = height - 1;
-            /* burst size */
-            dispc_reg_config.burstsize = burstsize;
-            /* pixel increment */
-            dispc_reg_config.pixelinc = pix_inc;
-            /* row increment */
-            dispc_reg_config.rowinc  = row_inc;
-            /* burst type: 1D/2D */
-            dispc_reg_config.bursttype = bursttype;
-            /* chroma DoubleStride when in YUV420 format */
-            dispc_reg_config.doublestride = doublestride;
-            /* Pixcel format of the frame.*/
-            dispc_reg_config.format = color_mode;
-            /* Rotation of frame */
-            dispc_reg_config.rotation = rotation;
-
-            /* DMA buffer allications - assuming reset values */
-            dispc_reg_config.gfx_top_buffer = 0;
-            dispc_reg_config.gfx_bottom_buffer = 0;
-            dispc_reg_config.vid1_top_buffer = 1;
-            dispc_reg_config.vid1_bottom_buffer = 1;
-            dispc_reg_config.vid2_top_buffer = 2;
-            dispc_reg_config.vid2_bottom_buffer = 2;
-            dispc_reg_config.vid3_top_buffer = 3;
-            dispc_reg_config.vid3_bottom_buffer = 3;
-            dispc_reg_config.wb_top_buffer = 4;
-            dispc_reg_config.wb_bottom_buffer = 4;
-
-            /* antiFlicker is off */
-            dispc_reg_config.antiflicker = 0;
-
-            return sa_calc_wrap(&dispc_reg_config, channel_no);
-    }
 int dispc_runtime_get(void)
 {
-            int r;
+	int r = 0;
 
-            mutex_lock(&dispc.runtime_lock);
+	DSSDBG("dispc_runtime_get\n");
 
-            if (dispc.runtime_count++ == 0) {
-                    DSSDBG("dispc_runtime_get\n");
+	/* Removes latency constraint */
+	/* This cause panic during bootup
+	omap_pm_set_max_dev_wakeup_lat(&dispc.pdev->dev,
+					&dispc.pdev->dev, -1);
+	*/
+	r = dss_runtime_get();
+	if (r)
+		printk(KERN_ERR"%s failed to enable dss clk\n", __func__);
 
-                    /*
-                     * OMAP4 ERRATUM xxxx: Mstandby and disconnect protocol issue
-                     * Impacts: all OMAP4 devices
-                     * Simplfied Description:
-                     * issue #1: The handshake between IP modules on L3_1 and L3_2
-                     * peripherals with PRCM has a limitation in a certain time
-                     * window of L4 clock cycle. Due to the fact that a wrong
-                     * variant of stall signal was used in circuit of PRCM, the
-                     * intitator-interconnect protocol is broken when the time
-                     * window is hit where the PRCM requires the interconnect to go
-                     * to idle while intitator asks to wakeup.
-                     * Issue #2: DISPC asserts a sub-mstandby signal for a short
-                     * period. In this time interval, IP block requests
-                     * disconnection of Master port, and results in Mstandby and
-                     * wait request to PRCM. In parallel, if mstandby is de-asserted
-                     * by DISPC simultaneously, interconnect requests for a
-                     * reconnect for one cycle alone resulting in a disconnect
-                     * protocol violation and a deadlock of the system.
-                     *
-                     * Workaround:
-                     * L3_1 clock domain must not be programmed in HW_AUTO if
-                     * Static dependency with DSS is enabled and DSS clock domain
-                     * is ON. Same for L3_2.
-                     */
-                    if (cpu_is_omap44xx()) {
-                            clkdm_deny_idle(l3_1_clkdm);
-                            clkdm_deny_idle(l3_2_clkdm);
-                    }
+	return r;
+}
 
-                    r = dss_runtime_get();
-                    if (r)
-                            goto err_dss_get;
+void dispc_runtime_put(void)
+{
 
-                    /* XXX dispc fclk can also come from DSI PLL */
-                    clk_enable(dispc.dss_clk);
+	DSSDBG("dispc_runtime_put\n");
 
-                    r = pm_runtime_get_sync(&dispc.pdev->dev);
-                    WARN_ON(r);
-                    if (r < 0)
-                            goto err_runtime_get;
-
-                    dispc_restore_context();
-            }
-
-            mutex_unlock(&dispc.runtime_lock);
-
-            return 0;
-
-    err_runtime_get:
-            clk_disable(dispc.dss_clk);
-            dss_runtime_put();
-    err_dss_get:
-            mutex_unlock(&dispc.runtime_lock);
-
-            return r;
-    }
-
-    void dispc_runtime_put(void)
-    {
-            struct powerdomain *dss_powerdomain = pwrdm_lookup("dss_pwrdm");
-            mutex_lock(&dispc.runtime_lock);
-
-            if (--dispc.runtime_count == 0) {
-                    int r;
-
-                    DSSDBG("dispc_runtime_put\n");
-
-                    dispc_save_context();
 	/* Sets DSS max latency constraint
 	 * * (allowing for deeper power state)
 	 * */
-	/* this cause panic - or not */
+	/* this cause panic
 	omap_pm_set_max_dev_wakeup_lat(
 			&dispc.pdev->dev,
 			&dispc.pdev->dev,
 			dss_powerdomain->wakeup_lat[PWRDM_FUNC_PWRST_OFF]);
+	*/
+	dss_runtime_put();
+}
 
-                    r = pm_runtime_put_sync(&dispc.pdev->dev);
-                    WARN_ON(r);
 
-                    clk_disable(dispc.dss_clk);
-
-                    dss_runtime_put();
-
-                    /*
-                     * OMAP4 ERRATUM xxxx: Mstandby and disconnect protocol issue
-                     * Workaround:
-                     * Restore L3_1 amd L3_2 CD to HW_AUTO, when DSS module idles.
-                     */
-                    if (cpu_is_omap44xx()) {
-                            clkdm_allow_idle(l3_1_clkdm);
-                            clkdm_allow_idle(l3_2_clkdm);
-                    }
-
-            }
-
-            mutex_unlock(&dispc.runtime_lock);
-    }
 bool dispc_go_busy(enum omap_channel channel)
 {
 	int bit;
@@ -905,7 +769,7 @@ dispc_get_scaling_coef(u32 inc, bool five_taps)
 	static const struct dispc_hv_coef coef_M32[8] = {
 		{    7,   34,   46,   34,    7 },
 		{    4,   31,   46,   37,   10 },
-		{    1,   27,   46,   39,   14 },
+		{    1,   28,   46,   39,   14 },
 		{   -1,   24,   46,   42,   17 },
 		{   21,   45,   45,   21,   -4 },
 		{   17,   42,   46,   24,   -1 },
@@ -1018,34 +882,6 @@ void _dispc_setup_color_conv_coef(enum omap_plane plane,
 	REG_FLD_MOD(DISPC_OVL_ATTRIBUTES(plane), ct->full_range, 11, 11);
 }
 
-    void _dispc_setup_wb_color_conv_coef(void)
-    {
-            const struct wb_color_conv {
-                    int  yr,  crr,  cbr;
-                    int  yg,  crg,  cbg;
-                    int  yb,  crb,  cbb;
-                    int  full_range;
-            }  ct = {
-                    66,  112,  -38,
-                    129, -94,  -74,
-                    25,  -18,   112,
-                    0,
-            };
-    #define CVAL(x, y) (FLD_VAL(x, 26, 16) | FLD_VAL(y, 10, 0))
-            dispc_write_reg(DISPC_OVL_CONV_COEF(OMAP_DSS_WB, 0),
-                            CVAL(ct.yg, ct.yr));
-            dispc_write_reg(DISPC_OVL_CONV_COEF(OMAP_DSS_WB, 1),
-                            CVAL(ct.crr,  ct.yb));
-            dispc_write_reg(DISPC_OVL_CONV_COEF(OMAP_DSS_WB, 2),
-                            CVAL(ct.crb, ct.crg));
-            dispc_write_reg(DISPC_OVL_CONV_COEF(OMAP_DSS_WB, 3),
-                            CVAL(ct.cbg, ct.cbr));
-            dispc_write_reg(DISPC_OVL_CONV_COEF(OMAP_DSS_WB, 4),
-                            CVAL(0, ct.cbb));
-    #undef CVAL
-            REG_FLD_MOD(DISPC_OVL_ATTRIBUTES(OMAP_DSS_WB),
-                            ct.full_range, 11, 11);
-    }
 
 static void _dispc_set_plane_ba0(enum omap_plane plane, u32 paddr)
 {
@@ -1276,33 +1112,6 @@ end:
 	dispc_runtime_put();
 }
 
-    
-
-    void dispc_set_wb_channel_out(enum omap_plane plane)
-    {
-            int shift;
-            u32 val;
-
-            switch (plane) {
-            case OMAP_DSS_GFX:
-                    shift = 8;
-                    break;
-            case OMAP_DSS_VIDEO1:
-            case OMAP_DSS_VIDEO2:
-            case OMAP_DSS_VIDEO3:
-                    shift = 16;
-                    break;
-            default:
-                    BUG();
-                    return;
-            }
-
-            val = dispc_read_reg(DISPC_OVL_ATTRIBUTES(plane));
-            val = FLD_MOD(val, 0, shift, shift);
-            val = FLD_MOD(val, 3, 31, 30);
-
-            dispc_write_reg(DISPC_OVL_ATTRIBUTES(plane), val);
-    }
 void dispc_set_burst_size(enum omap_plane plane,
 		enum omap_burst_size burst_size)
 {
@@ -1684,23 +1493,15 @@ static void _dispc_set_scaling_uv(enum omap_plane plane,
 			color_mode != OMAP_DSS_COLOR_UYVY &&
 			color_mode != OMAP_DSS_COLOR_NV12)) {
 		/* reset chroma resampling for RGB formats  */
-                    if (plane != OMAP_DSS_WB)
 		REG_FLD_MOD(DISPC_OVL_ATTRIBUTES2(plane), 0, 8, 8);
 		return;
 	}
 	switch (color_mode) {
 	case OMAP_DSS_COLOR_NV12:
-                    if (plane != OMAP_DSS_WB) {
 		/* UV is subsampled by 2 vertically*/
 		orig_height >>= 1;
 		/* UV is subsampled by 2 horz.*/
 		orig_width >>= 1;
-                    } else {
-                            /* UV is downsampled by 2 vertically*/
-                            out_height >>= 1;
-                            /* UV is downsampled by 2 horz.*/
-                            out_width >>= 1;
-                    }
 		break;
 	case OMAP_DSS_COLOR_YUV2:
 	case OMAP_DSS_COLOR_UYVY:
@@ -1708,14 +1509,9 @@ static void _dispc_set_scaling_uv(enum omap_plane plane,
 		 *we don't upsample chroma
 		 */
 		if (rotation == OMAP_DSS_ROT_0 ||
-                            rotation == OMAP_DSS_ROT_180) {
-                            if (plane != OMAP_DSS_WB) {
+			rotation == OMAP_DSS_ROT_180)
 			/* UV is subsampled by 2 hrz*/
 			orig_width >>= 1;
-                            } else {
-                                    out_width >>= 1;
-                            }
-                    }
 		/* must use FIR for YUV422 if rotated */
 		if (rotation != OMAP_DSS_ROT_0)
 			scale_x = scale_y = true;
@@ -1733,7 +1529,6 @@ static void _dispc_set_scaling_uv(enum omap_plane plane,
 			out_width, out_height, five_taps,
 				rotation, DISPC_COLOR_COMPONENT_UV);
 
-            if (plane != OMAP_DSS_WB)
 	REG_FLD_MOD(DISPC_OVL_ATTRIBUTES2(plane),
 		(scale_x || scale_y) ? 1 : 0, 8, 8);
 	/* set H scaling */
@@ -1773,7 +1568,6 @@ static void _dispc_set_rotation_attrs(enum omap_plane plane, u8 rotation,
 		bool mirroring, enum omap_color_mode color_mode,
 		enum omap_dss_rotation_type type)
 {
-            if (plane != OMAP_DSS_WB) {
 	bool row_repeat = false;
 	int vidrot = 0;
 
@@ -1812,8 +1606,7 @@ static void _dispc_set_rotation_attrs(enum omap_plane plane, u8 rotation,
 			}
 		}
 
-                            if (rotation == OMAP_DSS_ROT_90 ||
-                                            rotation == OMAP_DSS_ROT_270)
+		if (rotation == OMAP_DSS_ROT_90 || rotation == OMAP_DSS_ROT_270)
 			row_repeat = true;
 		else
 			row_repeat = false;
@@ -1826,7 +1619,6 @@ static void _dispc_set_rotation_attrs(enum omap_plane plane, u8 rotation,
 	if (dss_has_feature(FEAT_ROWREPEATENABLE))
 		REG_FLD_MOD(DISPC_OVL_ATTRIBUTES(plane),
 			row_repeat ? 1 : 0, 18, 18);
-            }
 
 	if (color_mode == OMAP_DSS_COLOR_NV12) {
 		/* this will never happen for GFX */
@@ -2323,9 +2115,9 @@ int dispc_scaling_decision(u16 width, u16 height,
 		if (!can_scale)
 			goto loop;
 
-                    if (out_width < in_width / maxdownscale ||
-                            out_height < in_height / maxdownscale)
-                            goto loop;
+		if (out_width * maxdownscale < in_width ||
+			out_height * maxdownscale < in_height) 
+			goto loop;
 
 		/* Use 5-tap filter unless must use 3-tap */
 		if (!cpu_is_omap44xx())
@@ -2687,7 +2479,6 @@ static void dispc_enable_lcd_out(enum omap_channel channel, bool enable)
 
 		r = omap_dispc_unregister_isr(dispc_disable_isr,
 				&frame_done_completion, irq);
-                    synchronize_irq(dispc.irq);
 
 		if (r)
 			DSSERR("failed to unregister FRAMEDONE isr\n");
@@ -2754,7 +2545,6 @@ static void dispc_enable_digit_out(enum omap_display_type type, bool enable)
 			&frame_done_completion,
 			DISPC_IRQ_EVSYNC_EVEN | DISPC_IRQ_EVSYNC_ODD
 						| DISPC_IRQ_FRAMEDONETV);
-            synchronize_irq(dispc.irq);
 	if (r)
 		DSSERR("failed to unregister EVSYNC isr\n");
 
@@ -4184,7 +3974,6 @@ int omap_dispc_wait_for_irq_timeout(u32 irqmask, unsigned long timeout)
 	timeout = wait_for_completion_timeout(&completion, timeout);
 
 	omap_dispc_unregister_isr(dispc_irq_wait_handler, &completion, irqmask);
-            synchronize_irq(dispc.irq);
 
 	if (timeout == 0)
 		return -ETIMEDOUT;
@@ -4220,7 +4009,6 @@ int omap_dispc_wait_for_irq_interruptible_timeout(u32 irqmask,
 			timeout);
 
 	omap_dispc_unregister_isr(dispc_irq_wait_handler, &completion, irqmask);
-            synchronize_irq(dispc.irq);
 
 	if (timeout == 0)
 		r = -ETIMEDOUT;
@@ -4345,7 +4133,6 @@ static int omap_dispchw_probe(struct platform_device *pdev)
 	int r = 0;
 	struct resource *dispc_mem;
 	struct clk *clk;
-            struct omap_display_platform_data *pdata = pdev->dev.platform_data;
 
 	dispc.pdev = pdev;
 
@@ -4402,9 +4189,7 @@ static int omap_dispchw_probe(struct platform_device *pdev)
 		goto err_irq;
 	}
 
-            mutex_init(&dispc.runtime_lock);
-
-            pm_runtime_enable(&pdev->dev);
+	/* pm_runtime_enable(&pdev->dev);*/
 
 	r = dispc_runtime_get();
 	if (r)
