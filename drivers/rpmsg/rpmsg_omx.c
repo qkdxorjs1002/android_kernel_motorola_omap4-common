@@ -292,8 +292,6 @@ static int rpmsg_omx_connect(struct rpmsg_omx_instance *omx, char *omxname)
 	payload = (struct omx_conn_req *)hdr->data;
 	strcpy(payload->name, omxname);
 
-	init_completion(&omx->reply_arrived);
-
 	/* send a conn req to the remote OMX connection service. use
 	 * the new local address that was just allocated by ->open */
 	ret = rpmsg_send_offchannel(omxserv->rpdev, omx->ept->addr,
