@@ -483,6 +483,8 @@ static int rpmsg_omx_open(struct inode *inode, struct file *filp)
 					    "rpmsg-omx");
 #endif
 
+	init_completion(&omx->reply_arrived);
+
 	/* associate filp with the new omx instance */
 	filp->private_data = omx;
 	mutex_lock(&omxserv->lock);
