@@ -1783,6 +1783,18 @@ void hdmi_ti_4xxx_core_audio_infoframe_config(struct hdmi_ip_data *ip_data,
 }
 EXPORT_SYMBOL(hdmi_ti_4xxx_core_audio_infoframe_config);
 
+void hdmi_ti_4xxx_audio_enable(struct hdmi_ip_data *ip_data, bool enable)
+{
+ 
+ 	REG_FLD_MOD(hdmi_av_base(ip_data),
+ 			HDMI_CORE_AV_AUD_MODE, enable, 0, 0);
+ 	REG_FLD_MOD(hdmi_wp_base(ip_data),
+ 			HDMI_WP_AUDIO_CTRL, enable, 31, 31);
+ 	REG_FLD_MOD(hdmi_wp_base(ip_data),
+ 			HDMI_WP_AUDIO_CTRL, enable, 30, 30);
+}
+EXPORT_SYMBOL(hdmi_ti_4xxx_audio_enable);
+
 void hdmi_ti_4xxx_audio_transfer_en(struct hdmi_ip_data *ip_data,
 						bool enable)
 {

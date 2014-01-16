@@ -412,6 +412,7 @@ void hdmi_ti_4xxx_core_audio_config(struct hdmi_ip_data *ip_data,
 					struct hdmi_core_audio_config *cfg);
 void hdmi_ti_4xxx_core_audio_infoframe_config(struct hdmi_ip_data *ip_data,
 		struct hdmi_core_infoframe_audio *info_aud);
+void hdmi_ti_4xxx_audio_enable(struct hdmi_ip_data *ip_data, bool idle);
 void hdmi_ti_4xxx_audio_transfer_en(struct hdmi_ip_data *ip_data,
 						bool idle);
 void hdmi_ti_4xxx_wp_audio_enable(struct hdmi_ip_data *ip_data, bool idle);

@@ -341,9 +341,9 @@ int hdmi_audio_notifier_callback(struct notifier_block *nb,
 				&hdmi_data.delayed_work,
 				msecs_to_jiffies(1));
 		}
-	} else {
+	 else {
 		cancel_delayed_work(&hdmi_data.delayed_work);
-
+		}
 	} else if (state == OMAP_DSS_DISPLAY_DISABLED) {
 		/* this happens after hotplug unplug */
 
