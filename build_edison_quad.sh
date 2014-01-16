@@ -18,7 +18,7 @@ make mrproper
 make ARCH=arm distclean
 source build/envsetup.sh
 export PATH=${PATH/\/path\/to\/jdk\/dir:/}
-lunch cm_edison-userdebug
+lunch cm_spyder-userdebug
 
 # built kernel & modules
 echo "Building kernel and modules..."
