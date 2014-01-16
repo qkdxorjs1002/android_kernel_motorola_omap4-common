@@ -1555,8 +1555,9 @@ static int __init omap4_pm_init(void)
 	l4_per = clkdm_lookup("l4_per_clkdm");
 	l4_cfg = clkdm_lookup("l4_cfg_clkdm");
 	l4wkup = clkdm_lookup("l4_wkup_clkdm");
-     if ((!mpuss_clkdm) || (!emif_clkdm) || (!l3_1_clkdm) || (!l4wkup) ||
-     	(!l3_2_clkdm) || (!ducati_clkdm) || (!l4_per) || (!l4_cfg))
+	if ((!mpuss_clkdm) || (!emif_clkdm) || (!l3_1_clkdm) || (!l4wkup) ||
+	(!l3_2_clkdm) || (!ducati_clkdm) || (!l4_per) || (!l4_cfg) ||
+	    (!abe_clkdm)) 
 		goto err2;
 
 	/* if we cannot ever enable static dependency. */
