@@ -189,7 +189,9 @@ static int plat_uart_enable(void)
 		if (!err)
 			uart_req = true;
 	}
-	wake_lock_timeout(&st_wk_lock, 5*HZ);
+
+	wake_lock(&st_wk_lock);
+
 	return err;
 }
 
