@@ -1,0 +1,12 @@
+42481b8 CPUFREQ: KTOONSERVATIVE: Allow a little better performance
+d0f78dc OMAP4: ST: Disabling UART if ldisc not installed.
+3d13aff Revert st_wakelock changes
+a64923d Revert: [moto] arch/arm/mach-omap2/omap4-sar: changes for sar restore
+f3c05c3 Added todays changelog and updated full history
+edf3f9d OMAP: SOUND: HDMI: Fix missing declaration of 'hdmi_lib_stop_acr_wa'
+891cbb3 OMAP: HDMI: Re-add function 'hdmi_ti_4xxx_audio_enable'
+ee1f5e5 OMAP: HDMI: hdmi_ti_4xxx_ip: Fix declarations of moved functions, fix syntaxes, re-sync with TI-OpenLink
+bcd00d3 Revert: OMAPDSS: HDMI: Use our own omap_video_timings field when setting interface timings
+958e441 Revert "add CIRQ_ENABLE to irq_mask if IBI is supported"
+60d6715 Revert "mmc: omap_hsmmc: set pm_runtime_irq_safe"
+b9096c6 Revert "arm: vfp: Fix memory corruption on PM suspend *EXPERIMENTAL*"
