@@ -41,6 +41,11 @@
 #include <linux/blx.h>
 #endif
 
+/*#ifdef CONFIG_BATT_FIX
+unsigned int batt_fix = 1;
+module_param(batt_fix, int, 0755);
+#endif*/
+
 #define CPCAP_BATT_IRQ_BATTDET 0x01
 #define CPCAP_BATT_IRQ_OV      0x02
 #define CPCAP_BATT_IRQ_CC_CAL  0x04
@@ -416,13 +421,6 @@ static void cpcap_batt_ind_chrg_ctrl(struct cpcap_batt_ps *sply)
 		sply->ind_chrg_dsbl_time = 0;
 		pr_cpcap_batt(TRANSITION, "cable insert, chrgcmpl set");
 
-#ifdef CONFIG_BLX
-	} else if ((get_charginglimit() != MAX_CHARGINGLIMIT) && (sply->batt_state.capacity >= get_charginglimit())) {
-			pr_info("BLX: Charging limit reached. chrgterm set\n");
-			pdata->ind_chrg->force_charge_terminate(1);
-		pr_cpcap_batt(TRANSITION, "BLX limit reached, chrgterm set");
-		sply->ind_chrg_dsbl_time = (unsigned long)temp;
-#endif
 	} else if ((sply->batt_state.batt_temp >= INDCHRG_HOT_TEMP)
 		   || (sply->batt_state.batt_temp <= INDCHRG_COLD_TEMP)) {
 		if (pdata->ind_chrg->force_charge_terminate != NULL)
@@ -441,8 +439,15 @@ static void cpcap_batt_ind_chrg_ctrl(struct cpcap_batt_ps *sply)
 		   (sply->ac_state.model == CPCAP_BATT_AC_IND)) {
 		if (pdata->ind_chrg->force_charge_complete != NULL)
 			pdata->ind_chrg->force_charge_complete(1);
-		pr_cpcap_batt(TRANSITION, "batt capacity BLX, chrgcmpl set");
+		pr_cpcap_batt(TRANSITION, "batt capacity full, chrgcmpl set");
 		sply->ind_chrg_dsbl_time = (unsigned long)temp;
+#ifdef CONFIG_BLX
+	} else if (get_charginglimit() != MAX_CHARGINGLIMIT && sply->batt_state.batt_capacity_one >= get_charginglimit()) {
+			pdata->ind_chrg->force_charge_complete(1);
+		pr_cpcap_batt(TRANSITION, "BLX: capacity reached, chrgcmpl set");
+		pr_info("BLX: capacity reached %d, chrgcmpl set\n", get_charginglimit());
+		sply->ind_chrg_dsbl_time = (unsigned long)temp;
+#endif
 
 	} else if (((temp - sply->ind_chrg_dsbl_time) >= INDCHRG_RS_TIME) ||
 		   (sply->batt_state.batt_capacity_one <= INDCHRG_RS_CPCY)) {
