@@ -111,7 +111,6 @@ EXPORT_SYMBOL_GPL(dm_get_rq_mapinfo);
 #define DMF_FREEING 3
 #define DMF_DELETING 4
 #define DMF_NOFLUSH_SUSPENDING 5
-#define DMF_MERGE_IS_OPTIONAL 6
 
 /*
  * Work processed by per-device workqueue.
@@ -746,14 +745,8 @@ static void rq_completed(struct mapped_device *md, int rw, int run_queue)
 	if (!md_in_flight(md))
 		wake_up(&md->wait);
 
-	/*
-	 * Run this off this callpath, as drivers could invoke end_io while
-	 * inside their request_fn (and holding the queue lock). Calling
-	 * back into ->request_fn() could deadlock attempting to grab the
-	 * queue lock again.
-	 */
 	if (run_queue)
-		blk_run_queue_async(md->queue);
+		blk_run_queue(md->queue);
 
 	/*
 	 * dm_put() must be at the end of this function. See the comment above
@@ -863,14 +856,10 @@ static void dm_done(struct request *clone, int error, bool mapped)
 {
 	int r = error;
 	struct dm_rq_target_io *tio = clone->end_io_data;
-	dm_request_endio_fn rq_end_io = NULL;
+	dm_request_endio_fn rq_end_io = tio->ti->type->rq_end_io;
 
-	if (tio->ti) {
-		rq_end_io = tio->ti->type->rq_end_io;
-
-		if (mapped && rq_end_io)
-			r = rq_end_io(tio->ti, clone, error, &tio->info);
-	}
+	if (mapped && rq_end_io)
+		r = rq_end_io(tio->ti, clone, error, &tio->info);
 
 	if (r <= 0)
 		/* The target wants to complete the I/O */
@@ -1190,8 +1179,7 @@ static int __clone_and_map_discard(struct clone_info *ci)
 
 		/*
 		 * Even though the device advertised discard support,
-		 * that does not mean every target supports it, and
-		 * reconfiguration might also have changed that since the
+		 * reconfiguration might have changed that since the
 		 * check was performed.
 		 */
 		if (!ti->num_discard_requests)
@@ -1574,6 +1562,15 @@ static int map_request(struct dm_target *ti, struct request *clone,
 	int r, requeued = 0;
 	struct dm_rq_target_io *tio = clone->end_io_data;
 
+	/*
+	 * Hold the md reference here for the in-flight I/O.
+	 * We can't rely on the reference count by device opener,
+	 * because the device may be closed during the request completion
+	 * when all bios are completed.
+	 * See the comment in rq_completed() too.
+	 */
+	dm_get(md);
+
 	tio->ti = ti;
 	r = ti->type->map_rq(ti, clone, &tio->info);
 	switch (r) {
@@ -1605,26 +1602,6 @@ static int map_request(struct dm_target *ti, struct request *clone,
 	return requeued;
 }
 
-static struct request *dm_start_request(struct mapped_device *md, struct request *orig)
-{
-	struct request *clone;
-
-	blk_start_request(orig);
-	clone = orig->special;
-	atomic_inc(&md->pending[rq_data_dir(clone)]);
-
-	/*
-	 * Hold the md reference here for the in-flight I/O.
-	 * We can't rely on the reference count by device opener,
-	 * because the device may be closed during the request completion
-	 * when all bios are completed.
-	 * See the comment in rq_completed() too.
-	 */
-	dm_get(md);
-
-	return clone;
-}
-
 /*
  * q->request_fn for request-based dm.
  * Called with the queue lock held.
@@ -1654,21 +1631,14 @@ static void dm_request_fn(struct request_queue *q)
 			pos = blk_rq_pos(rq);
 
 		ti = dm_table_find_target(map, pos);
-		if (!dm_target_is_valid(ti)) {
-			/*
-			 * Must perform setup, that dm_done() requires,
-			 * before calling dm_kill_unmapped_request
-			 */
-			DMERR_LIMIT("request attempted access beyond the end of device");
-			clone = dm_start_request(md, rq);
-			dm_kill_unmapped_request(clone, -EIO);
-			continue;
-		}
+		BUG_ON(!dm_target_is_valid(ti));
 
 		if (ti->type->busy && ti->type->busy(ti))
 			goto delay_and_out;
 
-		clone = dm_start_request(md, rq);
+		blk_start_request(rq);
+		clone = rq->special;
+		atomic_inc(&md->pending[rq_data_dir(clone)]);
 
 		spin_unlock(q->queue_lock);
 		if (map_request(ti, clone, md))
@@ -1688,6 +1658,8 @@ delay_and_out:
 	blk_delay_queue(q, HZ / 10);
 out:
 	dm_table_put(map);
+
+	return;
 }
 
 int dm_underlying_device_busy(struct request_queue *q)
@@ -1834,6 +1806,7 @@ static void dm_init_md_queue(struct mapped_device *md)
 	blk_queue_make_request(md->queue, dm_request);
 	blk_queue_bounce_limit(md->queue, BLK_BOUNCE_ANY);
 	blk_queue_merge_bvec(md->queue, dm_merge_bvec);
+	blk_queue_flush(md->queue, REQ_FLUSH | REQ_FUA);
 }
 
 /*
@@ -2081,7 +2054,6 @@ static struct dm_table *__bind(struct mapped_device *md, struct dm_table *t,
 	struct request_queue *q = md->queue;
 	sector_t size;
 	unsigned long flags;
-	int merge_is_optional;
 
 	size = dm_table_get_size(t);
 
@@ -2106,8 +2078,6 @@ static struct dm_table *__bind(struct mapped_device *md, struct dm_table *t,
 		stop_queue(q);
 
 	__bind_mempools(md, t);
-
-	merge_is_optional = dm_table_merge_is_optional(t);
 
 	write_lock_irqsave(&md->map_lock, flags);
 	old_map = md->map;

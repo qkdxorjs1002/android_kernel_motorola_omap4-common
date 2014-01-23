@@ -197,11 +197,6 @@ struct dm_target {
 	 * whether or not its underlying devices have support.
 	 */
 	unsigned discards_supported:1;
-
-	/*
-	 * Set if this target does not return zeroes on discarded blocks.
-	 */
-	unsigned discard_zeroes_data_unsupported:1;
 };
 
 /* Each target can link one of these into the table */
@@ -213,6 +208,7 @@ struct dm_target_callbacks {
 int dm_register_target(struct target_type *t);
 void dm_unregister_target(struct target_type *t);
 
+<<<<<<< HEAD
 /*
  * Target argument parsing.
  */
@@ -256,6 +252,8 @@ const char *dm_shift_arg(struct dm_arg_set *as);
  */
 void dm_consume_args(struct dm_arg_set *as, unsigned num_args);
 
+=======
+>>>>>>> 1a98c23... [WIP] rebase to 3.0.31
 /*-----------------------------------------------------------------
  * Functions for creating and manipulating mapped devices.
  * Drop the reference with dm_put when you finish with the object.

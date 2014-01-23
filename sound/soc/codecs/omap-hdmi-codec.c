@@ -152,7 +152,8 @@ static int hdmi_audio_set_configuration(struct hdmi_codec_data *priv)
 	u32 pclk = omapdss_hdmi_get_pixel_clock();
 	struct omap_chip_id audio_must_use_mclk;
 
-	audio_must_use_mclk.oc = CHIP_IS_OMAP4430ES2_3 | CHIP_IS_OMAP446X;
+	audio_must_use_mclk.oc = CHIP_IS_OMAP4430ES2_3 | CHIP_IS_OMAP446X |
+				CHIP_IS_OMAP447X;
 
 	switch (priv->params.format) {
 	case SNDRV_PCM_FORMAT_S16_LE:
@@ -332,6 +333,7 @@ int hdmi_audio_notifier_callback(struct notifier_block *nb,
 	if (state == OMAP_DSS_DISPLAY_ACTIVE) {
 		hdmi_clk.video_active = 1;
 		/* this happens just after hdmi_power_on */
+
 		hdmi_audio_set_configuration(&hdmi_data);
 		if (hdmi_data.active) {
 			omap_hwmod_set_slave_idlemode(hdmi_data.oh,
@@ -340,9 +342,11 @@ int hdmi_audio_notifier_callback(struct notifier_block *nb,
 			queue_delayed_work(hdmi_data.workqueue,
 				&hdmi_data.delayed_work,
 				msecs_to_jiffies(1));
+
 		}
 	 else {
 		cancel_delayed_work(&hdmi_data.delayed_work);
+
 		}
 	} else if (state == OMAP_DSS_DISPLAY_DISABLED) {
 		/* this happens after hotplug unplug */
@@ -363,15 +367,20 @@ int hdmi_audio_notifier_callback(struct notifier_block *nb,
 			priv->active = 0;
 			hdmi_audio_runtime_get();
 
-			hdmi_ti_4xxx_audio_enable(&priv->ip_data, 0);
+			hdmi_ti_4xxx_wp_audio_enable(&priv->ip_data, 0);
 			omap_hwmod_set_slave_idlemode(priv->oh,
 						HWMOD_IDLEMODE_SMART_WKUP);
 			hdmi_audio_runtime_put();
 		}
+	} else {
+		cancel_delayed_work(&hdmi_data.delayed_work);
 	}
-	mutex_unlock(&hdmi_clk.video_mutex);
-
 	return 0;
+}
+//	mutex_unlock(&hdmi_clk.video_mutex);
+static void hdmi_audio_work(struct work_struct *work)
+{
+	hdmi_ti_4xxx_audio_transfer_en(&hdmi_data.ip_data, 1);
 }
 
 static void hdmi_audio_work(struct work_struct *work)
@@ -421,7 +430,6 @@ static int hdmi_audio_trigger(struct snd_pcm_substream *substream, int cmd,
 		 */
 		omap_hwmod_set_slave_idlemode(priv->oh,
 			HWMOD_IDLEMODE_NO);
-
 
 		hdmi_ti_4xxx_wp_audio_enable(&priv->ip_data, 1);
 		queue_delayed_work(priv->workqueue, &priv->delayed_work,

@@ -686,19 +686,8 @@ static void call_console_drivers(unsigned start, unsigned end)
 	start_print = start;
 	while (cur_index != end) {
 		if (msg_level < 0 && ((end - cur_index) > 2)) {
-			/*
-			 * prepare buf_prefix, as a contiguous array,
-			 * to be processed by log_prefix function
-			 */
-			char buf_prefix[SYSLOG_PRI_MAX_LENGTH+1];
-			unsigned i;
-			for (i = 0; i < ((end - cur_index)) && (i < SYSLOG_PRI_MAX_LENGTH); i++) {
-				buf_prefix[i] = LOG_BUF(cur_index + i);
-			}
-			buf_prefix[i] = '\0'; /* force '\0' as last string character */
-
 			/* strip log prefix */
-			cur_index += log_prefix((const char *)&buf_prefix, &msg_level, NULL);
+			cur_index += log_prefix(&LOG_BUF(cur_index), &msg_level, NULL);
 			start_print = cur_index;
 		}
 		while (cur_index != end) {
@@ -733,13 +722,13 @@ extern void emergency_dump(void);
 static void emit_log_char(char c)
 {
 #ifdef CONFIG_APANIC_MMC
-       static int is_begin;
+	static int is_begin;
 
-       if (unlikely(start_apanic_threads) && !is_begin) {
-               is_begin = 1;
-               log_end = 0;
-               logged_chars = 0;
-       }
+	if (unlikely(start_apanic_threads) && !is_begin) {
+		is_begin = 1;
+		log_end = 0;
+		logged_chars = 0;
+	}
 #endif
 	LOG_BUF(log_end) = c;
 	log_end++;
@@ -750,11 +739,11 @@ static void emit_log_char(char c)
 	if (logged_chars < log_buf_len)
 		logged_chars++;
 #ifdef CONFIG_APANIC_MMC
-       if (unlikely(start_apanic_threads &&
-               ((log_end & (LOG_BUF_MASK + 1)) == __LOG_BUF_LEN))) {
-               emergency_dump();
-               is_begin = 0;
-       }
+	if (unlikely(start_apanic_threads &&
+		((log_end & (LOG_BUF_MASK + 1)) == __LOG_BUF_LEN))) {
+		emergency_dump();
+		is_begin = 0;
+	}
 #endif
 }
 

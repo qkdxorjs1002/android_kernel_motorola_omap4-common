@@ -353,9 +353,8 @@ __secondary_data:
  */
 __enable_mmu:
 
-#ifdef CONFIG_ALLOW_CPU_ALIGNMENT
- 	bic	r0, r0, #CR_A
-
+#if defined(CONFIG_ALIGNMENT_TRAP) && __LINUX_ARM_ARCH__ < 6
+	orr	r0, r0, #CR_A
 #else
 	orr  r0, r0, #CR_A
 #endif
