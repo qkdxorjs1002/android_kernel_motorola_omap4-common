@@ -19,6 +19,7 @@
 #include <linux/mutex.h>
 #include <linux/idr.h>
 #include <linux/log2.h>
+#include <linux/mmc/core.h>
 
 #include "blk.h"
 
@@ -518,7 +519,7 @@ void register_disk(struct gendisk *disk)
 
 	ddev->parent = disk->driverfs_dev;
 
-	dev_set_name(ddev, "%s", disk->disk_name);
+	dev_set_name(ddev, disk->disk_name);
 
 	/* delay uevents, until we scanned partition table */
 	dev_set_uevent_suppress(ddev, 1);
@@ -744,7 +745,7 @@ void __init printk_all_partitions(void)
 		struct hd_struct *part;
 		char name_buf[BDEVNAME_SIZE];
 		char devt_buf[BDEVT_SIZE];
-		char uuid_buf[PARTITION_META_INFO_UUIDLTH * 2 + 5];
+		u8 uuid[PARTITION_META_INFO_UUIDLTH * 2 + 1];
 
 		/*
 		 * Don't show empty devices or things that have been
@@ -763,16 +764,14 @@ void __init printk_all_partitions(void)
 		while ((part = disk_part_iter_next(&piter))) {
 			bool is_part0 = part == &disk->part0;
 
-			uuid_buf[0] = '\0';
+			uuid[0] = 0;
 			if (part->info)
-				snprintf(uuid_buf, sizeof(uuid_buf), "%pU",
-					 part->info->uuid);
+				part_unpack_uuid(part->info->uuid, uuid);
 
 			printk("%s%s %10llu %s %s", is_part0 ? "" : "  ",
 			       bdevt_str(part_devt(part), devt_buf),
 			       (unsigned long long)part->nr_sects >> 1,
-			       disk_name(disk, part->partno, name_buf),
-			       uuid_buf);
+			       disk_name(disk, part->partno, name_buf), uuid);
 			if (is_part0) {
 				if (disk->driverfs_dev != NULL &&
 				    disk->driverfs_dev->driver != NULL)
@@ -850,6 +849,7 @@ static int show_partition(struct seq_file *seqf, void *v)
 	struct disk_part_iter piter;
 	struct hd_struct *part;
 	char buf[BDEVNAME_SIZE];
+	char alias[BDEVNAME_SIZE];
 
 	/* Don't show non-partitionable removeable devices or empty devices */
 	if (!get_capacity(sgp) || (!disk_partitionable(sgp) &&
@@ -860,11 +860,14 @@ static int show_partition(struct seq_file *seqf, void *v)
 
 	/* show the full disk and all non-0 size partitions of it */
 	disk_part_iter_init(&piter, sgp, DISK_PITER_INCL_PART0);
-	while ((part = disk_part_iter_next(&piter)))
+	while ((part = disk_part_iter_next(&piter))) {
+		get_mmcalias_by_id(alias, MAJOR(part_devt(part)),
+			MINOR(part_devt(part)));
 		seq_printf(seqf, "%4d  %7d %10llu %s\n",
 			   MAJOR(part_devt(part)), MINOR(part_devt(part)),
 			   (unsigned long long)part->nr_sects >> 1,
 			   disk_name(sgp, part->partno, buf));
+	}
 	disk_part_iter_exit(&piter);
 
 	return 0;
@@ -1776,6 +1779,8 @@ static void disk_alloc_events(struct gendisk *disk)
 		pr_warn("%s: failed to initialize events\n", disk->disk_name);
 		return;
 	}
+
+	disk->ev = ev;
 
 	INIT_LIST_HEAD(&ev->node);
 	ev->disk = disk;

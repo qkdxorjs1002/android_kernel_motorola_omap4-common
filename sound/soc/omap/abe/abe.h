@@ -117,10 +117,16 @@ struct omap_abe {
 	u32 muted_gains_decibel[MAX_NBGAIN_CMEM];
 	u32 desired_gains_linear[MAX_NBGAIN_CMEM];
 	u32 desired_ramp_delay_ms[MAX_NBGAIN_CMEM];
+        u32 mcpdm_path;
+        int pp_buf_id;
+        int pp_buf_id_next;
+        int pp_buf_addr[4];
+        int pp_first_irq;
 	struct mutex mutex;
 	u32 warm_boot;
 
 	u32 irq_dbg_read_ptr;
+        u32 dbg_param;
 
 	struct omap_abe_dbg dbg;
 };
