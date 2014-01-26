@@ -74,8 +74,6 @@
 						  * powerdomain
 						  */
 
-#define PWRDM_HAS_LASTPOWERSTATEENT	(1 << 3)
-
 /*
  * Number of memory banks that are power-controllable.	On OMAP4430, the
  * maximum is 5.

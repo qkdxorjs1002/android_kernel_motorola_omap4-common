@@ -36,7 +36,6 @@
 #define SET_DSP_CONSTRAINT	10
 #define CLEAR_CONSTRAINT	-1
 
-
 /* accommodate the difference between omap1 and omap2/3 */
 static const struct iommu_functions *arch_iommu;
 
@@ -867,6 +866,7 @@ static void _set_latency_cstr(struct iommu *obj, bool set)
 	else if (!strcmp(obj->name, "tesla"))
 	    omap_pm_set_max_dev_wakeup_lat(obj->dev,
 	        obj->dev, val);
+
 	return;
 }
 
