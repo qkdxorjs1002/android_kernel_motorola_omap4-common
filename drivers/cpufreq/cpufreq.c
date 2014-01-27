@@ -33,6 +33,7 @@
 #include <trace/events/power.h>
 
 #ifdef CONFIG_BATTERY_FRIEND
+#include <linux/battery_friend.h>
 unsigned int fr_min;
 #endif
 
