@@ -32,6 +32,10 @@
 
 #include <trace/events/power.h>
 
+#ifdef CONFIG_BATTERY_FRIEND
+unsigned int fr_min;
+#endif
+
 /**
  * The "cpufreq driver" - the arch- or hardware-dependent low
  * level driver of CPUFreq support, and its spinlock. This lock
@@ -1905,12 +1909,30 @@ int cpufreq_update_policy(unsigned int cpu)
 
 	pr_debug("updating policy for CPU %u\n", cpu);
 	memcpy(&policy, data, sizeof(struct cpufreq_policy));
-
+#ifdef CONFIG_BATTERY_FRIEND
 	policy.min = data->user_policy.min;
-	policy.max = data->user_policy.max;
-	policy.policy = data->user_policy.policy;
-	policy.governor = data->user_policy.governor;
+	fr_min = policy.min;
 
+	if (likely(battery_friend_active)) {
+		if (policy.min != scr_min) {
+		policy.min = scr_min;
+		}
+		policy.max = data->user_policy.max;
+		policy.policy = data->user_policy.policy;
+		policy.governor = data->user_policy.governor;
+	}
+	else if (unlikely(battery_friend_active))	{
+		policy.min = fr_min;
+		policy.max = data->user_policy.max;
+		policy.policy = data->user_policy.policy;
+		policy.governor = data->user_policy.governor;
+		}
+#else
+		policy.min = data->user_policy.min;
+		policy.max = data->user_policy.max;
+		policy.policy = data->user_policy.policy;
+		policy.governor = data->user_policy.governor;
+#endif
 	/* BIOS might change freq behind our back
 	  -> ask driver for current freq and notify governors about a change */
 	if (cpufreq_driver->get) {

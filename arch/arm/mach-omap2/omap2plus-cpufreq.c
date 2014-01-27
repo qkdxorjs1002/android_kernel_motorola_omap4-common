@@ -100,8 +100,6 @@ static unsigned int stock_freq_max;
 
 #ifdef CONFIG_BATTERY_FRIEND
 unsigned int fr_min;
-// unsigned int fr_max = 1000000;
-// unsigned int fr_sc_min = 300000;
 unsigned int fr_sc_max;
 #endif
 
@@ -647,34 +645,33 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 	 * battery_friend_min_freq
 	 *
 	 * These values will override the common values for:
-	 * 'screen_on_min_freq', 'screen_off_max_freq', 'policy->min' and 'policy->max'
+	 * 'screen_off_max_freq', 'policy->min'
 	 *
 	 * ONLY for suspend mode!!
 	 *
 	 */
 #ifdef CONFIG_BATTERY_FRIEND
-			fr_min = policy->min = policy->cpuinfo.min_freq;
+			policy->min = policy->cpuinfo.min_freq;
+			fr_min = policy->min;
 #endif
+
 if (omap_cpufreq_suspended) 
 	{
 #ifdef CONFIG_BATTERY_FRIEND
 	if (likely(battery_friend_active))
     	 	{
+			if (policy->min != scr_min) {
 			policy->min = scr_min;
 			pr_info("Battery_Friend: Min: freq locked at %u Mhz\n", scr_min/1000);
-
-		/*	policy->max = scr_max;
-			pr_info("Battery_Friend: Max: freq locked at %u Mhz\n", scr_max/1000); */
-
-			policy->max = stock_freq_max = policy->cpuinfo.max_freq;
+			}
+			policy->max = policy->cpuinfo.max_freq;
+			stock_freq_max = policy->max;
 			policy->cur = omap_getspeed(policy->cpu);
     		}
 	else if (unlikely(battery_friend_active))
 		{
 			policy->min = policy->cpuinfo.min_freq;
 			policy->max = stock_freq_max = policy->cpuinfo.max_freq;
-			//fr_max = policy->max;
-
 			policy->cur = omap_getspeed(policy->cpu);
 		}
 #else
@@ -690,10 +687,6 @@ else if (!omap_cpufreq_suspended)
 		{
 			policy->min = fr_min;
 			pr_info("Battery_Friend: Min: Restored stock frequency\n");
-
-		/*	policy->max = fr_max;
-			pr_info("Battery_Friend: Max: Restored stock frequency\n"); */
-
 			policy->max = stock_freq_max = policy->cpuinfo.max_freq;	
 			policy->cur = omap_getspeed(policy->cpu);
 		}
@@ -701,7 +694,6 @@ else if (!omap_cpufreq_suspended)
 		{
 			policy->min = policy->cpuinfo.min_freq;
 			policy->max = stock_freq_max = policy->cpuinfo.max_freq;
-		//	fr_max = policy->max;
 			policy->cur = omap_getspeed(policy->cpu);
 	        }
 #else
@@ -710,6 +702,7 @@ else if (!omap_cpufreq_suspended)
 		policy->cur = omap_getspeed(policy->cpu);
 #endif
 	}
+
 
 	for (i = 0; freq_table[i].frequency != CPUFREQ_TABLE_END; i++)
 		max_freq = max(freq_table[i].frequency, max_freq);
@@ -861,11 +854,13 @@ static ssize_t store_screen_off_freq(struct cpufreq_policy *policy,
 
     if (likely(battery_friend_active))
 	{
-        screen_off_max_freq = scr_off_max;
+	if (screen_off_max_freq != scr_off_max)
+	        screen_off_max_freq = scr_off_max;
 	pr_info("Battery_Friend: Screen_off: Max: limited to %u Mhz\n", scr_off_max/1000);
         }
      else if (unlikely(battery_friend_active))
 	{
+	if (screen_off_max_freq != fr_sc_max)
 	screen_off_max_freq = fr_sc_max;
 	pr_info("Battery_Friend: screen_off: Max: restored stock frequency\n");
 	}
