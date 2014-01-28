@@ -881,8 +881,20 @@ void usbhs_wakeup()
 
 static void usbhs_resume_work(struct work_struct *work)
 {
-	dev_dbg(usbhs_wake->dev, "USB IO PAD Wakeup event triggered\n");
-	pm_runtime_put(usbhs_wake->dev);
+        dev_dbg(usbhs_wake->dev, "USB IO PAD Wakeup event triggered\n");
+
+        if (usbhs_wake->wakeup_ehci) {
+                usbhs_wake->wakeup_ehci = 0;
+                omap_hwmod_disable_ioring_wakeup(usbhs_wake->oh_ehci);
+        }
+
+        if (usbhs_wake->wakeup_ohci) {
+                usbhs_wake->wakeup_ohci = 0;
+                omap_hwmod_disable_ioring_wakeup(usbhs_wake->oh_ohci);
+        }
+
+        if (pm_runtime_suspended(usbhs_wake->dev))
+                pm_runtime_get_sync(usbhs_wake->dev);
 }
 
 void __init usbhs_init(const struct usbhs_omap_board_data *pdata)
