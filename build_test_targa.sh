@@ -28,7 +28,7 @@ export ARCH=arm
 export SUBARCH=arm
 export CROSS_COMPILE=arm-unknown-linux-gnueabi-
 # export TARGET_KERNEL_CUSTOM_TOOLCHAIN=arm-unknown-linux-gnueabi-standard_4.7.2
-export LOCALVERSION="-JBX-2.1-Hybrid-Test-4.4"
+export LOCALVERSION="-JBX-3.0-Hybrid-Test-4.4"
 make -j4 TARGET_KERNEL_SOURCE=/home/dtrail/android/android_kernel_motorola_omap4-common/ TARGET_KERNEL_CONFIG=mapphone_OCTarga_defconfig $OUT/boot.img
 
 # We don't use the kernel but the modules
@@ -49,8 +49,8 @@ echo "Packaging flashable Zip file..."
 echo " "
 
 cd /home/dtrail/android/built/4.4/targa/rls
-zip -r "JBX-Kernel-2.1-Hybrid-Targa-TEST-4.4_$(date +"%Y-%m-%d").zip" *
-mv "JBX-Kernel-2.1-Hybrid-Targa-TEST-4.4_$(date +"%Y-%m-%d").zip" /home/dtrail/android/out
+zip -r "JBX-Kernel-3.0-Hybrid-Targa-TEST-4.4_$(date +"%Y-%m-%d").zip" *
+mv "JBX-Kernel-3.0-Hybrid-Targa-TEST-4.4_$(date +"%Y-%m-%d").zip" /home/dtrail/android/out
 
 # Exporting changelog to file
 cd /home/dtrail/android/android_kernel_motorola_omap4-common
