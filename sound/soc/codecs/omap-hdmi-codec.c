@@ -201,8 +201,10 @@ static int hdmi_audio_set_configuration(struct hdmi_codec_data *priv)
 		return -EINVAL;
 	}
 
+	hdmi_audio_runtime_get();
 	err = hdmi_ti_4xxx_config_audio_acr(&priv->ip_data,
 			priv->params.sample_freq, &n, &cts, pclk);
+	hdmi_audio_runtime_put();
 	if (err < 0)
 		return err;
 
@@ -216,8 +218,10 @@ static int hdmi_audio_set_configuration(struct hdmi_codec_data *priv)
 	audio_dma->mode = HDMI_AUDIO_TRANSF_DMA;
 	audio_dma->fifo_threshold = 0x20; /* in number of samples */
 
+	hdmi_audio_runtime_get();
 	hdmi_ti_4xxx_wp_audio_config_dma(&priv->ip_data, audio_dma);
 	hdmi_ti_4xxx_wp_audio_config_format(&priv->ip_data, audio_format);
+	hdmi_audio_runtime_put();
 
 	/*
 	 * I2S config
@@ -303,8 +307,10 @@ static int hdmi_audio_set_configuration(struct hdmi_codec_data *priv)
 		return -EINVAL;
 	}
 
+	hdmi_audio_runtime_get();
 	hdmi_ti_4xxx_core_audio_config(&priv->ip_data, core_cfg);
 	hdmi_ti_4xxx_wp_audio_config_format(&priv->ip_data, audio_format);
+	hdmi_audio_runtime_put();
 
 	/*
 	 * Configure packet
@@ -318,7 +324,9 @@ static int hdmi_audio_set_configuration(struct hdmi_codec_data *priv)
 	aud_if_cfg->db5_downmix_inh = false;
 	aud_if_cfg->db5_lsv = 0;
 
+	hdmi_audio_runtime_get();
 	hdmi_ti_4xxx_core_audio_infoframe_config(&priv->ip_data, aud_if_cfg);
+	hdmi_audio_runtime_put();
 	return 0;
 
 }
@@ -333,7 +341,9 @@ int hdmi_audio_notifier_callback(struct notifier_block *nb,
 	if (state == OMAP_DSS_DISPLAY_ACTIVE) {
 		hdmi_clk.video_active = 1;
 		/* this happens just after hdmi_power_on */
-
+		hdmi_audio_runtime_get();
+		if (hdmi_data.active)
+			hdmi_ti_4xxx_wp_audio_enable(&hdmi_data.ip_data, 0);
 		hdmi_audio_set_configuration(&hdmi_data);
 		if (hdmi_data.active) {
 			omap_hwmod_set_slave_idlemode(hdmi_data.oh,
@@ -344,10 +354,7 @@ int hdmi_audio_notifier_callback(struct notifier_block *nb,
 				msecs_to_jiffies(1));
 
 		}
-	 else {
-		cancel_delayed_work(&hdmi_data.delayed_work);
-
-		}
+		hdmi_audio_runtime_put();
 	} else if (state == OMAP_DSS_DISPLAY_DISABLED) {
 		/* this happens after hotplug unplug */
 
@@ -378,11 +385,6 @@ int hdmi_audio_notifier_callback(struct notifier_block *nb,
 	return 0;
 }
 //	mutex_unlock(&hdmi_clk.video_mutex);
-static void hdmi_audio_work(struct work_struct *work)
-{
-	hdmi_ti_4xxx_audio_transfer_en(&hdmi_data.ip_data, 1);
-}
-
 static void hdmi_audio_work(struct work_struct *work)
 {
 	hdmi_ti_4xxx_audio_transfer_en(&hdmi_data.ip_data, 1);
@@ -428,13 +430,14 @@ static int hdmi_audio_trigger(struct snd_pcm_substream *substream, int cmd,
 		 * switch to no-idle to avoid DSS_L3_ICLK clock
 		 * to be shutdown during audio activity (as per TRM)
 		 */
+		hdmi_audio_runtime_get();
 		omap_hwmod_set_slave_idlemode(priv->oh,
 			HWMOD_IDLEMODE_NO);
-
 		hdmi_ti_4xxx_wp_audio_enable(&priv->ip_data, 1);
 		queue_delayed_work(priv->workqueue, &priv->delayed_work,
 				msecs_to_jiffies(1));
 
+		hdmi_audio_runtime_put();
 		priv->active = 1;
 		break;
 	case SNDRV_PCM_TRIGGER_STOP:
@@ -442,7 +445,7 @@ static int hdmi_audio_trigger(struct snd_pcm_substream *substream, int cmd,
 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
 		cancel_delayed_work(&hdmi_data.delayed_work);
 		priv->active = 0;
-
+		hdmi_audio_runtime_get();
 		hdmi_ti_4xxx_audio_transfer_en(&priv->ip_data, 0);
 		hdmi_ti_4xxx_wp_audio_enable(&priv->ip_data, 0);
 		/*
@@ -451,6 +454,7 @@ static int hdmi_audio_trigger(struct snd_pcm_substream *substream, int cmd,
 		 */
 		omap_hwmod_set_slave_idlemode(priv->oh,
 			HWMOD_IDLEMODE_SMART_WKUP);
+		hdmi_audio_runtime_put();
 		break;
 	default:
 		err = -EINVAL;
@@ -642,3 +646,4 @@ module_exit(hdmi_codec_exit);
 MODULE_AUTHOR("Ricardo Neri <ricardo.neri@ti.com>");
 MODULE_DESCRIPTION("ASoC HDMI codec driver");
 MODULE_LICENSE("GPL");
+

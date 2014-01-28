@@ -455,8 +455,8 @@ static int upgrade_mode(struct dm_dev_internal *dd, fmode_t new_mode,
  * Add a device to the list, or just increment the usage count if
  * it's already present.
  */
-int dm_get_device(struct dm_target *ti, const char *path, fmode_t mode,
-						struct dm_dev **result)
+static int __table_get_device(struct dm_table *t, struct dm_target *ti,
+		      const char *path, fmode_t mode, struct dm_dev **result)
 {
 	int r;
 	dev_t uninitialized_var(dev);
@@ -540,7 +540,7 @@ int dm_set_device_limits(struct dm_target *ti, struct dm_dev *dev,
 	 * smaller I/O, just to be safe.
 	 */
 
-	if (q->merge_bvec_fn && !ti->type->merge)
+	if (dm_queue_merge_is_compulsory(q) && !ti->type->merge)
 		blk_limits_max_hw_sectors(limits,
 					  (unsigned int) (PAGE_SIZE >> 9));
 	return 0;
@@ -791,11 +791,6 @@ int dm_table_add_target(struct dm_table *t, const char *type,
 
 	t->highs[t->num_targets++] = tgt->begin + tgt->len - 1;
 
-	if (!tgt->num_discard_requests && tgt->discards_supported)
-		DMWARN("%s: %s: ignoring discards_supported because num_discard_requests is zero.",
-
-	        dm_device_name(t->md), type);
-
 	if (!tgt->num_discard_requests)
 		t->discards_supported = 0;
 
@@ -806,84 +801,6 @@ int dm_table_add_target(struct dm_table *t, const char *type,
 	dm_put_target_type(tgt->type);
 	return r;
 }
-
-/*
- * Target argument parsing helpers.
- */
-static int validate_next_arg(struct dm_arg *arg, struct dm_arg_set *arg_set,
-           unsigned *value, char **error, unsigned grouped)
-{
-  const char *arg_str = dm_shift_arg(arg_set);
-
-  if (!arg_str ||
-      (sscanf(arg_str, "%u", value) != 1) ||
-      (*value < arg->min) ||
-      (*value > arg->max) ||
-      (grouped && arg_set->argc < *value)) {
-    *error = arg->error;
-    return -EINVAL;
-  }
-
-  return 0;
-}
-
-int dm_read_arg(struct dm_arg *arg, struct dm_arg_set *arg_set,
-    unsigned *value, char **error)
-{
-  return validate_next_arg(arg, arg_set, value, error, 0);
-			     unsigned *value, char **error, unsigned grouped)
-{
-	const char *arg_str = dm_shift_arg(arg_set);
-
-	if (!arg_str ||
-	    (sscanf(arg_str, "%u", value) != 1) ||
-	    (*value < arg->min) ||
-	    (*value > arg->max) ||
-	    (grouped && arg_set->argc < *value)) {
-		*error = arg->error;
-		return -EINVAL;
-	}
-
-	return 0;
-}
-
-int dm_read_arg(struct dm_arg *arg, struct dm_arg_set *arg_set,
-		unsigned *value, char **error)
-{
-	return validate_next_arg(arg, arg_set, value, error, 0);
-}
-EXPORT_SYMBOL(dm_read_arg);
-
-int dm_read_arg_group(struct dm_arg *arg, struct dm_arg_set *arg_set,
-          unsigned *value, char **error)
-{
-  return validate_next_arg(arg, arg_set, value, error, 1);
-
-}
-EXPORT_SYMBOL(dm_read_arg_group);
-
-const char *dm_shift_arg(struct dm_arg_set *as)
-{
-	char *r;
-
-	if (as->argc) {
-		as->argc--;
-		r = *as->argv;
-		as->argv++;
-		return r;
-	}
-
-	return NULL;
-}
-EXPORT_SYMBOL(dm_shift_arg);
-
-void dm_consume_args(struct dm_arg_set *as, unsigned num_args)
-{
- BUG_ON(as->argc < num_args);
- as->argc -= num_args;
- as->argv += num_args;
-}
-EXPORT_SYMBOL(dm_consume_args);
 
 static int dm_table_set_type(struct dm_table *t)
 {
@@ -1278,105 +1195,6 @@ static void dm_table_set_integrity(struct dm_table *t)
 		       dm_device_name(t->md));
 }
 
-static bool dm_table_discard_zeroes_data(struct dm_table *t)
-{
-  struct dm_target *ti;
-  unsigned i = 0;
-
-  /* Ensure that all targets supports discard_zeroes_data. */
-  while (i < dm_table_get_num_targets(t)) {
-    ti = dm_table_get_target(t, i++);
-
-    if (ti->discard_zeroes_data_unsupported)
-      return 0;
-  }
-
-  return 1;
-}
-
-static int device_flush_capable(struct dm_target *ti, struct dm_dev *dev,
-        sector_t start, sector_t len, void *data)
-{
-  unsigned flush = (*(unsigned *)data);
-  struct request_queue *q = bdev_get_queue(dev->bdev);
-
-  return q && (q->flush_flags & flush);
-}
-
-static bool dm_table_supports_flush(struct dm_table *t, unsigned flush)
-{
-  struct dm_target *ti;
-  unsigned i = 0;
-
-  /*
-   * Require at least one underlying device to support flushes.
-   * t->devices includes internal dm devices such as mirror logs
-   * so we need to use iterate_devices here, which targets
-   * supporting flushes must provide.
-   */
-  while (i < dm_table_get_num_targets(t)) {
-    ti = dm_table_get_target(t, i++);
-
-    if (!ti->num_flush_requests)
-      continue;
-
-    if (ti->type->iterate_devices &&
-        ti->type->iterate_devices(ti, device_flush_capable, &flush))
-      return 1;
-  }
-
-  return 0;
-
-static int device_flush_capable(struct dm_target *ti, struct dm_dev *dev,
-				sector_t start, sector_t len, void *data)
-{
-	unsigned flush = (*(unsigned *)data);
-	struct request_queue *q = bdev_get_queue(dev->bdev);
-
-	return q && (q->flush_flags & flush);
-}
-
-static bool dm_table_supports_flush(struct dm_table *t, unsigned flush)
-{
-	struct dm_target *ti;
-	unsigned i = 0;
-
-	/*
-	 * Require at least one underlying device to support flushes.
-	 * t->devices includes internal dm devices such as mirror logs
-	 * so we need to use iterate_devices here, which targets
-	 * supporting flushes must provide.
-	 */
-	while (i < dm_table_get_num_targets(t)) {
-		ti = dm_table_get_target(t, i++);
-
-		if (!ti->num_flush_requests)
-			continue;
-
-		if (ti->type->iterate_devices &&
-		    ti->type->iterate_devices(ti, device_flush_capable, &flush))
-			return 1;
-	}
-
-	return 0;
-}
-
-static bool dm_table_discard_zeroes_data(struct dm_table *t)
-{
-	struct dm_target *ti;
-	unsigned i = 0;
-
-	/* Ensure that all targets supports discard_zeroes_data. */
-	while (i < dm_table_get_num_targets(t)) {
-		ti = dm_table_get_target(t, i++);
-
-		if (ti->discard_zeroes_data_unsupported)
-			return 0;
-	}
-
-	return 1;
-}
-
 void dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
 			       struct queue_limits *limits)
 {
@@ -1389,18 +1207,6 @@ void dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
 		queue_flag_clear_unlocked(QUEUE_FLAG_DISCARD, q);
 	else
 		queue_flag_set_unlocked(QUEUE_FLAG_DISCARD, q);
-
-	if (dm_table_supports_flush(t, REQ_FLUSH)) {
-		flush |= REQ_FLUSH;
-
-	if (dm_table_supports_flush(t, REQ_FUA))
-		flush |= REQ_FUA;
-	}
-	
-	blk_queue_flush(q, flush);
-
-	if (!dm_table_discard_zeroes_data(t))
-	        q->limits.discard_zeroes_data = 0;
 
 	dm_table_set_integrity(t);
 

@@ -27,11 +27,7 @@
 #define HDMI_HPD_HIGH		0x20
 #define HDMI_BCAP		0x40
 #define HDMI_RI_ERR		0x80
-<<<<<<< HEAD
-#define HDMI_CEC_INT		0x100
-=======
 #define HDMI_CEC_INT           0x100
->>>>>>> 1a98c23... [WIP] rebase to 3.0.31
 enum hdmi_pll_pwr {
 	HDMI_PLLPWRCMD_ALLOFF = 0,
 	HDMI_PLLPWRCMD_PLLONLY = 1,
@@ -397,13 +393,8 @@ int hdmi_ti_4xxx_phy_init(struct hdmi_ip_data *ip_data, int ds_percent);
 #else
 int hdmi_ti_4xxx_phy_init(struct hdmi_ip_data *ip_data);
 #endif
-<<<<<<< HEAD
-void hdmi_ti_4xxx_phy_off(struct hdmi_ip_data *ip_data,
-			enum hdmi_pwrchg_reasons reason);
-=======
 
 //void hdmi_ti_4xxx_phy_off(struct hdmi_ip_data *ip_data, bool set_mode);
->>>>>>> 1a98c23... [WIP] rebase to 3.0.31
 int read_ti_4xxx_edid(struct hdmi_ip_data *ip_data, u8 *pedid, u16 max_length);
 void hdmi_ti_4xxx_wp_video_start(struct hdmi_ip_data *ip_data, bool start);
 int hdmi_ti_4xxx_pll_program(struct hdmi_ip_data *ip_data,
@@ -426,18 +417,11 @@ void hdmi_ti_4xxx_core_audio_config(struct hdmi_ip_data *ip_data,
 					struct hdmi_core_audio_config *cfg);
 void hdmi_ti_4xxx_core_audio_infoframe_config(struct hdmi_ip_data *ip_data,
 		struct hdmi_core_infoframe_audio *info_aud);
-<<<<<<< HEAD
-void hdmi_ti_4xxx_audio_enable(struct hdmi_ip_data *ip_data, bool idle);
-=======
->>>>>>> 1a98c23... [WIP] rebase to 3.0.31
 void hdmi_ti_4xxx_audio_transfer_en(struct hdmi_ip_data *ip_data,
 						bool idle);
 void hdmi_ti_4xxx_wp_audio_enable(struct hdmi_ip_data *ip_data, bool idle);
 
-<<<<<<< HEAD
-=======
 //void hdmi_ti_4xxx_audio_enable(struct hdmi_ip_data *ip_data, bool idle);
->>>>>>> 1a98c23... [WIP] rebase to 3.0.31
 int hdmi_ti_4xxx_set_wait_soft_reset(struct hdmi_ip_data *ip_data);
 int hdmi_ti_4xx_check_aksv_data(struct hdmi_ip_data *ip_data);
 void hdmi_core_vsi_config(struct hdmi_ip_data *ip_data,
@@ -459,3 +443,4 @@ int hdmi_ti_4xxx_cec_set_listening_mask(struct hdmi_ip_data *ip_data,
 
 
 #endif
+

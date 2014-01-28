@@ -335,6 +335,9 @@ static struct poolinfo {
 #endif
 };
 
+#define POOLBITS	poolwords*32
+#define POOLBYTES	poolwords*4
+
 /*
  * For the purposes of better mixing, we use the CRC-32 polynomial as
  * well to make a twisted Generalized Feedback Shift Reigster
