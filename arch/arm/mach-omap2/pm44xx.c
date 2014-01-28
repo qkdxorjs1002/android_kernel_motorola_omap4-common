@@ -81,9 +81,6 @@ static struct powerdomain *tesla_pwrdm;
 static struct clockdomain *emif_clkdm, *mpuss_clkdm;
 static struct clockdomain *abe_clkdm;
 
-
-static struct clockdomain *abe_clkdm; 
-
 /* Yet un-named erratum which requires AUTORET to be disabled for IVA PD
 *
 * NOTE: This erratum is disabled and replaced with updated work-around relaxing
@@ -188,9 +185,10 @@ static struct clockdomain *abe_clkdm;
  * 2) OFF mode is enabled only in Suspend path.
  * 3) AUTO RET for IVA VDD remains disabled in Suspend path (before OFF mode).
  */
-#define OMAP4_PM_ERRATUM_IVA_AUTO_RET_IDLE_iXXX        BIT(8)
+#define OMAP4_PM_ERRATUM_IVA_AUTO_RET_IDLE_iXXX	BIT(8)
 static int iva_toggle_wa_applied;
 
+u16 pm44xx_errata;
 #define is_pm44xx_erratum(erratum) (pm44xx_errata & OMAP4_PM_ERRATUM_##erratum)
 
 #define MAX_IOPAD_LATCH_TIME 1000
@@ -359,7 +357,6 @@ void omap4_enter_sleep(unsigned int cpu, unsigned int power_state, bool suspend)
 				omap_vc_set_auto_trans(iva_voltdm,
 				OMAP_VC_CHANNEL_AUTO_TRANSITION_RETENTION);
 			}
-
 		}
 
 		omap_temp_sensor_prepare_idle();
@@ -375,19 +372,11 @@ void omap4_enter_sleep(unsigned int cpu, unsigned int power_state, bool suspend)
 		omap4_pm_suspend_save_regs();
 
 	if (omap4_device_next_state_off()) {
-
-    /* Proceed with OFF mode sequence only if WA is applied */
-    if (is_pm44xx_erratum(IVA_AUTO_RET_IDLE_iXXX)) {
-      if (!iva_toggle_wa_applied)
-        goto abort_device_off;
-    }
-
 		/* Proceed with OFF mode sequence only if WA is applied */
 		if (is_pm44xx_erratum(IVA_AUTO_RET_IDLE_iXXX)) {
 			if (!iva_toggle_wa_applied)
 				goto abort_device_off;
 		}
->>>>>>> 30bb8e6... [WIP] merge to 3.0.31
 
 		/* Save the device context to SAR RAM */
 		if (omap4_sar_save())
@@ -426,7 +415,6 @@ abort_device_off:
 		/* See note above */
 		omap_vc_set_auto_trans(core_voltdm,
 				OMAP_VC_CHANNEL_AUTO_TRANSITION_DISABLE);
-
 
 		if (is_pm44xx_erratum(IVA_AUTO_RET_IDLE_iXXX)) {
 			if (omap_vc_set_auto_trans(iva_voltdm,
@@ -1145,17 +1133,6 @@ static void __init syscontrol_setup_regs(void)
 		OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO2_3);
 
 	syscontrol_lpddr_clk_io_errata(true);
-	
-	/*
-	 * dtrail:  Workaround for CK differential IO PADn, PADp values due to bug in
-	 * 			EMIF CMD phy.
-	 */
-	v = omap4_ctrl_pad_readl(OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO1_2);
-	v &= ~OMAP4_LPDDR2IO1_GR10_WD_MASK;
-	omap4_ctrl_pad_writel(v, OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO1_2);
-	v = omap4_ctrl_pad_readl(OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO2_2);
-	v &= ~OMAP4_LPDDR2IO2_GR10_WD_MASK;
-	omap4_ctrl_pad_writel(v, OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO2_2);
 }
 
 static void __init prcm_setup_regs(void)
@@ -1561,7 +1538,6 @@ static int __init omap4_pm_init(void)
 	 */
 	mpuss_clkdm = clkdm_lookup("mpuss_clkdm");
 	emif_clkdm = clkdm_lookup("l3_emif_clkdm");
-
 	abe_clkdm = clkdm_lookup("abe_clkdm");
 	l3_1_clkdm = clkdm_lookup("l3_1_clkdm");
 	l3_2_clkdm = clkdm_lookup("l3_2_clkdm");
@@ -1570,10 +1546,8 @@ static int __init omap4_pm_init(void)
 	l4_cfg = clkdm_lookup("l4_cfg_clkdm");
 	l4wkup = clkdm_lookup("l4_wkup_clkdm");
 	if ((!mpuss_clkdm) || (!emif_clkdm) || (!l3_1_clkdm) || (!l4wkup) ||
-
-	(!l3_2_clkdm) || (!ducati_clkdm) || (!l4_per) || (!l4_cfg) ||
-	    (!abe_clkdm)) 
-
+		(!l3_2_clkdm) || (!ducati_clkdm) || (!l4_per) || (!l4_cfg) ||
+		(!abe_clkdm))
 		goto err2;
 
 	/* if we cannot ever enable static dependency. */
@@ -1728,3 +1702,4 @@ err2:
 	return ret;
 }
 late_initcall(omap4_pm_init);
+

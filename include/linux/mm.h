@@ -1160,10 +1160,7 @@ struct shrink_control {
 struct shrinker {
 	int (*shrink)(struct shrinker *, struct shrink_control *sc);
 	int seeks;	/* seeks to recreate an obj */
-<<<<<<< HEAD
 	long batch;  	/* reclaim batch size, 0 = default */
-=======
->>>>>>> 1a98c23... [WIP] rebase to 3.0.31
 
 	/* These are for internal use */
 	struct list_head list;
