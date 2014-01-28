@@ -1,3 +1,5 @@
+6eabba2 build script: update changelog branch
+1470f88 Added todays changelog and updated full history
 af356f3 JBX-Kernel Version 3.0 build scripts
 80b3f5d Enable Smartreflex for OMAP4430
 0307eec defconfig: disable DEBUG_MUTEXES
