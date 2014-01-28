@@ -101,8 +101,8 @@ static unsigned int stock_freq_max;
 #ifdef CONFIG_BATTERY_FRIEND
 struct cpufreq_policy *policy;
 extern bool battery_friend_active;
-unsigned int fr_min;
-unsigned int fr_sc_max;
+static unsigned int fr_min;
+static unsigned int fr_sc_max;
 #endif
 
 #ifdef CONFIG_DYN_HOTPLUG

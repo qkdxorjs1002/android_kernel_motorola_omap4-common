@@ -35,7 +35,7 @@
 #ifdef CONFIG_BATTERY_FRIEND
 #include <linux/battery_friend.h>
 extern bool battery_friend_active;
-unsigned int fr_min;
+static unsigned int fr_min;
 #endif
 
 /**
