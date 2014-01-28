@@ -99,6 +99,8 @@ unsigned int screen_on_min_freq;
 static unsigned int stock_freq_max; 
 
 #ifdef CONFIG_BATTERY_FRIEND
+struct cpufreq_policy *policy;
+extern bool battery_friend_active;
 unsigned int fr_min;
 unsigned int fr_sc_max;
 #endif
@@ -117,11 +119,6 @@ static int gpu_freq_idx = DEFAULT_MAX_GPU_FREQUENCY_INDEX;
 #ifdef CONFIG_OMAP4430_IVA_OVERCLOCK
 #define OMAP4430_IVA_OC_FREQUENCY 430000000 // must match value in opp4xxx_data.c
 static int iva_freq_oc = 0; // boolean flag
-#endif
-
-#ifdef CONFIG_BATTERY_FRIEND
-struct cpufreq_policy *policy;
-extern bool battery_friend_active;
 #endif
 
 #ifdef CONFIG_CPU_FREQ_GOV_INTELLIDEMAND
