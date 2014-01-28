@@ -469,6 +469,12 @@ inline void print_irqtrace_events(struct task_struct *curr)
 /*
  * We are only interested in hardirq on/off events:
  */
+void trace_hardirqs_on(void)
+{
+	if (!preempt_trace() && irq_trace())
+		stop_critical_timing(CALLER_ADDR0, CALLER_ADDR1);
+}
+EXPORT_SYMBOL(trace_hardirqs_on);
 
 void trace_hardirqs_off(void)
 {
@@ -476,12 +482,6 @@ void trace_hardirqs_off(void)
 		start_critical_timing(CALLER_ADDR0, CALLER_ADDR1);
 }
 EXPORT_SYMBOL(trace_hardirqs_off);
-
-void trace_hardirqs_on(void)
-{
- trace_hardirqs_on_caller(CALLER_ADDR0);
-}
-EXPORT_SYMBOL(trace_hardirqs_on);
 
 void trace_hardirqs_on_caller(unsigned long caller_addr)
 {
