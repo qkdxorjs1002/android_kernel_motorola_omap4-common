@@ -275,7 +275,7 @@ void omap_thermal_throttle(void)
 	pr_warn("%s: temperature too high, cpu throttle at max %u\n",
 		__func__, max_thermal);
 
-	if (omap_cpufreq_suspended) {
+	if (!omap_cpufreq_suspended) {
 		if (omap_getspeed(0) > max_thermal)
 			omap_cpufreq_scale(mpu_dev, max_thermal);
 	}
