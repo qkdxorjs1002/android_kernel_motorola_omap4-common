@@ -589,7 +589,6 @@ int sr_configure_errgen(struct voltagedomain *voltdm)
 	}
 
 #ifndef CONFIG_OMAP4_DPLL_CASCADING
-	if (likely(dpll_active))
 	if (!sr->clk_length)
 #endif
 		sr_set_clk_length(sr);
