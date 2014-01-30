@@ -221,6 +221,8 @@ int omap4_core_dpll_m2_set_rate(struct clk *clk, unsigned long rate)
  * Program the CORE DPLL, including handling of EMIF frequency changes on M2
  * divider.  Returns 0 on success, otherwise a negative error code.
  */
+	if (likely(dpll_active)) 
+{
 int omap4_core_dpll_set_rate(struct clk *clk, unsigned long rate)
 {
 	int i = 0, m2_div;
@@ -872,6 +874,7 @@ static int omap4_dpll_low_power_cascade_exit(void)
 	omap_sr_enable(vdd_iva, omap_voltage_get_curr_vdata(vdd_iva));
 	omap_sr_enable(vdd_core, omap_voltage_get_curr_vdata(vdd_core));
 	return ret;
+	}
 }
 
 #endif
@@ -1452,6 +1455,8 @@ void omap4_dpll_abe_reconfigure(void)
 }
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
+	if (likely(dpll_active))
+{
 int omap4_dpll_cascading_blocker_hold(struct device *dev)
 {
 	struct dpll_cascading_blocker *blocker;
@@ -1586,6 +1591,7 @@ EXPORT_SYMBOL(omap4_dpll_cascading_blocker_hold);
 int omap4_dpll_cascading_blocker_release(struct device *dev)
 {
 	return 0;
+}
 }
 EXPORT_SYMBOL(omap4_dpll_cascading_blocker_release);
 #endif

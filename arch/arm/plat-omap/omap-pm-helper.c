@@ -295,9 +295,10 @@ int omap_pm_apply_min_bus_tput_helper_l(void)
 	ret = omap_device_scale(&dummy_l3_dev, l3_dev, target_level);
 	if (ret)
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
+	if (likely(dpll_active))
 		pr_debug("Failed: change interconnect bandwidth to %ld\n",
 		     target_level);
-#else
+else
 		pr_err("Failed: change interconnect bandwidth to %ld\n",
 		     target_level);
 #endif

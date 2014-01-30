@@ -736,6 +736,12 @@ config BATTERY_FRIEND
         help
           Say Y here to enable Battery Friend Feature 
 
+config DPLL
+        bool "Support for enable/disable dpll cascading"
+        default y
+        help
+          Say Y here to enable dpll module
+
 config SUSPEND_GOV
         bool "Support for suspend governor control"
         default y

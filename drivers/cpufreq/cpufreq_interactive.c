@@ -162,6 +162,7 @@ struct cpufreq_governor cpufreq_gov_interactive = {
 };
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
+	if (likely(dpll_active)) {
 void cpufreq_interactive_set_timer_rate(unsigned long val, unsigned int reset)
 {
 	if (!reset) {
@@ -171,6 +172,7 @@ void cpufreq_interactive_set_timer_rate(unsigned long val, unsigned int reset)
 		if (timer_rate == val)
 			timer_rate = default_timer_rate;
 	}
+}
 }
 #endif
 
