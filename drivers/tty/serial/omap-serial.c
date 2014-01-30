@@ -1681,7 +1681,7 @@ static int serial_omap_probe(struct platform_device *pdev)
 	if (!up->port.membase) {
 		dev_err(&pdev->dev, "can't ioremap UART\n");
 		ret = -ENOMEM;
-		goto do_free;
+		goto err1;
 	}
 
 	up->port.flags = omap_up_info->flags;
