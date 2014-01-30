@@ -30,7 +30,9 @@ make mrproper
 make ARCH=arm distclean
 source build/envsetup.sh
 export PATH=${PATH/\/path\/to\/jdk\/dir:/}
-lunch cm_targa-userdebug
+#lunch cm_targa-userdebug
+# Try SPYDER device tree to see if it boots
+lunch cm_spyder-userdebug
 
 # built kernel & modules
 echo "Building kernel and modules..."
