@@ -1592,6 +1592,5 @@ int omap4_dpll_cascading_blocker_release(struct device *dev)
 {
 	return 0;
 }
-}
 EXPORT_SYMBOL(omap4_dpll_cascading_blocker_release);
 #endif
