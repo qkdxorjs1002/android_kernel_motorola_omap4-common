@@ -1,3 +1,9 @@
+091e94d revert and re-enable usb_phy_resume_workaround
+ebda360 Revert "Revert "OMAP: Serial: Fix err""
+7d4b963 Revert "Revert "[3.0.31 WIP] Continue with some serial stuff""
+3c33d51 Revert "Revert "Revert some serial settings""
+bd61bca defconfig updates
+94d4bdf Added todays changelog and updated full history
 1f65563 Revert "Revert some serial settings"
 e245c80 Revert "[3.0.31 WIP] Continue with some serial stuff"
 d09b0b0 Revert "OMAP: Serial: Fix err"
