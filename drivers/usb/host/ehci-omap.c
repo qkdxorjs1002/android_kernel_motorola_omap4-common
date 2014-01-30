@@ -284,9 +284,7 @@ static int omap4_ehci_phy_hub_control (
 				ehci_writel(ehci,
 					temp & ~(PORT_RWC_BITS | PORT_RESUME),
 					status_reg);
-#if 0
 				usb_phy_resume_workaround(ehci);
-#endif
 				retval = handshake(ehci, status_reg,
 					   PORT_RESUME, 0, 2000 /* 2msec */);
 				if (retval != 0) {
