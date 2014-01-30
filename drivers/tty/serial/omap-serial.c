@@ -1681,7 +1681,7 @@ static int serial_omap_probe(struct platform_device *pdev)
 	if (!up->port.membase) {
 		dev_err(&pdev->dev, "can't ioremap UART\n");
 		ret = -ENOMEM;
-		goto err1;
+		goto do_free;
 	}
 
 	up->port.flags = omap_up_info->flags;
@@ -1744,15 +1744,9 @@ static int serial_omap_probe(struct platform_device *pdev)
 	ui[pdev->id] = up;
 	serial_omap_add_console_port(up);
 
-	ret = request_irq(up->port.irq, serial_omap_irq, up->port.irqflags,
-	      up->name, up);
-	  if (ret)
-	    goto do_iounmap;
-	  disable_irq(up->port.irq);
-
 	ret = uart_add_one_port(&serial_omap_reg, &up->port);
 	if (ret != 0)
-		goto do_free_irq;
+		goto err1;
 
 	dev_set_drvdata(&pdev->dev, up);
 	platform_set_drvdata(pdev, up);
