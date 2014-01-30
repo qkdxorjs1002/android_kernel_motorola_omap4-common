@@ -1,0 +1,70 @@
+1f65563 Revert "Revert some serial settings"
+e245c80 Revert "[3.0.31 WIP] Continue with some serial stuff"
+d09b0b0 Revert "OMAP: Serial: Fix err"
+d851fe6 DPLL: Fix err
+40c31ca OMAP: Serial: Fix err
+92f4b4e [3.0.31 WIP] Continue with some serial stuff
+f79003c Revert some serial settings
+d09509d OMAP: Smartreflex: Fix wrong insertion
+49d4a28 Revert "EHCI: Disable usb_phy_resume_workaround(ehci) to prepare new wotkaround"
+9818054 Revert "revert and re-enable usb_phy_resume_workaround"
+746a4f6 Disbale DPLL for now§
+df4dcd6 DPLL_MODULE: Initial commit for new module - this might be totally bullsh** :-D, disabled for now
+44da227 DPLL CASCADING: Add module to make DPLL CASCADING active state switchable for users Users can simply activate or deactivate DPLL. This allows more testing and comparing of the algorithm.
+826d85b build scripts: add option to sync repo before building
+1f659ab OMAP4: PM: syscontrol: workaround LPDDR CK IO pull disable
+6b1a87e revert and re-enable usb_phy_resume_workaround
+8404c86 EHCI: Disable usb_phy_resume_workaround(ehci) to prepare new wotkaround
+94cdc96 defconfig: update for Targa and Edison
+e3a71bc Added todays changelog and updated full history
+6eabba2 build script: update changelog branch
+1470f88 Added todays changelog and updated full history
+af356f3 JBX-Kernel Version 3.0 build scripts
+80b3f5d Enable Smartreflex for OMAP4430
+0307eec defconfig: disable DEBUG_MUTEXES
+626d1b6 Revert "Revert "defconfig: disable some net related options""
+f0732f9 kernel: mutex: fixup to keep function for less atomic operations
+fe1b14f Revert "defconfig: disable some net related options"
+d716c94 JBX-Kernel 3.0 Series
+735d093 defconfig: disable some net related options
+86b1163 [WIP] Merge into 3.0.31 - FIXES and CLEANUP
+16878af Revert "defconfig: adjust to new version"
+c8389f7 Fixup from Merges
+662ee75 defconfig: adjust to new version
+17b439c [WIP] Merge to 3.0.31
+5214588  [WIP] rebase to 3.0.31
+d6f0ae9  Merge CM11 remote changes
+11e3a9d [WIP] Merge to 3.0.101 dhacker29's git kernel-tuna, part9
+f54b86e [WIP] Merge to 3.0.101 dhacker29's git kernel-tuna, part8
+a10607d [WIP] Merge to 3.0.101 dhacker29's git kernel-tuna, part7
+5e068d3  [WIP] Merge to 3.0.101 dhacker29's git kernel-tuna, part6
+c93ab06 [WIP] Merge to 3.0.101 dhacker29's git kernel-tuna, part5
+e196d36 [WIP] Merge to 3.0.101 dhacker29's git kernel-tuna, part4
+df508fa [WIP] Merge to 3.0.101 dhacker29's git kernel-tuna, part3
+ab68cc1 [WIP] Merge to 3.0.101 dhacker29's git kernel-tuna, part2
+e8a6401 [WIP] Merge to 3.0.101 dhacker29's git kernel-tuna
+58bb2eb Revert "Revert "sync omap4_ehci_phy_hub_control and clean up usb_phy_resume_workaround""
+d562a5a5 Revert "OMAP: usb-host: Fix usbhs_resume_work"
+642dae1 OMAP: usb-host: Fix usbhs_resume_work
+27eed26 Revert "sync omap4_ehci_phy_hub_control and clean up usb_phy_resume_workaround"
+75a9ff5 sync omap4_ehci_phy_hub_control and clean up usb_phy_resume_workaround
+908e845 Revert "increase timeouts in motorola's implementation of "HACK: fix ehci suspend/resume failure""
+c540130 OMAP: CPU: Fix suspend rule in thermal throttle
+2044dc6 Revert "Revert "arm: make return_address available for ARM_UNWIND""
+87cc627 Revert "arm: make return_address available for ARM_UNWIND"
+e89636e arm: make return_address available for ARM_UNWIND
+00b4512 Battery Friend: redefine stock frequency holders as 'static' to avoid conflicts
+4ade576 Battery Friend: Fix and cleanup from prior commits
+f79c23c Fix some stuff...
+928a581 Battery Friend: try something else...
+5b95f72 Revert " CHROMIUM: mm: Fix calculation of dirtyable memory"
+71f3076 Revert "Revert "sched/rt: Remove redundant nr_cpus_allowed test""
+fce4e80 Battery Friend: Fix storing of stock frequencies
+7053e73 Revert "sched/rt: Remove redundant nr_cpus_allowed test"
+c94ad71 sched/rt: Remove redundant nr_cpus_allowed test The optimization to select_task_rq_rt() immediately returns when p->nr_cpis_allowed == 1 at the beginning of the function. This makes the latter p->nr_cpus_allowed > 1 check redundant and can be removed.
+1dc2518  CHROMIUM: mm: Fix calculation of dirtyable memory
+6c160c9 defconfig: enable BLX
+dd94dc5 increase timeouts in motorola's implementation of "HACK: fix ehci suspend/resume failure"
+a7f9a0d always reset modem on boot, not only on SOLANA
+08d9e1b sync struct wl12xx_platform_data to hardware/ti/wlan
+12af30a Add build scripts for test builds
