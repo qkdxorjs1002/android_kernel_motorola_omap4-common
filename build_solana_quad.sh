@@ -1,6 +1,17 @@
 #!/bin/bash
 set -m
 
+# Exporting changelog to file
+cd /home/dtrail/android/4.4
+while true; do
+    read -p "Do you wish to sync repo?" yn
+    case $yn in
+        [Yy]* ) echo "Syncing repo..."; echo " "; repo sync; break;;
+        [Nn]* ) break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
 # Build script for JBX-Kernel RELEASE
 echo "Cleaning out kernel source directory..."
 echo " "
