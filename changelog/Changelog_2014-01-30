@@ -1,3 +1,13 @@
+36dbfee Revert "Revert "Revert "Revert some serial settings"""
+d3b6ae6 Revert "Revert "Revert "[3.0.31 WIP] Continue with some serial stuff"""
+49e2ffd Revert "Revert "Revert "OMAP: Serial: Fix err"""
+07a9afd Revert "EHCI: Disable usb_phy_resume_workaround(ehci) to prepare new wotkaround"
+90ee6f5 Revert "revert and re-enable usb_phy_resume_workaround"
+7281402 Revert "Revert "revert and re-enable usb_phy_resume_workaround""
+6b57122 Revert "Revert "EHCI: Disable usb_phy_resume_workaround(ehci) to prepare new wotkaround""
+70f8cb6 Revert "revert and re-enable usb_phy_resume_workaround"
+d31da4b Revert "OMAP4: PM: syscontrol: workaround LPDDR CK IO pull disable"
+1a3ca50 Added todays changelog and updated full history
 091e94d revert and re-enable usb_phy_resume_workaround
 ebda360 Revert "Revert "OMAP: Serial: Fix err""
 7d4b963 Revert "Revert "[3.0.31 WIP] Continue with some serial stuff""
