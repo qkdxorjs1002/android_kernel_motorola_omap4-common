@@ -1,3 +1,9 @@
+c8f2f8a OMAP4: PM: syscontrol: workaround LPDDR CK IO pull disable
+eac7612 Revert "Revert "Revert "Revert "OMAP: Serial: Fix err""""
+5eb61a1 Revert "Revert "Revert "Revert "[3.0.31 WIP] Continue with some serial stuff""""
+c28445b Revert "Revert "Revert "Revert "Revert some serial settings""""
+4e29d15 TARGA: Try SPYDER device tree to see if this one boots..
+e01d338 BREAKING POINT: Good mAh consumption! Modem IS working
 36dbfee Revert "Revert "Revert "Revert some serial settings"""
 d3b6ae6 Revert "Revert "Revert "[3.0.31 WIP] Continue with some serial stuff"""
 49e2ffd Revert "Revert "Revert "OMAP: Serial: Fix err"""
