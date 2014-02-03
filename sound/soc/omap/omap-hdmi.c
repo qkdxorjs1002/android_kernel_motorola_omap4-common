@@ -30,7 +30,7 @@
 #include <sound/pcm_params.h>
 #include <sound/initval.h>
 #include <sound/soc.h>
-#include <linux/rpmsg.h>
+
 #include <plat/dma.h>
 #include "omap-pcm.h"
 #include "omap-hdmi.h"
