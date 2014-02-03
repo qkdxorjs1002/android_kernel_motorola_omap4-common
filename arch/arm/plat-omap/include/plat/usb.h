@@ -341,3 +341,6 @@ extern void omap4_trigger_ioctrl(void);
 #define USBHS_OHCI_HWMODNAME    "usbhs_ohci"
 
 #endif	/* __ASM_ARCH_OMAP_USB_H */
+
+extern int sar_needs_ehci_saving;
+#define save_usb_sar_regs() do {sar_needs_ehci_saving = 1; } while (0);
