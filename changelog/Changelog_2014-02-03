@@ -1,0 +1,57 @@
+60c7335 exfat: remove prior exfat driver.
+07ab098 HDMI: CODEC: Fix
+acaa1c0 HDMI: Fix others..
+67b7c05 OMAP4_DUTY_CYCLE: fix warning by changing to boolean
+5397a2d HADMI: Resyncto common 3.0.31 branch
+619d54e Revert "OMAPFB: Suspend on FB BLANK depending on device"
+213615c OMAP: DSS: hdmi: Revert all changes
+d31887c Revert "OMAPDSS: CEC: Physical address discovery form edid"
+5e4ac8b Revert all hdmi changes
+3f29a46 Revert "Revert "Revert "OMAPDSS: Increase PLL1_CLK1 frequency for correct work with large panels"""
+e55db27 Revert "DSS. hdmi.c: Sync to google kernel/common.git"
+0caa77f Revert "Revert "Revert: OMAPDSS: HDMI: Use our own omap_video_timings field when setting interface timings""
+8c0367f Revert "Revert: OMAPDSS: HDMI: Use our own omap_video_timings field when setting interface timings"
+27d5609 Revert: OMAP: HDMI: hdmi_ti_4xxx_ip: Fix declarations of moved functions, fix syntaxes, re-sync with TI-OpenLink / Reset hdmi driver to current 3.0.31 [WIP]
+fb2ce28 ERevert: OMAP: HDMI: Re-add function 'hdmi_ti_4xxx_audio_enable'
+9d70080 Revert: OMAP: SOUND: HDMI: Fix missing declaration of 'hdmi_lib_stop_acr_wa'
+c9b38d6 OMAPFB: Suspend on FB BLANK depending on device
+fc58052 OMAP: tty: Serial: Just check if everything is in place..
+bba1210 Revert "Revert "Revert "Revert "Revert "Revert some serial settings"""""
+702e421 Revert "Revert "Revert "Revert "Revert "[3.0.31 WIP] Continue with some serial stuff"""""
+a8fb9c0 Revert "Revert "Revert "Revert "Revert "OMAP: Serial: Fix err"""""
+0c9c663 NEW BREAKING POINT: GOOD mAH CONSUMPTION, MODEM NOT SURE
+c8f2f8a OMAP4: PM: syscontrol: workaround LPDDR CK IO pull disable
+eac7612 Revert "Revert "Revert "Revert "OMAP: Serial: Fix err""""
+5eb61a1 Revert "Revert "Revert "Revert "[3.0.31 WIP] Continue with some serial stuff""""
+c28445b Revert "Revert "Revert "Revert "Revert some serial settings""""
+4e29d15 TARGA: Try SPYDER device tree to see if this one boots..
+e01d338 BREAKING POINT: Good mAh consumption! Modem IS working
+36dbfee Revert "Revert "Revert "Revert some serial settings"""
+d3b6ae6 Revert "Revert "Revert "[3.0.31 WIP] Continue with some serial stuff"""
+49e2ffd Revert "Revert "Revert "OMAP: Serial: Fix err"""
+07a9afd Revert "EHCI: Disable usb_phy_resume_workaround(ehci) to prepare new wotkaround"
+90ee6f5 Revert "revert and re-enable usb_phy_resume_workaround"
+7281402 Revert "Revert "revert and re-enable usb_phy_resume_workaround""
+6b57122 Revert "Revert "EHCI: Disable usb_phy_resume_workaround(ehci) to prepare new wotkaround""
+70f8cb6 Revert "revert and re-enable usb_phy_resume_workaround"
+d31da4b Revert "OMAP4: PM: syscontrol: workaround LPDDR CK IO pull disable"
+1a3ca50 Added todays changelog and updated full history
+091e94d revert and re-enable usb_phy_resume_workaround
+ebda360 Revert "Revert "OMAP: Serial: Fix err""
+7d4b963 Revert "Revert "[3.0.31 WIP] Continue with some serial stuff""
+3c33d51 Revert "Revert "Revert some serial settings""
+bd61bca defconfig updates
+94d4bdf Added todays changelog and updated full history
+1f65563 Revert "Revert some serial settings"
+e245c80 Revert "[3.0.31 WIP] Continue with some serial stuff"
+d09b0b0 Revert "OMAP: Serial: Fix err"
+d851fe6 DPLL: Fix err
+40c31ca OMAP: Serial: Fix err
+92f4b4e [3.0.31 WIP] Continue with some serial stuff
+f79003c Revert some serial settings
+d09509d OMAP: Smartreflex: Fix wrong insertion
+49d4a28 Revert "EHCI: Disable usb_phy_resume_workaround(ehci) to prepare new wotkaround"
+9818054 Revert "revert and re-enable usb_phy_resume_workaround"
+746a4f6 Disbale DPLL for now§
+df4dcd6 DPLL_MODULE: Initial commit for new module - this might be totally bullsh** :-D, disabled for now
+44da227 DPLL CASCADING: Add module to make DPLL CASCADING active state switchable for users Users can simply activate or deactivate DPLL. This allows more testing and comparing of the algorithm.
