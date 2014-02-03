@@ -445,4 +445,3 @@ void hdmi_panel_exit(void)
 
 	switch_dev_unregister(&hdmi.hpd_switch);
 }
-
