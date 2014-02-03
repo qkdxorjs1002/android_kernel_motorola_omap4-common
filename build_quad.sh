@@ -45,8 +45,8 @@ make -j4 TARGET_KERNEL_SOURCE=/home/dtrail/android/android_kernel_motorola_omap4
 # We don't use the kernel but the modules
 echo "Copying modules to package folder"
 echo " "
-cp -r /home/dtrail/android/4.4/out/target/product/spyder/system/lib/modules/* /home/dtrail/android/built/4.4/rls/system/lib/modules/
-cp /home/dtrail/android/4.4/out/target/product/spyder/kernel /home/dtrail/android/built/4.4/rls/system/etc/kexec/
+cp -r /home/dtrail/android/4.4/out/target/product/spyder/system/lib/modules/* /home/dtrail/android/built/4.4/3.0/rls/system/lib/modules/
+cp /home/dtrail/android/4.4/out/target/product/spyder/kernel /home/dtrail/android/built/4.4/3.0/rls/system/etc/kexec/
 
 echo "------------- "
 echo "Done building"
@@ -59,7 +59,7 @@ echo " "
 echo "Packaging flashable Zip file..."
 echo " "
 
-cd /home/dtrail/android/built/4.4/rls
+cd /home/dtrail/android/built/4.4/3.0/rls
 zip -r "JBX-Kernel-3.0-Hybrid-4.4_$(date +"%Y-%m-%d").zip" *
 mv "JBX-Kernel-3.0-Hybrid-4.4_$(date +"%Y-%m-%d").zip" /home/dtrail/android/out
 
