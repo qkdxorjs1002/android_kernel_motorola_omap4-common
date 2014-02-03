@@ -355,6 +355,7 @@ int hdmi_audio_notifier_callback(struct notifier_block *nb,
 
 		}
 		hdmi_audio_runtime_put();
+
 	} else if (state == OMAP_DSS_DISPLAY_DISABLED) {
 		/* this happens after hotplug unplug */
 
