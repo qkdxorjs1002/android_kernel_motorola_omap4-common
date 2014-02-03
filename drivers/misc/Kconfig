@@ -674,7 +674,7 @@ config VIB_PWM
         default n
 
 config OMAP4_DUTY_CYCLE
-	tristate "Control OPP_NITRO usage based on duty cycle strategy"
+	boolean "Control OPP_NITRO usage based on duty cycle strategy"
 	depends on ARCH_OMAP4
 	default n
 	---help---
