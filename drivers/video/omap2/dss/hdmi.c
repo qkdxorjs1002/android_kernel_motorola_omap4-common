@@ -64,8 +64,6 @@ static struct pm_qos_request_list pm_qos_handle;
 #define EDID_SIZE_BLOCK1_TIMING_DESCRIPTOR	4
 
 #define OMAP_HDMI_TIMINGS_NB			34
-#define HDMI_DEFAULT_REGN 15
-#define HDMI_DEFAULT_REGM2 1
 
 static struct {
 	struct mutex lock;
@@ -348,11 +346,7 @@ static void hdmi_compute_pll(struct omap_dss_device *dssdev, int phy,
 	 * Input clock is predivided by N + 1
 	 * out put of which is reference clk
 	 */
-	if (dssdev->clocks.hdmi.regn == 0)
-		pi->regn = HDMI_DEFAULT_REGN;
-	else
-		pi->regn = dssdev->clocks.hdmi.regn;
-
+	pi->regn = dssdev->clocks.hdmi.regn;
 	refclk = clkin / (pi->regn + 1);
 
 	/*
@@ -360,11 +354,7 @@ static void hdmi_compute_pll(struct omap_dss_device *dssdev, int phy,
 	 * Multiplying by 100 to avoid fractional part removal
 	 */
 	pi->regm = (phy * 100 / (refclk)) / 100;
-
-	if (dssdev->clocks.hdmi.regm2 == 0)
-		pi->regm2 = HDMI_DEFAULT_REGM2;
-	else
-		pi->regm2 = dssdev->clocks.hdmi.regm2;
+	pi->regm2 = dssdev->clocks.hdmi.regm2;
 
 	/*
 	 * fractional multiplier is remainder of the difference between
@@ -415,7 +405,6 @@ static void hdmi_load_hdcp_keys(struct omap_dss_device *dssdev)
 	}
 
 }
-
 /* Set / Release c-state constraints */
 static void hdmi_set_l3_cstr(struct omap_dss_device *dssdev, bool enable)
 {
@@ -452,11 +441,9 @@ static int hdmi_power_on(struct omap_dss_device *dssdev)
 
 	dispc_enable_channel(OMAP_DSS_CHANNEL_DIGIT, dssdev->type, 0);
 
-	p = &dssdev->panel.timings;
+	p = &hdmi.ip_data.cfg.timings;
 
-	DSSDBG("hdmi_power_on x_res= %d y_res = %d\n",
-		dssdev->panel.timings.x_res,
-		dssdev->panel.timings.y_res);
+	DSSDBG("hdmi_power_on x_res= %d y_res = %d\n", p->x_res, p->y_res);
 
 	if (!hdmi.custom_set) {
 		struct fb_videomode vesa_vga = vesa_modes[4];
@@ -517,18 +504,21 @@ static int hdmi_power_on(struct omap_dss_device *dssdev)
 	/* Make selection of HDMI in DSS */
 	dss_select_hdmi_venc_clk_source(DSS_HDMI_M_PCLK);
 
-	/* Select the dispc clock source as PRCM clock, to ensure that it is not
-	 * DSI PLL source as the clock selected by DSI PLL might not be
-	 * sufficient for the resolution selected / that can be changed
-	 * dynamically by user. This can be moved to single location , say
-	 * Boardfile.
+	/*
+	 * Select the DISPC clock source as PRCM clock in case when both LCD
+	 * panels are disabled and we cannot use DSI PLL for this purpose.
 	 */
-	dss_select_dispc_clk_source(dssdev->clocks.dispc.dispc_fclk_src);
+	if (!dispc_is_channel_enabled(OMAP_DSS_CHANNEL_LCD) &&
+	    !dispc_is_channel_enabled(OMAP_DSS_CHANNEL_LCD2))
+		dss_select_dispc_clk_source(dssdev->clocks.dispc.dispc_fclk_src);
 
 	/* bypass TV gamma table */
 	dispc_enable_gamma_table(0);
 
 	/* tv size */
+	
+	dss_mgr_set_timings(dssdev->manager, p);
+	
 	dispc_set_digit_size(dssdev->panel.timings.x_res,
 			dssdev->panel.timings.y_res);
 
@@ -714,18 +704,38 @@ int omapdss_hdmi_display_set_mode(struct omap_dss_device *dssdev,
 	return r1 ? : r2;
 }
 
-void omapdss_hdmi_display_set_timing(struct omap_dss_device *dssdev)
+void omapdss_hdmi_display_set_timing(struct omap_dss_device *dssdev,
+				 	struct omap_video_timings *timings)
 {
 	struct fb_videomode t;
+	const struct hdmi_config *t;
+
+	cm = hdmi_get_code(timings);
+ 	hdmi.ip_data.cfg.cm = cm;
 
 	omapfb_dss2fb_timings(&dssdev->panel.timings, &t);
+
 	/* also check interlaced timings */
 	if (!hdmi_set_timings(&t, true)) {
 		t.yres *= 2;
 		t.vmode |= FB_VMODE_INTERLACED;
 	}
 
+	t = hdmi_get_timings();
+
+ 	if (t != NULL)
+		hdmi.ip_data.cfg = *t;
+		
+	if (dssdev->state == OMAP_DSS_DISPLAY_ACTIVE) {
+		int r;
+	
+
+	if (r)
+	 	DSSERR("failed to power on device\n");
+
+	} else {
 	omapdss_hdmi_display_set_mode(dssdev, &t);
+	dss_mgr_set_timings(dssdev->manager, &t->timings);
 }
 
 int omapdss_hdmi_display_enable(struct omap_dss_device *dssdev)
