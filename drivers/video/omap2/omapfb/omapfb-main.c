@@ -1365,10 +1365,12 @@ static int omapfb_blank(int blank, struct fb_info *fbi)
 
 		if (display->state != OMAP_DSS_DISPLAY_ACTIVE)
 			goto exit;
-
+#if defined(CONFIG_MACH_MAPPHONE_SOLANA) || defined(CONFIG_MACH_MAPPHONE_EDISON)
 		if (display->driver->suspend)
 			r = display->driver->suspend(display);
-		else if (display->driver->disable)
+		else
+#endif
+			if (display->driver->disable)
 			display->driver->disable(display);
 
 		break;
