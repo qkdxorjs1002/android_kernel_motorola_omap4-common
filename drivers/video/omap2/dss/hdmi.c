@@ -404,9 +404,11 @@ static int hdmi_power_on(struct omap_dss_device *dssdev)
 
 	dispc_enable_channel(OMAP_DSS_CHANNEL_DIGIT, dssdev->type, 0);
 
-	p = &hdmi.ip_data.cfg.timings;
+	p = &dssdev->panel.timings;
 
-	DSSDBG("hdmi_power_on x_res= %d y_res = %d\n", p->x_res, p->y_res);
+	DSSDBG("hdmi_power_on x_res= %d y_res = %d\n",
+		dssdev->panel.timings.x_res,
+		dssdev->panel.timings.y_res);
 
 	if (!hdmi.custom_set) {
 		struct fb_videomode vesa_vga = vesa_modes[4];
@@ -479,9 +481,6 @@ static int hdmi_power_on(struct omap_dss_device *dssdev)
 	dispc_enable_gamma_table(0);
 
 	/* tv size */
-	
-	dss_mgr_set_timings(dssdev->manager, p);
-	
 	dispc_set_digit_size(dssdev->panel.timings.x_res,
 			dssdev->panel.timings.y_res);
 
@@ -503,18 +502,13 @@ err:
 
 static void hdmi_power_off(struct omap_dss_device *dssdev)
 {
-	enum hdmi_pwrchg_reasons reason = HDMI_PWRCHG_DEFAULT;
 	if (hdmi.hdmi_irq_cb)
 		hdmi.hdmi_irq_cb(HDMI_HPD_LOW);
 
 	hdmi_ti_4xxx_wp_video_start(&hdmi.hdmi_data, 0);
 
 	dispc_enable_channel(OMAP_DSS_CHANNEL_DIGIT, dssdev->type, 0);
-	if (hdmi.set_mode)
-		reason = reason | HDMI_PWRCHG_MODE_CHANGE;
-	if (dssdev->sync_lost_error)
-		reason = reason | HDMI_PWRCHG_RESYNC;
-	hdmi_ti_4xxx_phy_off(&hdmi.hdmi_data, reason);
+	hdmi_ti_4xxx_phy_off(&hdmi.hdmi_data, hdmi.set_mode);
 	hdmi_ti_4xxx_set_pll_pwr(&hdmi.hdmi_data, HDMI_PLLPWRCMD_ALLOFF);
 	hdmi_set_l3_cstr(dssdev, false);
 	hdmi_runtime_put();
@@ -645,38 +639,18 @@ int omapdss_hdmi_display_set_mode(struct omap_dss_device *dssdev,
 	return r1 ? : r2;
 }
 
-void omapdss_hdmi_display_set_timing(struct omap_dss_device *dssdev,
-				 	struct omap_video_timings *timings)
+void omapdss_hdmi_display_set_timing(struct omap_dss_device *dssdev)
 {
 	struct fb_videomode t;
-	const struct hdmi_config *t;
-
-	cm = hdmi_get_code(timings);
- 	hdmi.ip_data.cfg.cm = cm;
 
 	omapfb_dss2fb_timings(&dssdev->panel.timings, &t);
-
 	/* also check interlaced timings */
 	if (!hdmi_set_timings(&t, true)) {
 		t.yres *= 2;
 		t.vmode |= FB_VMODE_INTERLACED;
 	}
 
-	t = hdmi_get_timings();
-
- 	if (t != NULL)
-		hdmi.ip_data.cfg = *t;
-		
-	if (dssdev->state == OMAP_DSS_DISPLAY_ACTIVE) {
-		int r;
-	
-
-	if (r)
-	 	DSSERR("failed to power on device\n");
-
-	} else {
 	omapdss_hdmi_display_set_mode(dssdev, &t);
-	dss_mgr_set_timings(dssdev->manager, &t->timings);
 }
 
 int omapdss_hdmi_display_enable(struct omap_dss_device *dssdev)
@@ -928,3 +902,4 @@ void hdmi_dump_regs(struct seq_file *s)
 
 	hdmi_runtime_put();
 }
+
