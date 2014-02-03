@@ -378,9 +378,9 @@ struct hdmi_video_interface {
 	int	tm;	/* Timing mode */
 };
 
-/* #ifdef CONFIG_OMAP_HDMI_AUDIO_WA
+#ifdef CONFIG_OMAP_HDMI_AUDIO_WA
 int hdmi_lib_start_acr_wa(int);
 int hdmi_lib_stop_acr_wa(void);
-#endif */
+#endif
 
 #endif
