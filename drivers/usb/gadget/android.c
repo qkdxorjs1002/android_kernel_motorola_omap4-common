@@ -128,7 +128,7 @@ struct android_dev {
 
 	bool enabled;
         int disable_depth;
-	struct mutex mutex;
+        struct mutex mutex;
 	bool connected;
 	bool sw_connected;
 	struct work_struct work;
@@ -1425,7 +1425,7 @@ functions_show(struct device *pdev, struct device_attribute *attr, char *buf)
 
         size =functions_core_show(pdev, attr, buf);
 
-	mutex_unlock(&dev->mutex);
+        mutex_unlock(&dev->mutex);
         return size;
 }
 
@@ -1480,7 +1480,7 @@ static ssize_t enable_store(struct device *pdev, struct device_attribute *attr,
 	int functions_len;
 	int pid;
 
-	mutex_lock(&dev->mutex);
+        mutex_lock(&dev->mutex);
 
 	sscanf(buff, "%d", &enabled);
 	printk("%s: set enable = %d; old enable = %d\n", __func__,
@@ -1566,8 +1566,7 @@ static ssize_t enable_store(struct device *pdev, struct device_attribute *attr,
 		pr_err("android_usb: already %s\n",
 				dev->enabled ? "enabled" : "disabled");
 	}
-
-	mutex_unlock(&dev->mutex);
+        mutex_unlock(&dev->mutex);
 	return size;
 }
 
@@ -1631,9 +1630,9 @@ field ## _show(struct device *dev, struct device_attribute *attr,	\
 }									\
 static ssize_t								\
 field ## _store(struct device *dev, struct device_attribute *attr,	\
-		const char *buf, size_t size)				\
+		const char *buf, size_t size)		       		\
 {									\
-	int value;							\
+	int value;					       		\
 	if (sscanf(buf, format_string, &value) == 1) {			\
 		device_desc.field = value;				\
 		return size;						\
@@ -1651,10 +1650,10 @@ field ## _show(struct device *dev, struct device_attribute *attr,	\
 }									\
 static ssize_t								\
 field ## _store(struct device *dev, struct device_attribute *attr,	\
-		const char *buf, size_t size)				\
+		const char *buf, size_t size)		       		\
 {									\
 	if (size >= sizeof(buffer)) return -EINVAL;			\
-	if (sscanf(buf, "%s", buffer) == 1) {				\
+	if (sscanf(buf, "%s", buffer) == 1) {			       	\
 		return size;						\
 	}								\
 	return -1;							\
@@ -1988,7 +1987,7 @@ static int __init init(void)
 	dev->functions = supported_functions;
 	INIT_LIST_HEAD(&dev->enabled_functions);
 	INIT_WORK(&dev->work, android_work);
-	mutex_init(&dev->mutex);
+        mutex_init(&dev->mutex);
 	INIT_WORK(&dev->enumeration_work, android_enumeration_work);
 
 	err = android_create_device(dev);

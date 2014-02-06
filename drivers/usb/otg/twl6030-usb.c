@@ -218,7 +218,7 @@ static int twl6030_usb_ldo_init(struct twl6030_usb *twl)
 {
 	char *regulator_name;
 
-	if (twl->features & TWL6032_SUBCLASS)
+	if (twl->features & TWL6025_SUBCLASS)
 		regulator_name = "ldousb";
 	else
 		regulator_name = "vusb";
@@ -478,7 +478,7 @@ static int twl6030_set_power(struct otg_transceiver *x, unsigned int mA)
 	struct twl6030_usb *twl = xceiv_to_twl(x);
 
 	twl->usb_cinlimit_mA = mA;
-	if (mA && (twl->otg.last_event != USB_EVENT_NONE))
+	if (mA)
 		atomic_notifier_call_chain(&twl->otg.notifier, USB_EVENT_ENUMERATED,
 				&twl->usb_cinlimit_mA);
 	return 0;
