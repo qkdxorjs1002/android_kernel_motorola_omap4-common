@@ -509,7 +509,7 @@ static int exact_lock(dev_t devt, void *data)
 	return 0;
 }
 
-void register_disk(struct gendisk *disk)
+static void register_disk(struct gendisk *disk)
 {
 	struct device *ddev = disk_to_dev(disk);
 	struct block_device *bdev;
@@ -859,7 +859,7 @@ static void *show_partition_start(struct seq_file *seqf, loff_t *pos)
 
 	p = disk_seqf_start(seqf, pos);
 	if (!IS_ERR_OR_NULL(p) && !*pos)
-		seq_puts(seqf, "major minor  #blocks  name\talias\n\n");
+		seq_puts(seqf, "major minor  #blocks  name\n\n");
 	return p;
 }
 
@@ -883,10 +883,10 @@ static int show_partition(struct seq_file *seqf, void *v)
 	while ((part = disk_part_iter_next(&piter))) {
 		get_mmcalias_by_id(alias, MAJOR(part_devt(part)),
 			MINOR(part_devt(part)));
-		seq_printf(seqf, "%4d  %7d %10llu %s\t%s\n",
+		seq_printf(seqf, "%4d  %7d %10llu %s\n",
 			   MAJOR(part_devt(part)), MINOR(part_devt(part)),
 			   (unsigned long long)part->nr_sects >> 1,
-			   disk_name(sgp, part->partno, buf), alias);
+			   disk_name(sgp, part->partno, buf));
 	}
 	disk_part_iter_exit(&piter);
 
@@ -1799,6 +1799,8 @@ static void disk_alloc_events(struct gendisk *disk)
 		pr_warn("%s: failed to initialize events\n", disk->disk_name);
 		return;
 	}
+
+	disk->ev = ev;
 
 	INIT_LIST_HEAD(&ev->node);
 	ev->disk = disk;
