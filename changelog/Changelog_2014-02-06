@@ -1,0 +1,46 @@
+095a11d OMAP4: HWMOD: UART1: enable smart-idle.
+e490ec9 arm: make return_address available for ARM_UNWIND
+f99384e sched/rt: Remove redundant nr_cpus_allowed test The optimization to select_task_rq_rt() immediately returns when p->nr_cpis_allowed == 1 at the beginning of the function. This makes the latter p->nr_cpus_allowed > 1 check redundant and can be removed.
+b3335ac OMAP4: ST: Disabling UART if ldisc not installed.
+bc17622 omap: serial: serial port irq and cleanup from merge
+5d42681 defconfig: some stuff..
+9306e49 Merge branch 'test' into JBX_30X
+faecb94 defconfig: BLX: disable BLX, enable DPLL
+2fa993e omap: dss/dsscomp: cleanup from merge
+baf8a36 include: net: cleanup from merge
+6dd51f6 include: linux: metlink: cleanup from merge
+8711eb7 [WIP] merge to 3.0.31
+956902b drivers: remoteproc: cleanup from merge
+6c78ccc block: cleanup from merge
+ea8c142 staging: thermal: cleanup from merge
+56e14b9 Rebase to 3.0.31 clean
+95e2a23 Fix from merge
+6a46138 Merge 'JBX_30X' into 'test'
+00c2ba7 3.0.31 Stable release [WIP]
+10fbeb4 [WIP] merge to 3.0.31
+119b192 build script: targa: revert to cm-targa_userdebug device tree
+4fa1f26 defconfig: targa: enable CONFIG_PANEL_MAPPHONE_SKIP_FIRSTBOOT Just for testing if this can fix kexec reject for the Bionic
+8bfd0ed Update build scripts for 3.0.31 kernel pakcaging path
+e6e4418 revert and re-enable usb_phy_resume_workaround
+2a963ac Added todays changelog and updated full history
+60c7335 exfat: remove prior exfat driver.
+07ab098 HDMI: CODEC: Fix
+acaa1c0 HDMI: Fix others..
+67b7c05 OMAP4_DUTY_CYCLE: fix warning by changing to boolean
+5397a2d HADMI: Resyncto common 3.0.31 branch
+619d54e Revert "OMAPFB: Suspend on FB BLANK depending on device"
+213615c OMAP: DSS: hdmi: Revert all changes
+d31887c Revert "OMAPDSS: CEC: Physical address discovery form edid"
+5e4ac8b Revert all hdmi changes
+3f29a46 Revert "Revert "Revert "OMAPDSS: Increase PLL1_CLK1 frequency for correct work with large panels"""
+e55db27 Revert "DSS. hdmi.c: Sync to google kernel/common.git"
+0caa77f Revert "Revert "Revert: OMAPDSS: HDMI: Use our own omap_video_timings field when setting interface timings""
+8c0367f Revert "Revert: OMAPDSS: HDMI: Use our own omap_video_timings field when setting interface timings"
+27d5609 Revert: OMAP: HDMI: hdmi_ti_4xxx_ip: Fix declarations of moved functions, fix syntaxes, re-sync with TI-OpenLink / Reset hdmi driver to current 3.0.31 [WIP]
+fb2ce28 ERevert: OMAP: HDMI: Re-add function 'hdmi_ti_4xxx_audio_enable'
+9d70080 Revert: OMAP: SOUND: HDMI: Fix missing declaration of 'hdmi_lib_stop_acr_wa'
+c9b38d6 OMAPFB: Suspend on FB BLANK depending on device
+fc58052 OMAP: tty: Serial: Just check if everything is in place..
+bba1210 Revert "Revert "Revert "Revert "Revert "Revert some serial settings"""""
+702e421 Revert "Revert "Revert "Revert "Revert "[3.0.31 WIP] Continue with some serial stuff"""""
+a8fb9c0 Revert "Revert "Revert "Revert "Revert "OMAP: Serial: Fix err"""""
