@@ -534,6 +534,7 @@ int gpmc_cs_configure(int cs, int cmd, int wval)
 
 		/* set the proper value */
 		regval |= GPMC_CONFIG1_DEVICESIZE(wval);
+
 		gpmc_cs_write_reg(cs, GPMC_CS_CONFIG1, regval);
 		break;
 

@@ -36,7 +36,6 @@ config IOSCHED_ROW
   	   manner when the dispatch quantum for each queue is calculated
   	   according to queue priority.
   	   Most suitable for mobile devices.
-  	
 
 config IOSCHED_CFQ
 	tristate "CFQ I/O scheduler"

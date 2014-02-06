@@ -69,14 +69,14 @@ config PROC_PAGE_MONITOR
           interfaces will reduce the size of the kernel by approximately 4kb.
 
 config PROC_SOCINFO
-       default y
-       depends on PROC_FS
-       bool "Enable /proc/socinfo" if EMBEDDED
-       help
-         Say Y here if you need to see information about the your System on
+	default y
+	depends on PROC_FS
+	bool "Enable /proc/socinfo" if EMBEDDED
+	help
+	 Say Y here if you need to see information about the your System on
 
 config EXPOSE_VIRTUAL_PID
-    boolean "Expose virtual PID from child namespace in /proc/PID/status"
-    default n
-    ---help---
-        Turn this on to expose virtual PID from child namespace in /proc/PID/status
+	boolean "Expose virtual PID from child namespace in /proc/PID/status"
+	default n
+	---help---
+	    Turn this on to expose virtual PID from child namespace in /proc/PID/status

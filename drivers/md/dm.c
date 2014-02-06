@@ -1180,8 +1180,7 @@ static int __clone_and_map_discard(struct clone_info *ci)
 
 		/*
 		 * Even though the device advertised discard support,
-		 * that does not mean every target supports it, and
-		 * reconfiguration might also have changed that since the
+		 * reconfiguration might have changed that since the
 		 * check was performed.
 		 */
 		if (!ti->num_discard_requests)
@@ -1808,6 +1807,7 @@ static void dm_init_md_queue(struct mapped_device *md)
 	blk_queue_make_request(md->queue, dm_request);
 	blk_queue_bounce_limit(md->queue, BLK_BOUNCE_ANY);
 	blk_queue_merge_bvec(md->queue, dm_merge_bvec);
+	blk_queue_flush(md->queue, REQ_FLUSH | REQ_FUA);
 }
 
 /*
@@ -2081,12 +2081,11 @@ static struct dm_table *__bind(struct mapped_device *md, struct dm_table *t,
 
 	__bind_mempools(md, t);
 
-	merge_is_optional = dm_table_merge_is_optional(t);
-
 	write_lock_irqsave(&md->map_lock, flags);
 	old_map = md->map;
 	md->map = t;
 	dm_table_set_restrictions(t, q, limits);
+
      if (merge_is_optional)
 	set_bit(DMF_MERGE_IS_OPTIONAL, &md->flags);
      else

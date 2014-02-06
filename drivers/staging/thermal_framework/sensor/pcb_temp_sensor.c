@@ -17,6 +17,34 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA
  *
+ * NTC termistor (NCP15WB473F) schematic connection for OMAP4460 board:
+ *
+ *	     [Vref]
+ *	       |
+ *	       $ (Rpu)
+ *	       |
+ *	       +----+-----------[Vin]
+ *	       |    |
+ *	      [Rt]  $ (Rpd)
+ *	       |    |
+ *	      -------- (ground)
+ *
+ * NTC termistor resistanse (Rt, k) calculated from following formula:
+ *
+ * Rt = Rpd * Rpu * Vin / (Rpd * (Vref - Vin) - Rpu * Vin)
+ *
+ * where	Vref (GPADC_VREF4) - reference voltage, Vref = 1250 mV;
+ *			Vin (GPADC_IN4) - measuring voltage, Vin = 0...1250 mV;
+ *			Rpu (R1041) - pullup resistor, Rpu = 10 k;
+ *			Rpd (R1043) - pulldown resistor, Rpd = 220 k;
+ *
+ * Pcb temp sensor temperature (t, C) calculated from following formula:
+ *
+ * t = 1 / (ln(Rt / Rt0) / B + 1 / T0) - 273
+ *
+ * where	Rt0 - NTC termistor resistance at 25 C, Rt0 = 47 k;
+ *			B - specific constant, B = 4131 K;
+ *			T0 - temperature, T0 = 298 K
  */
 
 #include <linux/err.h>
@@ -180,7 +208,7 @@ static int pcb_read_current_temp(struct pcb_temp_sensor *temp_sensor)
 			__func__, val);
 		return -EINVAL;
 	}
-	temp = adc_to_temp_conversion(req.rbuf[TWL6030_GPADC_CHANNEL]);
+	temp = adc_to_temp_conversion(req.buf[TWL6030_GPADC_CHANNEL].code);
 
 	return temp;
 }

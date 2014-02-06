@@ -1,0 +1,9 @@
+3dab33b Add support for SOLANA device
+c0cad97 Revert st_wakelock changes
+e1f82ee Revert "Revert st_wakelock changes"
+39aa719 Add support for TARGA device
+6e339276 Added todays changelog and updated full history
+42481b8 CPUFREQ: KTOONSERVATIVE: Allow a little better performance
+d0f78dc OMAP4: ST: Disabling UART if ldisc not installed.
+3d13aff Revert st_wakelock changes
+a64923d Revert: [moto] arch/arm/mach-omap2/omap4-sar: changes for sar restore

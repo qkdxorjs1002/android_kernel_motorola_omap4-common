@@ -36,7 +36,7 @@
 #include "cm-regbits-24xx.h"
 #include "cm-regbits-34xx.h"
 
-u8 cpu_mask;
+u16 cpu_mask;
 
 /*
  * OMAP2+ specific clock functions
@@ -44,9 +44,11 @@ u8 cpu_mask;
 
 /* Private functions */
 
-static int _omap4_module_wait_ready(struct clk *clk)
+static void _omap4_module_wait_ready(struct clk *clk)
 {
-	return omap4_cm_wait_module_ready(clk->enable_reg);
+	if (omap4_cm_wait_module_ready(clk->enable_reg) < 0)
+		pr_err("%s: Timeout waiting for module enable (%s: clkctrl = 0x%x)\n",
+		       __func__, clk->name, __raw_readl(clk->enable_reg));
 }
 
 /**
@@ -181,7 +183,6 @@ void omap2_clk_dflt_find_idlest(struct clk *clk, void __iomem **idlest_reg,
 int omap2_dflt_clk_enable(struct clk *clk)
 {
 	u32 v;
-	int r = 0;
 
 	if (unlikely(clk->enable_reg == NULL)) {
 		pr_err("clock.c: Enable for %s without enable code\n",
@@ -199,12 +200,12 @@ int omap2_dflt_clk_enable(struct clk *clk)
 
 	if (clk->ops->find_idlest) {
 		if (cpu_is_omap44xx())
-			r = _omap4_module_wait_ready(clk);
+			_omap4_module_wait_ready(clk);
 		else
 			_omap2_module_wait_ready(clk);
 	}
 
-	return r;
+	return 0;
 }
 
 void omap2_dflt_clk_disable(struct clk *clk)

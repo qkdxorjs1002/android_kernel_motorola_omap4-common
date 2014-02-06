@@ -21,7 +21,6 @@
 #include <linux/interrupt.h>
 #include <linux/delay.h>
 #include <linux/irq.h>
-#include <linux/regulator/driver.h>
 #include <linux/regulator/machine.h>
 
 #include <asm/hardware/gic.h>
@@ -34,6 +33,7 @@
 #include <plat/omap-pm.h>
 #include <plat/gpmc.h>
 #include <plat/dma.h>
+#include <plat/omap_device.h>
 
 #include <mach/omap_fiq_debugger.h>
 
@@ -79,44 +79,39 @@ static struct clockdomain *tesla_clkdm;
 static struct powerdomain *tesla_pwrdm;
 
 static struct clockdomain *emif_clkdm, *mpuss_clkdm;
-static struct clockdomain *abe_clkdm; 
-static int need_sar_restore;
+static struct clockdomain *abe_clkdm;
 
 /* Yet un-named erratum which requires AUTORET to be disabled for IVA PD
- *
- * NOTE: This erratum is disabled and replaced with updated work-around relaxing
+*
+* NOTE: This erratum is disabled and replaced with updated work-around relaxing
 * constraint of always holding IVA AUTO RET disabled (now only before OFF),
- * which in turn was preventing IVA VDD from reaching RET and SYS_CLK from
- * being automatically gated in idle path. This previous work-around code is
- * kept and maintained for reference until Errata documentation is updated.
- * TODO: Once final Errata documentation is available, remove reference to this
- * previous IVA AUTO RET erratum.
- */ 
+* which in turn was preventing IVA VDD from reaching RET and SYS_CLK from
+* being automatically gated in idle path. This previous work-around code is
+* kept and maintained for reference until Errata documentation is updated.
+* TODO: Once final Errata documentation is available, remove reference to this
+* previous IVA AUTO RET erratum.
+*/
 #define OMAP4_PM_ERRATUM_IVA_AUTO_RET_iXXX	BIT(1)
 
 /*
 * HSI - OMAP4430-2.2BUG00055:
 * HSI: DSP Swakeup generated is the same than MPU Swakeup.
-* System can’t enter in off mode due to the DSP.
+* System can't enter in off mode due to the DSP.
 */
 #define OMAP4_PM_ERRATUM_HSI_SWAKEUP_iXXX	BIT(2)
 
 /* Dynamic dependendency Cannot be enabled due to i688 erratum ID for 443x */
 #define OMAP4_PM_ERRATUM_MPU_EMIF_NO_DYNDEP_i688	BIT(3)
 /*
- * Dynamic dependendency Cannot be enabled due to i688 erratum ID for above 443x
- * NOTE: this is NOT YET a confirmed erratum for 446x, but provided here in
- * anticipation.
- * If a fix is found at a later date, the code using this can be removed.
+ * Dynamic Dependency cannot be permanently enabled due to i745 erratum ID
+ * for 446x/447x
  * WA involves:
  * Enable MPU->EMIF SD before WFI and disable while coming out of WFI.
  * This works around system hang/lockups seen when only MPU->EMIF
  * dynamic dependency set. Allows dynamic dependency to be used
  * in all active usecases and get all the power savings accordingly.
- * TODO: Once this is available as final Errata, update with proper
- * fix.
  */
-#define OMAP4_PM_ERRATUM_MPU_EMIF_NO_DYNDEP_IDLE_iXXX	BIT(4)
+#define OMAP4_PM_ERRATUM_MPU_EMIF_NO_DYNDEP_IDLE_i745	BIT(4)
 
 /*
  * There is a HW bug in CMD PHY which gives ISO signals as same for both
@@ -132,8 +127,31 @@ static int need_sar_restore;
  *
  * CDDS no: OMAP4460-1.0BUG00291 (OMAP official errata ID yet to be available).
  */
-#define OMAP4_PM_ERRATUM_LPDDR_CLK_IO_iXXX		BIT(5)
+#define OMAP4_PM_ERRATUM_LPDDR_CLK_IO_i736		BIT(5)
 #define LPDDR_WD_PULL_DOWN				0x02
+
+/*
+ * The OFF mode isn't fully supported for OMAP4430GP ES2.0 - ES2.2
+ * When coming back from device off mode, the Cortex-A9 WUGEN enable registers
+ * are not restored by ROM code due to i625. The work around is using an
+ * alternative power state (instead of off mode) which maintains the proper
+ * register settings.
+ */
+#define OMAP4_PM_ERRATUM_WUGEN_LOST_i625	BIT(6)
+
+/* TI Errata i612 - Wkup Clk Recycling Needed After Warm Reset
+ * CRITICALITY: Low
+ * REVISIONS IMPACTED: OMAP4430 all
+ * Hardware does not recycle the I/O wake-up clock upon a global warm reset.
+ * When a warm reset is done, wakeups of daisy I/Os are disabled,
+ * but without the wake-up clock running, this change is not latched.
+ * Hence there is a possibility of seeing unexpected I/O wake-up events
+ * after warm reset.
+ *
+ * As W/A the call to omap4_trigger_ioctrl() has been added
+ * at PM initialization time for I/O pads daisy chain reseting.
+ **/
+#define OMAP4_PM_ERRATUM_IO_WAKEUP_CLOCK_NOT_RECYCLED_i612	BIT(7)
 
 /*
  * AUTO RET for IVA VDD Cannot be permanently enabled during OFF mode due to
@@ -167,10 +185,10 @@ static int need_sar_restore;
  * 2) OFF mode is enabled only in Suspend path.
  * 3) AUTO RET for IVA VDD remains disabled in Suspend path (before OFF mode).
  */
-#define OMAP4_PM_ERRATUM_IVA_AUTO_RET_IDLE_iXXX        BIT(8)
+#define OMAP4_PM_ERRATUM_IVA_AUTO_RET_IDLE_iXXX	BIT(8)
 static int iva_toggle_wa_applied;
 
-u16 pm44xx_errata; 
+u16 pm44xx_errata;
 #define is_pm44xx_erratum(erratum) (pm44xx_errata & OMAP4_PM_ERRATUM_##erratum)
 
 #define MAX_IOPAD_LATCH_TIME 1000
@@ -179,7 +197,7 @@ void syscontrol_lpddr_clk_io_errata(bool enable)
 {
 	u32 v = 0;
 
-	if (!is_pm44xx_erratum(LPDDR_CLK_IO_iXXX))
+	if (!is_pm44xx_erratum(LPDDR_CLK_IO_i736))
 		return;
 
 	v = omap4_ctrl_pad_readl(OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO1_2);
@@ -275,7 +293,7 @@ void omap4_enter_sleep(unsigned int cpu, unsigned int power_state, bool suspend)
 	if (ret)
 		goto abort_gpio;
 
-	if (is_pm44xx_erratum(MPU_EMIF_NO_DYNDEP_IDLE_iXXX) &&
+	if (is_pm44xx_erratum(MPU_EMIF_NO_DYNDEP_IDLE_i745) &&
 			mpu_next_state <= PWRDM_POWER_INACTIVE) {
 		/* Configures MEMIF clockdomain in SW_WKUP */
 		if (clkdm_wakeup(emif_clkdm)) {
@@ -302,6 +320,7 @@ void omap4_enter_sleep(unsigned int cpu, unsigned int power_state, bool suspend)
 			OMAP_VC_CHANNEL_AUTO_TRANSITION_RETENTION);
 	}
 
+//	if (core_next_state < PWRDM_POWER_ON) {
 	if (core_next_state < PWRDM_POWER_INACTIVE) {
 		/*
 		 * Note: IVA can hit RET outside of cpuidle and hence this is
@@ -316,28 +335,28 @@ void omap4_enter_sleep(unsigned int cpu, unsigned int power_state, bool suspend)
 		omap_vc_set_auto_trans(core_voltdm,
 			OMAP_VC_CHANNEL_AUTO_TRANSITION_RETENTION);
 
-    /*
-     * Do not enable IVA AUTO-RET if device targets OFF mode.
-     * In such case, purpose of IVA AUTO-RET WA is to ensure
-     * IVA domain goes straight from stable Voltage ON to OFF.
-     */
-    if (is_pm44xx_erratum(IVA_AUTO_RET_IDLE_iXXX)) {
-      if (!omap4_device_next_state_off())
-        omap_vc_set_auto_trans(iva_voltdm,
-        OMAP_VC_CHANNEL_AUTO_TRANSITION_RETENTION);
-    /* Normal path without IVA AUTO RET IDLE work-around applied */
-    } else {
-      /*
-       * Note: The previous erratum is deactivated and replaced
-       * with updated work-around in idle path which relaxes
-       * constraint of always holding IVA AUTO RET disabled
-       * (now only before OFF). Code is kept and maintained for
-       * reference until Errata is updated.
-       */
-      if (!is_pm44xx_erratum(IVA_AUTO_RET_iXXX)) {
-        omap_vc_set_auto_trans(iva_voltdm,
-        OMAP_VC_CHANNEL_AUTO_TRANSITION_RETENTION);
-      } 
+		/*
+		* Do not enable IVA AUTO-RET if device targets OFF mode.
+		* In such case, purpose of IVA AUTO-RET WA is to ensure
+		* IVA domain goes straight from stable Voltage ON to OFF.
+		*/
+		if (is_pm44xx_erratum(IVA_AUTO_RET_IDLE_iXXX)) {
+			if (!omap4_device_next_state_off())
+				omap_vc_set_auto_trans(iva_voltdm,
+				OMAP_VC_CHANNEL_AUTO_TRANSITION_RETENTION);
+		/* Normal path without IVA AUTO RET IDLE work-around applied */
+		} else {
+			/*
+			* Note: The previous erratum is deactivated and replaced
+			* with updated work-around in idle path which relaxes
+			* constraint of always holding IVA AUTO RET disabled
+			* (now only before OFF). Code is kept and maintained for
+			* reference until Errata is updated.
+			*/
+			if (!is_pm44xx_erratum(IVA_AUTO_RET_iXXX)) {
+				omap_vc_set_auto_trans(iva_voltdm,
+				OMAP_VC_CHANNEL_AUTO_TRANSITION_RETENTION);
+			}
 		}
 
 		omap_temp_sensor_prepare_idle();
@@ -353,18 +372,15 @@ void omap4_enter_sleep(unsigned int cpu, unsigned int power_state, bool suspend)
 		omap4_pm_suspend_save_regs();
 
 	if (omap4_device_next_state_off()) {
-    /* Proceed with OFF mode sequence only if WA is applied */
-    if (is_pm44xx_erratum(IVA_AUTO_RET_IDLE_iXXX)) {
-      if (!iva_toggle_wa_applied)
-        goto abort_device_off;
-    }
+		/* Proceed with OFF mode sequence only if WA is applied */
+		if (is_pm44xx_erratum(IVA_AUTO_RET_IDLE_iXXX)) {
+			if (!iva_toggle_wa_applied)
+				goto abort_device_off;
+		}
 
 		/* Save the device context to SAR RAM */
-		if (omap4_sar_save()) {
-			need_sar_restore = 0;
+		if (omap4_sar_save())
 			goto abort_device_off;
-		}
-		need_sar_restore = 1;
 		omap4_sar_overwrite();
 		omap4_cm_prepare_off();
 		omap4_dpll_prepare_off();
@@ -394,51 +410,52 @@ void omap4_enter_sleep(unsigned int cpu, unsigned int power_state, bool suspend)
 	}
 
 abort_device_off:
+//	if (core_next_state < PWRDM_POWER_ON) {
 	if (core_next_state < PWRDM_POWER_INACTIVE) {
 		/* See note above */
 		omap_vc_set_auto_trans(core_voltdm,
 				OMAP_VC_CHANNEL_AUTO_TRANSITION_DISABLE);
 
-    if (is_pm44xx_erratum(IVA_AUTO_RET_IDLE_iXXX)) {
-      if (omap_vc_set_auto_trans(iva_voltdm,
-        OMAP_VC_CHANNEL_AUTO_TRANSITION_DISABLE)){
-        pr_err("%s: Failed to disable autoret for %s\n",
-          __func__, iva_voltdm->name);
-        iva_toggle_wa_applied = 0;
-      /*
-       * Ensure PRCM IVA Voltage FSM is ON upon exit of idle.
-       * Upon successful IVA AUTO-RET disabling, trigger a
-       * Dummy SW Wakup on IVA domain. Later on, upon enabling
-       * of IVA Smart-Reflex, IVA Voltage Controller state will
-       * be ON as well. Both FSMs would now be aligned and safe
-       * during active and for further attempts to Device OFF
-       * mode for which IVA would go straight from ON to OFF.
-       */
-      } else {
-        /* Configures ABE clockdomain in SW_WKUP */
-        if (clkdm_wakeup(abe_clkdm)) {
-          pr_err("%s: Failed to force wakeup of %s\n",
-            __func__, abe_clkdm->name);
-          iva_toggle_wa_applied = 0;
-        /* Configures ABE clockdomain back to HW_AUTO */
-        } else {
-          clkdm_allow_idle(abe_clkdm);
-          iva_toggle_wa_applied = 1;
-        }
-      }
-    /* Normal path without IVA AUTO RET IDLE work-around applied */
-    } else {
-      /*
-       * Note: The previous erratum is deactivated and replaced
-       * with updated work-around in idle path which relaxes
-       * constraint of always holding IVA AUTO RET disabled
-       * (now only before OFF). Code is kept and maintained for
-       * reference until Errata is updated.
-       */
-      if (!is_pm44xx_erratum(IVA_AUTO_RET_iXXX)) {
-        omap_vc_set_auto_trans(iva_voltdm, 
+		if (is_pm44xx_erratum(IVA_AUTO_RET_IDLE_iXXX)) {
+			if (omap_vc_set_auto_trans(iva_voltdm,
+				OMAP_VC_CHANNEL_AUTO_TRANSITION_DISABLE)){
+				pr_err("%s: Failed to disable autoret for %s\n",
+					__func__, iva_voltdm->name);
+				iva_toggle_wa_applied = 0;
+			/*
+			* Ensure PRCM IVA Voltage FSM is ON upon exit of idle.
+			* Upon successful IVA AUTO-RET disabling, trigger a
+			* Dummy SW Wakup on IVA domain. Later on, upon enabling
+			* of IVA Smart-Reflex, IVA Voltage Controller state will
+			* be ON as well. Both FSMs would now be aligned and safe
+			* during active and for further attempts to Device OFF
+			* mode for which IVA would go straight from ON to OFF.
+			*/
+			} else {
+				/* Configures ABE clockdomain in SW_WKUP */
+				if (clkdm_wakeup(abe_clkdm)) {
+					pr_err("%s: Failed to force wakeup of %s\n",
+						__func__, abe_clkdm->name);
+					iva_toggle_wa_applied = 0;
+				/* Configures ABE clockdomain back to HW_AUTO */
+				} else {
+					clkdm_allow_idle(abe_clkdm);
+					iva_toggle_wa_applied = 1;
+				}
+			}
+		/* Normal path without IVA AUTO RET IDLE work-around applied */
+		} else {
+			/*
+			* Note: The previous erratum is deactivated and replaced
+			* with updated work-around in idle path which relaxes
+			* constraint of always holding IVA AUTO RET disabled
+			* (now only before OFF). Code is kept and maintained for
+			* reference until Errata is updated.
+			*/
+			if (!is_pm44xx_erratum(IVA_AUTO_RET_iXXX)) {
+				omap_vc_set_auto_trans(iva_voltdm,
 				OMAP_VC_CHANNEL_AUTO_TRANSITION_DISABLE);
-	 } 
+			}
 		}
 
 		omap_temp_sensor_resume_idle();
@@ -473,7 +490,7 @@ abort_device_off:
 	 * NOTE: is_pm44xx_erratum is not strictly required, but retained for
 	 * code context redability.
 	 */
-	if (is_pm44xx_erratum(MPU_EMIF_NO_DYNDEP_IDLE_iXXX) &&
+	if (is_pm44xx_erratum(MPU_EMIF_NO_DYNDEP_IDLE_i745) &&
 			staticdep_wa_applied) {
 		/* Configures MEMIF clockdomain in SW_WKUP */
 		if (clkdm_wakeup(emif_clkdm))
@@ -808,36 +825,18 @@ static void omap4_configure_pwrst(bool is_off_mode)
 static int omap4_restore_pwdms_after_suspend(void)
 {
 	struct power_state *pwrst;
-	int cstate, pstate, state, ret = 0;
-
-
-	/* Print the previous power domain states */
-	pr_info("Read Powerdomain states as ...\n");
-	pr_info("0 : OFF, 1 : RETENTION, 2 : ON-INACTIVE, 3 : ON-ACTIVE\n");
+	int cstate, pstate, ret = 0;
 
 	/* Restore next powerdomain state */
 	list_for_each_entry(pwrst, &pwrst_list, node) {
 		cstate = pwrdm_read_pwrst(pwrst->pwrdm);
 		pstate = pwrdm_read_prev_pwrst(pwrst->pwrdm);
-
-		if (pstate == -EINVAL) {
-			state = cstate;
-			pr_info("Powerdomain (%s) is in state %d\n",
-				pwrst->pwrdm->name, state);
-		} else {
-			state = pstate;
-			pr_info("Powerdomain (%s) entered state %d\n",
-				pwrst->pwrdm->name, state);
-		}
-
-		if (state > pwrst->next_state) {
-#if 0
+		if (pstate > pwrst->next_state) {
 			pr_info("Powerdomain (%s) didn't enter "
 			       "target state %d Vs achieved state %d. "
 			       "current state %d\n",
 			       pwrst->pwrdm->name, pwrst->next_state,
 			       pstate, cstate);
-#endif
 			ret = -1;
 		}
 
@@ -845,6 +844,10 @@ static int omap4_restore_pwdms_after_suspend(void)
 			pwrdm_set_logic_retst(pwrst->pwrdm, PWRDM_POWER_RET);
 			continue;
 		}
+
+		/* If state already ON due to h/w dep, don't do anything */
+		if (cstate == PWRDM_POWER_ON)
+			continue;
 
 		/* If we have already achieved saved state, nothing to do */
 		if (cstate == pwrst->saved_state)
@@ -916,9 +919,6 @@ static int omap4_pm_suspend(void)
 	omap4_enter_sleep(0, PWRDM_POWER_OFF, true);
 	omap4_print_wakeirq();
 	prcmdebug_dump(PRCMDEBUG_LASTSLEEP);
-#ifdef CONFIG_PM_DEBUG
-	regulator_show_state_noirq(enable_regulator_dump);
-#endif
 
 	/* Disable Device OFF state*/
 	if (off_mode_enabled)
@@ -929,19 +929,7 @@ static int omap4_pm_suspend(void)
 	if (ret)
 		pr_err("Could not enter target state in pm_suspend\n");
 	else
-		pr_info("Successfully put all powerdomains to target state\n");
-
-	if (off_mode_enabled)
-		omap_voltage_reconfigure_switchers();
-
-	/*
-	 * Restore USB SAR registers only if off mode is enabled
-	 * and we fail to hit OFF mode. Otherwise USB SAR context
-	 * gets corrupted due to the SAR save.
-	 */
-	if (off_mode_enabled && !omap4_device_prev_state_off() &&
-		need_sar_restore)
-		omap4_usb_sar_restore();
+		pr_err("Successfully put all powerdomains to target state\n");
 
 	return 0;
 }
@@ -1072,6 +1060,7 @@ static int __init pwrdms_setup(struct powerdomain *pwrdm, void *unused)
 #endif
 
 	pwrst->pwrdm = pwrdm;
+
 	if ((!strcmp(pwrdm->name, "mpu_pwrdm")) ||
 			(!strcmp(pwrdm->name, "core_pwrdm")) ||
 			(!strcmp(pwrdm->name, "cpu0_pwrdm")) ||
@@ -1134,25 +1123,27 @@ static void __init syscontrol_setup_regs(void)
 	v = omap4_ctrl_pad_readl(OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO1_3);
 	v &= ~(OMAP4_LPDDR21_VREF_EN_CA_MASK | OMAP4_LPDDR21_VREF_EN_DQ_MASK);
 	v |= OMAP4_LPDDR21_VREF_AUTO_EN_CA_MASK | OMAP4_LPDDR21_VREF_AUTO_EN_DQ_MASK;
-        omap4_ctrl_pad_writel(v, OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO1_3);
+	omap4_ctrl_pad_writel(v,
+		OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO1_3);
 
 	v = omap4_ctrl_pad_readl(OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO2_3);
 	v &= ~(OMAP4_LPDDR21_VREF_EN_CA_MASK | OMAP4_LPDDR21_VREF_EN_DQ_MASK);
 	v |= OMAP4_LPDDR21_VREF_AUTO_EN_CA_MASK | OMAP4_LPDDR21_VREF_AUTO_EN_DQ_MASK;
-        omap4_ctrl_pad_writel(v, OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO2_3);
+	omap4_ctrl_pad_writel(v,
+		OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO2_3);
 
 	syscontrol_lpddr_clk_io_errata(true);
 	
-	/*
-	 * dtrail:  Workaround for CK differential IO PADn, PADp values due to bug in
-	 * 			EMIF CMD phy.
-	 */
-	v = omap4_ctrl_pad_readl(OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO1_2);
-	v &= ~OMAP4_LPDDR2IO1_GR10_WD_MASK;
-	omap4_ctrl_pad_writel(v, OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO1_2);
-	v = omap4_ctrl_pad_readl(OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO2_2);
-	v &= ~OMAP4_LPDDR2IO2_GR10_WD_MASK;
-	omap4_ctrl_pad_writel(v, OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO2_2);
+	 /*
+	  * dtrail:  Workaround for CK differential IO PADn, PADp values due to bug in
+	  *       EMIF CMD phy.
+	  */
+	 v = omap4_ctrl_pad_readl(OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO1_2);
+	 v &= ~OMAP4_LPDDR2IO1_GR10_WD_MASK;
+	 omap4_ctrl_pad_writel(v, OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO1_2);
+	 v = omap4_ctrl_pad_readl(OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO2_2);
+	 v &= ~OMAP4_LPDDR2IO2_GR10_WD_MASK;
+	 omap4_ctrl_pad_writel(v, OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO2_2);
 }
 
 static void __init prcm_setup_regs(void)
@@ -1194,7 +1185,7 @@ static void __init prcm_setup_regs(void)
 		OMAP4430_PRM_PARTITION, OMAP4430_PRM_DEVICE_INST, OMAP4_PRM_LDO_SRAM_IVA_SETUP_OFFSET);
 
 	/* Allow SRAM LDO to enter RET during  low power state*/
-	if (cpu_is_omap446x()) {
+	if (cpu_is_omap446x() || cpu_is_omap447x()) {
 		omap4_prminst_rmw_inst_reg_bits(OMAP4430_RETMODE_ENABLE_MASK,
 				0x1 << OMAP4430_RETMODE_ENABLE_SHIFT, OMAP4430_PRM_PARTITION,
 				OMAP4430_PRM_DEVICE_INST, OMAP4_PRM_LDO_SRAM_CORE_CTRL_OFFSET);
@@ -1262,6 +1253,9 @@ no_32k:
 	omap4_prminst_write_inst_reg(0x3, OMAP4430_PRM_PARTITION,
 		OMAP4430_PRM_DEVICE_INST, OMAP4_PRM_PWRREQCTRL_OFFSET);
 
+	/* Handle errata i612 */
+	if (is_pm44xx_erratum(IO_WAKEUP_CLOCK_NOT_RECYCLED_i612))
+		omap4_trigger_ioctrl();
 }
 
 
@@ -1348,7 +1342,6 @@ void omap_pm_clear_dsp_wake_up(void)
 static irqreturn_t prcm_interrupt_handler (int irq, void *dev_id)
 {
 	u32 irqenable_mpu, irqstatus_mpu;
-	int hsi_port;
 
 	irqenable_mpu = omap4_prm_read_inst_reg(OMAP4430_PRM_OCP_SOCKET_INST,
 					 OMAP4_PRM_IRQENABLE_MPU_OFFSET);
@@ -1363,13 +1356,9 @@ static irqreturn_t prcm_interrupt_handler (int irq, void *dev_id)
 	/* Check if a IO_ST interrupt */
 	if (irqstatus_mpu & OMAP4430_IO_ST_MASK) {
 		/* Check if HSI caused the IO wakeup */
-		if (omap_hsi_is_io_wakeup_from_hsi(&hsi_port)) {
-			omap_hsi_wakeup(hsi_port);
-		}
+		omap_hsi_io_wakeup_check();
 		omap_uart_resume_idle();
-#ifndef CONFIG_USB_OOBWAKE
 		usbhs_wakeup();
-#endif
 		omap_debug_uart_resume_idle();
 		omap4_trigger_ioctrl();
 	}
@@ -1406,7 +1395,7 @@ static void omap_default_idle(void)
 void omap4_device_set_state_off(u8 enable)
 {
 #ifdef CONFIG_OMAP_ALLOW_OSWR
-	if (enable)
+	if (enable && !(is_pm44xx_erratum(WUGEN_LOST_i625)))
 		omap4_prminst_write_inst_reg(0x1 <<
 				OMAP4430_DEVICE_OFF_ENABLE_SHIFT,
 		OMAP4430_PRM_PARTITION, OMAP4430_PRM_DEVICE_INST,
@@ -1468,17 +1457,29 @@ static void __init omap4_pm_setup_errata(void)
 	 * all OMAP4 silica
 	 */
 	if (cpu_is_omap44xx())
-		pm44xx_errata |= OMAP4_PM_ERRATUM_IVA_AUTO_RET_IDLE_iXXX | 
+		pm44xx_errata |= OMAP4_PM_ERRATUM_IVA_AUTO_RET_IDLE_iXXX |
 				 OMAP4_PM_ERRATUM_HSI_SWAKEUP_iXXX |
-				 OMAP4_PM_ERRATUM_LPDDR_CLK_IO_iXXX;
+				 OMAP4_PM_ERRATUM_LPDDR_CLK_IO_i736;
 
-	  iva_toggle_wa_applied = 0;
+	iva_toggle_wa_applied = 0;
 
-	/* Dynamic Dependency errata for all silicon !=443x */
-	if (cpu_is_omap443x())
+	if (cpu_is_omap443x()) {
+		/* Dynamic Dependency errata for all silicon !=443x */
 		pm44xx_errata |= OMAP4_PM_ERRATUM_MPU_EMIF_NO_DYNDEP_i688;
-	else
-		pm44xx_errata |= OMAP4_PM_ERRATUM_MPU_EMIF_NO_DYNDEP_IDLE_iXXX;
+		/* Enable errata i612 */
+		pm44xx_errata |=
+			OMAP4_PM_ERRATUM_IO_WAKEUP_CLOCK_NOT_RECYCLED_i612;
+	} else
+		pm44xx_errata |= OMAP4_PM_ERRATUM_MPU_EMIF_NO_DYNDEP_IDLE_i745;
+
+	/*
+	 * The OFF mode isn't fully supported for OMAP4430GP ES2.0 - ES2.2
+	 * due to errata i625
+	 * On ES1.0 OFF mode is not supported due to errata i498
+	 */
+	if (cpu_is_omap443x() && (omap_type() == OMAP2_DEVICE_TYPE_GP) &&
+			(omap_rev() < OMAP4430_REV_ES2_3))
+		pm44xx_errata |= OMAP4_PM_ERRATUM_WUGEN_LOST_i625;
 }
 
 /**
@@ -1492,6 +1493,8 @@ static int __init omap4_pm_init(void)
 	int ret = 0;
 	struct clockdomain *l3_1_clkdm, *l4wkup;
 	struct clockdomain *ducati_clkdm, *l3_2_clkdm, *l4_per, *l4_cfg;
+	char *init_devices[] = {"mpu", "iva"};
+	int i;
 
 	if (!cpu_is_omap44xx())
 		return -ENODEV;
@@ -1507,9 +1510,7 @@ static int __init omap4_pm_init(void)
 	omap4_pm_setup_errata();
 
 	prcm_setup_regs();
-
-	if (cpu_is_omap446x())
-		syscontrol_setup_regs();
+	syscontrol_setup_regs();
 
 	ret = request_irq(OMAP44XX_IRQ_PRCM,
 			  (irq_handler_t)prcm_interrupt_handler,
@@ -1548,7 +1549,7 @@ static int __init omap4_pm_init(void)
 	 */
 	mpuss_clkdm = clkdm_lookup("mpuss_clkdm");
 	emif_clkdm = clkdm_lookup("l3_emif_clkdm");
-	abe_clkdm = clkdm_lookup("abe_clkdm"); 
+	abe_clkdm = clkdm_lookup("abe_clkdm");
 	l3_1_clkdm = clkdm_lookup("l3_1_clkdm");
 	l3_2_clkdm = clkdm_lookup("l3_2_clkdm");
 	ducati_clkdm = clkdm_lookup("ducati_clkdm");
@@ -1556,8 +1557,8 @@ static int __init omap4_pm_init(void)
 	l4_cfg = clkdm_lookup("l4_cfg_clkdm");
 	l4wkup = clkdm_lookup("l4_wkup_clkdm");
 	if ((!mpuss_clkdm) || (!emif_clkdm) || (!l3_1_clkdm) || (!l4wkup) ||
-	(!l3_2_clkdm) || (!ducati_clkdm) || (!l4_per) || (!l4_cfg) ||
-	    (!abe_clkdm)) 
+		(!l3_2_clkdm) || (!ducati_clkdm) || (!l4_per) || (!l4_cfg) ||
+		(!abe_clkdm))
 		goto err2;
 
 	/* if we cannot ever enable static dependency. */
@@ -1584,7 +1585,13 @@ static int __init omap4_pm_init(void)
 			" MPUSS <-> L3_MAIN_1.\n");
 		pr_info("OMAP4 PM: Static dependency added between"
 			" DUCATI <-> L4_PER/CFG and DUCATI <-> L3.\n");
-	} else if (cpu_is_omap446x()) {
+	} else if (cpu_is_omap446x() || cpu_is_omap447x()) {
+		/*
+		 * Static dependency between mpuss and emif can only be
+		 * disabled if OSWR is disabled to avoid a HW bug that occurs
+		 * when mpuss enters OSWR
+		 */
+		/*ret |= clkdm_add_wkdep(mpuss_clkdm, emif_clkdm);*/
 		ret |= clkdm_add_wkdep(mpuss_clkdm, l4_per);
 		ret |= clkdm_add_wkdep(mpuss_clkdm, l4_cfg);
 
@@ -1669,7 +1676,41 @@ static int __init omap4_pm_init(void)
 	/* let the other CPU know as well */
 	smp_wmb();
 
+	/* Setup the scales for every init device appropriately */
+	for (i = 0; i < ARRAY_SIZE(init_devices); i++) {
+		struct omap_hwmod *oh = omap_hwmod_lookup(init_devices[i]);
+		struct clk *clk;
+		struct device *dev;
+		unsigned int rate;
+
+		if (!oh || !oh->od || !oh->main_clk) {
+			pr_warn("%s: no hwmod or odev or clk for %s, [%d] "
+				"oh=%p od=%p clk=%p cannot add OPPs.\n",
+				__func__, init_devices[i], i, oh,
+				(oh) ? oh->od : NULL,
+				(oh) ? oh->main_clk :  NULL);
+			continue;
+		}
+
+		clk = oh->_clk;
+		dev = &oh->od->pdev.dev;
+		/* Get the current rate */
+		rate = clk_get_rate(clk);
+
+		/* Update DVFS framework with rate information */
+		ret = omap_device_scale(dev, dev, rate);
+		if (ret) {
+			dev_warn(dev, "%s unable to scale to %d - %d\n",
+				__func__, rate, ret);
+			/* Continue to next device */
+		}
+	}
+
+	/* apply any pending bus throughput requests */
+	omap_pm_apply_min_bus_tput();
+
 err2:
 	return ret;
 }
 late_initcall(omap4_pm_init);
+

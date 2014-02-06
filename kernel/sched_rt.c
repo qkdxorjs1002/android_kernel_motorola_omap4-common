@@ -621,7 +621,7 @@ static int sched_rt_runtime_exceeded(struct rt_rq *rt_rq)
 	if (rt_rq->rt_throttled)
 		return rt_rq_throttled(rt_rq);
 
-	if (runtime >= sched_rt_period(rt_rq))
+	if (sched_rt_runtime(rt_rq) >= sched_rt_period(rt_rq))
 		return 0;
 
 	balance_runtime(rt_rq);
@@ -1389,6 +1389,11 @@ static int push_rt_task(struct rq *rq)
 	next_task = pick_next_pushable_task(rq);
 	if (!next_task)
 		return 0;
+
+#ifdef __ARCH_WANT_INTERRUPTS_ON_CTXSW
+       if (unlikely(task_running(rq, next_task)))
+               return 0;
+#endif
 
 retry:
 	if (unlikely(next_task == rq->curr)) {

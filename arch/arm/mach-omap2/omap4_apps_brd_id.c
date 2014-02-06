@@ -27,6 +27,7 @@
 
 static int board_revision;
 static int board_id;
+bool omap4_tablet_uses_hsic;
 
 bool omap_is_board_version(int req_board_version)
 {
@@ -34,6 +35,11 @@ bool omap_is_board_version(int req_board_version)
 		return true;
 
 	return false;
+}
+
+bool omap_board_uses_hsic(void)
+{
+	return omap4_tablet_uses_hsic;
 }
 
 int omap_get_board_version(void)
@@ -76,6 +82,10 @@ __init int omap_init_board_version(int forced_rev)
 		case OMAP4_TABLET_2_1_1:
 			board_revision = OMAP4_TABLET_2_1_1;
 			board_id = OMAP4_TABLET_2_1_1_ID;
+			break;
+		case OMAP4_TABLET_2_1_2:
+			board_revision = OMAP4_TABLET_2_1_2;
+			board_id = OMAP4_TABLET_2_1_2_ID;
 			break;
 		case OMAP4_BLAZE:
 			board_revision = OMAP4_BLAZE;

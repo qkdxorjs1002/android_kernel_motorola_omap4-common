@@ -32,6 +32,12 @@
 
 #include <trace/events/power.h>
 
+#ifdef CONFIG_BATTERY_FRIEND
+#include <linux/battery_friend.h>
+extern bool battery_friend_active;
+static unsigned int fr_min;
+#endif
+
 /**
  * The "cpufreq driver" - the arch- or hardware-dependent low
  * level driver of CPUFreq support, and its spinlock. This lock
@@ -1692,9 +1698,6 @@ static int __cpufreq_set_policy(struct cpufreq_policy *data,
 	blocking_notifier_call_chain(&cpufreq_policy_notifier_list,
 			CPUFREQ_NOTIFY, policy);
 
-	// Set min speed to 100mhz
-
-
 	data->min = policy->min;
 	data->max = policy->max;
 	pr_debug("new min and max freqs are %u - %u kHz\n",
@@ -1905,7 +1908,6 @@ int cpufreq_update_policy(unsigned int cpu)
 
 	pr_debug("updating policy for CPU %u\n", cpu);
 	memcpy(&policy, data, sizeof(struct cpufreq_policy));
-
 	policy.min = data->user_policy.min;
 	policy.max = data->user_policy.max;
 	policy.policy = data->user_policy.policy;
@@ -1996,16 +1998,18 @@ static int __cpuinit cpufreq_cpu_callback(struct notifier_block *nfb,
 	if (sys_dev) {
 		switch (action) {
 		case CPU_ONLINE:
+		case CPU_ONLINE_FROZEN:
 			cpufreq_add_dev(sys_dev);
 			break;
 		case CPU_DOWN_PREPARE:
-		case CPU_UP_CANCELED_FROZEN:
+		case CPU_DOWN_PREPARE_FROZEN:
 			if (unlikely(lock_policy_rwsem_write(cpu)))
 				BUG();
 
 			__cpufreq_remove_dev(sys_dev);
 			break;
 		case CPU_DOWN_FAILED:
+		case CPU_DOWN_FAILED_FROZEN:
 			cpufreq_add_dev(sys_dev);
 			break;
 		}

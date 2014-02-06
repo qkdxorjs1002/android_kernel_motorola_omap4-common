@@ -4,6 +4,7 @@
 
 menuconfig THERMAL_FRAMEWORK
 	bool "Thermal Framework support"
+	default y
 	help
 	  This is a generic thermal framework which will be used as
 	  a central hub for sensors, governors and cooling devices
@@ -19,3 +20,5 @@ config OMAP_THERMAL
 source "drivers/staging/thermal_framework/sensor/Kconfig"
 
 source "drivers/staging/thermal_framework/governor/Kconfig"
+
+source "drivers/staging/thermal_framework/kconfig.duty_cycle

@@ -69,6 +69,8 @@
 #define OTG_CTRL_SET_1					0x4A06290B
 /*-------------------------------------------------------------------------*/
 
+int omap_ehci_ulpi_write(const struct usb_hcd *hcd, u8 val, u8 reg, u8 retry_times);
+
 static struct hc_driver ehci_omap_hc_driver;
 
 
@@ -161,6 +163,108 @@ static int omap4_ehci_phy_hub_control(
 				+ HOSTPC0 + 4 * ((wIndex & 0xff) - 1));
 	spin_lock_irqsave(&ehci->lock, flags);
 	switch (typeReq) {
+	case ClearHubFeature:
+		switch (wValue) {
+		case C_HUB_LOCAL_POWER:
+		case C_HUB_OVER_CURRENT:
+			/* no hub-wide feature/status flags */
+			break;
+		default:
+			goto error;
+		}
+		break;
+	case ClearPortFeature:
+		if (!wIndex || wIndex > ports)
+			goto error;
+		wIndex--;
+		temp = ehci_readl(ehci, status_reg);
+
+		/*
+		 * Even if OWNER is set, so the port is owned by the
+		 * companion controller, khubd needs to be able to clear
+		 * the port-change status bits (especially
+		 * USB_PORT_STAT_C_CONNECTION).
+		 */
+
+		switch (wValue) {
+		case USB_PORT_FEAT_ENABLE:
+			ehci_writel(ehci, temp & ~PORT_PE, status_reg);
+			break;
+		case USB_PORT_FEAT_C_ENABLE:
+			ehci_writel(ehci, (temp & ~PORT_RWC_BITS) | PORT_PEC,
+					status_reg);
+			break;
+		case USB_PORT_FEAT_SUSPEND:
+			if (temp & PORT_RESET)
+				goto error;
+			if (ehci->no_selective_suspend)
+				break;
+#ifdef CONFIG_USB_OTG
+			if ((hcd->self.otg_port == (wIndex + 1))
+			    && hcd->self.b_hnp_enable) {
+				otg_start_hnp(ehci->transceiver);
+				break;
+			}
+#endif
+			if (!(temp & PORT_SUSPEND))
+				break;
+			if ((temp & PORT_PE) == 0)
+				goto error;
+
+			/* clear phy low-power mode before resume */
+			if (hostpc_reg) {
+				temp1 = ehci_readl(ehci, hostpc_reg);
+				ehci_writel(ehci, temp1 & ~HOSTPC_PHCD,
+						hostpc_reg);
+				spin_unlock_irqrestore(&ehci->lock, flags);
+				msleep(5);/* wait to leave low-power mode */
+				spin_lock_irqsave(&ehci->lock, flags);
+			}
+			/* resume signaling for 20 msec */
+			temp &= ~(PORT_RWC_BITS | PORT_WAKE_BITS);
+			ehci_writel(ehci, temp | PORT_RESUME, status_reg);
+			ehci->reset_done[wIndex] = jiffies
+					+ msecs_to_jiffies(20);
+			break;
+		case USB_PORT_FEAT_C_SUSPEND:
+			clear_bit(wIndex, &ehci->port_c_suspend);
+			break;
+		case USB_PORT_FEAT_POWER:
+			if (HCS_PPC (ehci->hcs_params))
+				ehci_writel(ehci,
+					  temp & ~(PORT_RWC_BITS | PORT_POWER),
+					  status_reg);
+			break;
+		case USB_PORT_FEAT_C_CONNECTION:
+			if (ehci->has_lpm) {
+				/* clear PORTSC bits on disconnect */
+				temp &= ~PORT_LPM;
+				temp &= ~PORT_DEV_ADDR;
+			}
+			ehci_writel(ehci, (temp & ~PORT_RWC_BITS) | PORT_CSC,
+					status_reg);
+			break;
+		case USB_PORT_FEAT_C_OVER_CURRENT:
+			ehci_writel(ehci, (temp & ~PORT_RWC_BITS) | PORT_OCC,
+					status_reg);
+			break;
+		case USB_PORT_FEAT_C_RESET:
+			/* GetPortStatus clears reset */
+			break;
+		default:
+			goto error;
+		}
+		ehci_readl(ehci, &ehci->regs->command);	/* unblock posted write */
+		break;
+	case GetHubDescriptor:
+		ehci_hub_descriptor (ehci, (struct usb_hub_descriptor *)
+			buf);
+		break;
+	case GetHubStatus:
+		/* no hub-wide feature/status flags */
+		memset (buf, 0, 4);
+		//cpu_to_le32s ((u32 *) buf);
+		break;
 	case GetPortStatus:
 		if (!wIndex || wIndex > ports)
 			goto error;
@@ -184,10 +288,11 @@ static int omap4_ehci_phy_hub_control(
 			 * power switching; they're allowed to just limit the
 			 * current.  khubd will turn the power back on.
 			 */
-			if (HCS_PPC(ehci->hcs_params)) {
+			if ((temp & PORT_OC) && HCS_PPC(ehci->hcs_params)) {
 				ehci_writel(ehci,
 					temp & ~(PORT_RWC_BITS | PORT_POWER),
 					status_reg);
+				temp = ehci_readl(ehci, status_reg);
 			}
 		}
 
@@ -310,6 +415,16 @@ static int omap4_ehci_phy_hub_control(
 #endif
 		dbg_port(ehci, "GetStatus", wIndex + 1, temp);
 		put_unaligned_le32(status, buf);
+		break;
+	case SetHubFeature:
+		switch (wValue) {
+		case C_HUB_LOCAL_POWER:
+		case C_HUB_OVER_CURRENT:
+			/* no hub-wide feature/status flags */
+			break;
+		default:
+			goto error;
+		}
 		break;
 	case SetPortFeature:
 		selector = wIndex >> 8;
@@ -983,7 +1098,6 @@ static int ehci_hcd_omap_probe(struct platform_device *pdev)
 	}
 
 	pm_runtime_get_sync(dev->parent);
-	*pdata->usbhs_update_sar = 1;
 
 	/*
 	 * An undocumented "feature" in the OMAP3 EHCI controller,

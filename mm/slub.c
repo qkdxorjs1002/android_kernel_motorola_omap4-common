@@ -1818,10 +1818,10 @@ static void *__slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
 	if (unlikely(!node_match(c, node)))
 		goto another_slab;
 
-  /* must check again c->freelist in case of cpu migration or IRQ */
-  object = c->freelist;
-  if (object)
-    goto update_freelist;
+	/* must check again c->freelist in case of cpu migration or IRQ */
+	object = c->freelist;
+	if (object)
+		goto update_freelist;
 
 	stat(s, ALLOC_REFILL);
 
@@ -1833,6 +1833,7 @@ load_freelist:
 		goto debug;
 
 update_freelist: 
+
 	c->freelist = get_freepointer(s, object);
 	page->inuse = page->objects;
 	page->freelist = NULL;
@@ -3439,9 +3440,10 @@ struct kmem_cache *kmem_cache_create(const char *name, size_t size,
 		if (kmem_cache_open(s, n,
 				size, align, flags, ctor)) {
 			list_add(&s->list, &slab_caches);
-			up_write(&slub_lock); 
+
+			up_write(&slub_lock);
 			if (sysfs_slab_add(s)) {
-				down_write(&slub_lock); 
+				down_write(&slub_lock);
 				list_del(&s->list);
 				kfree(n);
 				kfree(s);

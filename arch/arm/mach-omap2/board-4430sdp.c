@@ -525,6 +525,15 @@ static int omap4_twl6030_hsmmc_late_init(struct device *dev)
 						MMCDETECT_INTR_OFFSET;
 		pdata->slots[0].card_detect = twl6030_mmc_card_detect;
 	}
+	/* Setting MMC5 SDIO card .built-in variable
+	 * This is to make sure that if WiFi driver is not loaded
+	 * at all, then the MMC/SD/SDIO driver does not keep
+	 * turning on/off the voltage to the SDIO card
+	 */
+	if (pdev->id == 4) {
+		ret = 0;
+		pdata->slots[0].mmc_data.built_in = 1;
+	}
 	return ret;
 }
 
@@ -1155,6 +1164,10 @@ static void omap_4430sdp_display_init(void)
 	omap_vram_set_sdram_vram(BLAZE_FB_RAM_SIZE, 0);
 	omapfb_set_platform_data(&blaze_fb_pdata);
 	omap_display_init(&sdp4430_dss_data);
+
+	omap_mux_init_gpio(HDMI_GPIO_LS_OE, OMAP_PIN_OUTPUT);
+	omap_mux_init_gpio(HDMI_GPIO_CT_CP_HPD, OMAP_PIN_OUTPUT);
+	omap_mux_init_gpio(HDMI_GPIO_HPD, OMAP_PIN_INPUT_PULLDOWN);
 }
 
 #ifdef CONFIG_OMAP_MUX
@@ -1183,6 +1196,20 @@ static struct omap_board_mux board_mux[] __initdata = {
 static __initdata struct emif_device_details emif_devices = {
 	.cs0_device = &lpddr2_elpida_2G_S4_dev,
 	.cs1_device = &lpddr2_elpida_2G_S4_dev
+};
+
+/*
+ * LPDDR2 Configuration Data for 4470 SOMs:
+ * The memory organization is as below :
+ *     EMIF1 - CS0 -   4 Gb
+ *     EMIF2 - CS0 -   4 Gb
+ *     --------------------
+ *     TOTAL -         8 Gb
+ *
+ * Same devices installed on EMIF1 and EMIF2
+ */
+static __initdata struct emif_device_details emif_devices_4470 = {
+	.cs0_device = &lpddr2_elpida_4G_S4_dev,
 };
 
 static struct omap_device_pad blaze_uart1_pads[] __initdata = {
@@ -1388,8 +1415,11 @@ static void __init omap_4430sdp_init(void)
 	if (omap_rev() == OMAP4430_REV_ES1_0)
 		package = OMAP_PACKAGE_CBL;
 	omap4_mux_init(board_mux, NULL, package);
-
-	omap_emif_setup_device_details(&emif_devices, &emif_devices);
+	if (cpu_is_omap447x())
+		omap_emif_setup_device_details(&emif_devices_4470,
+					       &emif_devices_4470);
+	else
+		omap_emif_setup_device_details(&emif_devices, &emif_devices);
 
 	omap_board_config = sdp4430_config;
 	omap_board_config_size = ARRAY_SIZE(sdp4430_config);
@@ -1447,8 +1477,8 @@ static void __init omap_4430sdp_init(void)
 	}
 
 	omap_enable_smartreflex_on_init();
-        if (enable_suspend_off)
-                omap_pm_enable_off_mode();
+	if (enable_suspend_off)
+		omap_pm_enable_off_mode();
 
 }
 
@@ -1467,8 +1497,10 @@ static void __init omap_4430sdp_reserve(void)
 	memblock_remove(PHYS_ADDR_SMC_MEM, PHYS_ADDR_SMC_SIZE);
 	memblock_remove(PHYS_ADDR_DUCATI_MEM, PHYS_ADDR_DUCATI_SIZE);
 	/* ipu needs to recognize secure input buffer area as well */
-	omap_ipu_set_static_mempool(PHYS_ADDR_DUCATI_MEM, PHYS_ADDR_DUCATI_SIZE +
-					OMAP4_ION_HEAP_SECURE_INPUT_SIZE);
+	omap_ipu_set_static_mempool(PHYS_ADDR_DUCATI_MEM,
+					PHYS_ADDR_DUCATI_SIZE +
+					OMAP4_ION_HEAP_SECURE_INPUT_SIZE +
+					OMAP4_ION_HEAP_SECURE_OUTPUT_WFDHDCP_SIZE);
 #ifdef CONFIG_OMAP_REMOTE_PROC_DSP
 	memblock_remove(PHYS_ADDR_TESLA_MEM, PHYS_ADDR_TESLA_SIZE);
 	omap_dsp_set_static_mempool(PHYS_ADDR_TESLA_MEM,

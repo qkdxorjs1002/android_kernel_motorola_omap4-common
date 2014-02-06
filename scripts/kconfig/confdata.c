@@ -227,8 +227,8 @@ load:
 
 	def_flags = SYMBOL_DEF << def;
 
- 	 if (!sym_init)
-  	  goto readsym;
+	if (!sym_init)
+		goto readsym;
 
 	for_all_symbols(i, sym) {
 		sym->flags |= SYMBOL_CHANGED;
@@ -246,6 +246,7 @@ load:
 			sym->def[def].tri = no;
 		}
 	}
+
 readsym:
 	while (fgets(line, sizeof(line), in)) {
 		conf_lineno++;

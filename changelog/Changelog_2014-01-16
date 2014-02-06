@@ -1,0 +1,62 @@
+edf3f9d OMAP: SOUND: HDMI: Fix missing declaration of 'hdmi_lib_stop_acr_wa'
+891cbb3 OMAP: HDMI: Re-add function 'hdmi_ti_4xxx_audio_enable'
+ee1f5e5 OMAP: HDMI: hdmi_ti_4xxx_ip: Fix declarations of moved functions, fix syntaxes, re-sync with TI-OpenLink
+bcd00d3 Revert: OMAPDSS: HDMI: Use our own omap_video_timings field when setting interface timings
+958e441 Revert "add CIRQ_ENABLE to irq_mask if IBI is supported"
+60d6715 Revert "mmc: omap_hsmmc: set pm_runtime_irq_safe"
+b9096c6 Revert "arm: vfp: Fix memory corruption on PM suspend *EXPERIMENTAL*"
+990f1ae DSS. hdmi.c: Sync to google kernel/common.git (the past state fo this driver
+1028e59 Revert "Revert "OMAPDSS: Increase PLL1_CLK1 frequency for correct work with large panels""
+d1669bd Revert "OMAPDSS: Increase PLL1_CLK1 frequency for correct work with large panels"
+bae3242 OMAPDSS: CEC: Add callback to CEC driver on HDMI HPD Adding support for call back from HDMI to CEC driver on HPD and HDMI enable.
+589b2b9 OMAPDSS: CEC: Physical address discovery form edid
+70f8af3 defconfig updates
+625b8ac OMAPDSS: HDMI: Use our own omap_video_timings field when setting interface timings
+af3d56b remoteproc: get suspend address from resource table The suspend address is used as a flag to check if the remoteproc has actually suspended. The address could vary according to the memory map in the remoteproc. Changing the memory map in the remote processor changes the value of the suspend address. Passing the address in the resource table information avoids hardcoding the value in the platform data of the remoteproc. The value is instead assigned while parsing the resource table.
+24e746b omap4: hdmi: adding a macro for acr wa dependency with rpmsg and ipu Hdmi acr workaround is based on the creation of an rpmsg channel to start/stop the workaround in the ipu remote processor. If the ipu remoteproc or rpmsg are disabled by menu config, the build is broken.
+f504643 OMAP4: HDMI: limited & full range support
+c7810a8 OMAP4: HDMI: sync to TI-OpenLink: Fix audio delay in resume from suspend This change is to bypass the wait_for_audio_stop loop if turning off hdmi for resync after resume while playing audio. This fixes slow system response and the delay in the return of audio after resume. OMAPS00260109 Device will become slow if you play music with HDMI while wakeup from suspend.
+76b2ad5 ASoC: OMAP: HDMI: Sync to TI-OpenLink: ASoC: OMAP: HDMI: Defer audio transfer start Defer audio transfer after HDMI AUDIO wrapper is enabled. If audio transmit was started along with audio wrapper enabling, spurious data (zeros) was sent at the beginning of the transfer as part of the of audio sample packets, due an AUDIO FIFO UNDERFLOW, which was shifting audio channels.
+58be00f OMAP: HDMI: Correction in HDMI PLL program sequence
+2058754 rpmsg: kconfig: add a dependency with remoteproc in rpmsg_omx
+cf836cf remoteproc: export rproc_da_to_pa function The rproc_da_to_pa function has been converted from an internal function to a public function. The function's signature is also modified to be similar to its counter-part and already exported function, rproc_pa_to_da.
+47f2e57 omap: remoteproc: fix a compilation error on autosuspend disable
+ad71e36 OMAP4: PM: Add errata id for handling Errata i736
+df858c4 OMAPDSS: Increase PLL1_CLK1 frequency for correct work with large panels
+e986942 arm: vfp: Fix memory corruption on PM suspend *EXPERIMENTAL*
+9bd0ffc mmc: omap_hsmmc: set pm_runtime_irq_safe
+e71a6d0 add CIRQ_ENABLE to irq_mask if IBI is supported
+4ebfe83 PM: fix might_sleep_if in __pm_runtime_idle
+94fa555 omap: iommu: program constraints based on platform data IOMMU driver requests and releases constraints in iommu_get and iommu_put respectively. These constraints are actually needed only on OMAP4 and beyond for sub-systems that have an AMMU. The current driver code has these values hard-coded for all the chips.
+18d06c7 omap: remoteproc: return -EAGAIN on a suspend time out
+fe97559 Revert "OMAP4: Workaround the OCP synchronisation issue with 32K synctimer."
+9748289 OMAP4: Workaround the OCP synchronisation issue with 32K synctimer. Backport from: http://git.kernel.org/?p=linux/kernel/git/tmlind/linux-omap.git; a=commitdiff;h=68523f4233de5f233478dde0a63047b4efb710b8
+06a85ed OMAP4: EMIF: Disable EMIF DDR self refresh during EMIF frequency change sequences
+084024e rpmsg: omx: lower the traces level in driver open, ioctl & release The dev_info traces in open, connect ioctl and release incur a time penalty and affect application launch time performances. These have been converted to dev_dbg traces.
+28ae06e OMAP: DSS: dispc: allow DSS max latency constraint
+9f6dc47 allow the mapphone-panel sometime to reset on poweron
+c47a276 OMAP: DSS: dispc: Re-implement OMAPZOOM changes into DSS
+89a8041 Add build script for test builds
+37d0fbf Added todays changelog and updated full history
+af45297 Edison: update build script
+e728481 defconfig: updates
+1524f73 rpmsg: omx: implement separate register ioctl for sgx buffers
+3884ade rpmsg: omx: initialize completion event in rpmsg_omx_open rpmsg: omx: initialize completion event in rpmsg_omx_open
+9ede423 rpmsg: omx: send disconnect only if omx state is connected rpmsg: omx: send disconnect only if omx state is connected
+359737f rpmsg: omx: fix copy_to_user in register/unregister ioctls
+6e22e28 rpmsg: omx: return ENXIO in rpmsg_omx_write
+335435f rpmsg: omx: copy_from_user() errors should return -EFAULT
+766ee9c rpmsg: omx: return actual user-provided bytes written in write
+713e3eb rpmsg: resmgr: disable aux_clk_src in case of error
+c85080b Added todays changelog and updated full history
+f871096 Raise version
+69ac122 Revert "OMAP: DSS: dispc: Re-implement workarounds for Errataxxx"
+aa62637 Added todays changelog and updated full history
+bd16bca ARM: OMAP: HS USB Host: fix unbalanced pm calls
+e6da66e usb: ehci: fix the host wakeup state machine and fix the overall USB host logic
+1af5623 ARM: OMAP4: USB: Update workaround for USB errata i719
+750bda5 OMAP4430: USB Host: Implement workaround for Errata i719 OMAP4430: USB Host: Implement workaround for Errata i719
+1becc94 OMAP: DSS: dispc: Re-implement workarounds for Errataxxx
+3b57ea8 Revert "OMAP: DSS: DISPC: Add workaround for L3_1/L3_2 clock domains"
+2e43d8f OMAP: DSS: DISPC: Add workaround for L3_1/L3_2 clock domains
+7542f70 Battery Friend: Fix scr_min

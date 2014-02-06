@@ -1555,6 +1555,7 @@ static int omap44xx_dss_reset(struct omap_hwmod *oh)
 #define DISPC_CONTROL2    (0x238UL)
 
 void __iomem *base_addr, *ctrl1_addr, *ctrl2_addr, *irq_addr; 
+
 	u32 ctrl1_mask = 0;
 	u32 ctrl2_mask = 0;
 	u32 irq_mask = 0;
@@ -1570,12 +1571,15 @@ void __iomem *base_addr, *ctrl1_addr, *ctrl2_addr, *irq_addr;
   irq_addr = base_addr + DISPC_IRQSTATUS;
  
 	/* HACK */
+
 	/* If LCD1/LCD2/TV are active, disable them first before
 	 * moving the clock sources back to PRCM. We don't want to change
 	 * the clock source while a DMA is active.
 	 */
+
 	 /* Read DISPC_CONTROL1 register */
 	 val = __raw_readl(ctrl1_addr);
+
 	if (val & (1 << 0)) {
 		/* LCD1 */
 		irq_mask |= 1 << 0;
@@ -1586,7 +1590,6 @@ void __iomem *base_addr, *ctrl1_addr, *ctrl2_addr, *irq_addr;
 		irq_mask |= 1 << 24;
 		ctrl1_mask |= 1 << 1;
 	}
-	
 	val = __raw_readl(ctrl2_addr);
 	if (val & (1 << 0)) {
 		/* LCD2 */
@@ -1596,26 +1599,26 @@ void __iomem *base_addr, *ctrl1_addr, *ctrl2_addr, *irq_addr;
 
 	/* disable the active controllers */
 	__raw_writel(__raw_readl(ctrl1_addr) & (~ctrl1_mask), ctrl1_addr);
-	__raw_writel(__raw_readl(ctrl2_addr) & (~ctrl2_mask), ctrl2_addr); 
+	__raw_writel(__raw_readl(ctrl2_addr) & (~ctrl2_mask), ctrl2_addr);
 
-	 __raw_writel(irq_mask, irq_addr); 
+	__raw_writel(irq_mask, irq_addr);
 
 	end_wait = jiffies + msecs_to_jiffies(50);
 
-  while (((__raw_readl(ctrl1_addr) & ctrl1_mask) ||
-    (__raw_readl(ctrl2_addr) & ctrl2_mask) ||
-    ((__raw_readl(irq_addr) & irq_mask) != irq_mask)) &&
-    time_before(jiffies, end_wait))
-            cpu_relax();
+	while (((__raw_readl(ctrl1_addr) & ctrl1_mask) ||
+		(__raw_readl(ctrl2_addr) & ctrl2_mask) ||
+		((__raw_readl(irq_addr) & irq_mask) != irq_mask)) &&
+		time_before(jiffies, end_wait))
+						cpu_relax();
 
-  WARN_ON((__raw_readl(ctrl1_addr) & ctrl1_mask) ||
-    (__raw_readl(ctrl2_addr) & ctrl2_mask) ||
-    ((__raw_readl(irq_addr) & irq_mask) != irq_mask));
+	WARN_ON((__raw_readl(ctrl1_addr) & ctrl1_mask) ||
+		(__raw_readl(ctrl2_addr) & ctrl2_mask) ||
+		((__raw_readl(irq_addr) & irq_mask) != irq_mask));
 
-  iounmap(base_addr); 
-
+	iounmap(base_addr);
 	omap_hwmod_write(0x0, oh, 0x40);
 	return 0;
+
 #undef DISPC_IRQSTATUS
 #undef DISPC_CONTROL1
 #undef DISPC_CONTROL2
@@ -1648,7 +1651,7 @@ static struct omap_hwmod_ocp_if omap44xx_l3_main_2__dss = {
 	.clk		= "l3_div_ck",
 	.addr		= omap44xx_dss_dma_addrs,
 	.addr_cnt	= ARRAY_SIZE(omap44xx_dss_dma_addrs),
-	.user		= OCP_USER_SDMA,
+	.user		= OCP_USER_SDMA | OCP_USER_MPU,
 };
 
 static struct omap_hwmod_addr_space omap44xx_dss_addrs[] = {
@@ -1748,7 +1751,7 @@ static struct omap_hwmod_ocp_if omap44xx_l3_main_2__dss_dispc = {
 	.clk		= "l3_div_ck",
 	.addr		= omap44xx_dss_dispc_dma_addrs,
 	.addr_cnt	= ARRAY_SIZE(omap44xx_dss_dispc_dma_addrs),
-	.user		= OCP_USER_SDMA,
+	.user		= OCP_USER_SDMA | OCP_USER_MPU,
 };
 
 static struct omap_hwmod_addr_space omap44xx_dss_dispc_addrs[] = {
