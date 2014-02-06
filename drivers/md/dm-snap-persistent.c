@@ -470,10 +470,8 @@ static int insert_exceptions(struct pstore *ps,
 		/*
 		 * Keep track of the start of the free chunks.
 		 */
-
-		if (ps->next_free <= e.new_chunk)
-		     	ps->next_free = e.new_chunk + 1;
-
+		if (ps->next_free <= de.new_chunk)
+			ps->next_free = de.new_chunk + 1;
 
 		/*
 		 * Otherwise we add the exception to the snapshot.
@@ -745,10 +743,9 @@ static int persistent_prepare_merge(struct dm_exception_store *store,
 	for (nr_consecutive = 1; nr_consecutive < ps->current_committed;
 	     nr_consecutive++) {
 		read_exception(ps, ps->current_committed - 1 - nr_consecutive,
-	             &ce);
-	    if (ce.old_chunk != *last_old_chunk - nr_consecutive ||
-	        ce.new_chunk != *last_new_chunk - nr_consecutive)
-
+			       &de);
+		if (de.old_chunk != *last_old_chunk - nr_consecutive ||
+		    de.new_chunk != *last_new_chunk - nr_consecutive)
 			break;
 	}
 

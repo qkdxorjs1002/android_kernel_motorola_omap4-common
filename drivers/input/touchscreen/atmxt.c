@@ -2375,9 +2375,7 @@ static void atmxt_report_touches(struct atmxt_driver_data *dd)
 		w = dd->rdat->tchdat[i].w;
 
 		dd->rdat->active_touches++;
-#ifdef CONFIG_TOUCH_WAKE
-if (!device_is_suspended())
-#endif
+
 		atmxt_dbg(dd, ATMXT_DBG1, "%s: ID=%d, X=%d, Y=%d, P=%d, W=%d\n",
 			__func__, id, x, y, p, w);
 
@@ -2399,7 +2397,6 @@ if (!device_is_suspended())
 				rval = id;
 				break;
 			}
-
 			if (dd->rdat->axis[j] != ATMXT_ABS_RESERVED) {
 				input_report_abs(dd->in_dev,
 					dd->rdat->axis[j], rval);
@@ -2416,9 +2413,7 @@ if (!device_is_suspended())
 			dd->dbg->evt_act = dd->rdat->active_touches;
 #endif
 	}
-#ifdef CONFIG_TOUCH_WAKE
-touch_press();
-#endif
+
 	if (dd->rdat->active_touches == 0)
 		input_mt_sync(dd->in_dev);
 

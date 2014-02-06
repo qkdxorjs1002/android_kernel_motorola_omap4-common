@@ -823,13 +823,8 @@ static int parse_features(struct arg_set *as, struct multipath *m)
 
 		if (!strnicmp(param_name, MESG_STR("pg_init_retries")) &&
 		    (argc >= 1)) {
-<<<<<<< HEAD
-			r = dm_read_arg(_args + 1, as, &m->pg_init_retries, &ti->error);
-
-=======
 			r = read_param(_params + 1, shift(as),
 				       &m->pg_init_retries, &ti->error);
->>>>>>> 1a98c23... [WIP] rebase to 3.0.31
 			argc--;
 			continue;
 		}
@@ -1518,13 +1513,7 @@ static int multipath_message(struct dm_target *ti, unsigned argc, char **argv)
 		if (!strnicmp(argv[0], MESG_STR("queue_if_no_path"))) {
 			r = queue_if_no_path(m, 1, 0);
 			goto out;
-<<<<<<< HEAD
-
-		 } else if (!strcasecmp(argv[0], "fail_if_no_path")) {
-
-=======
 		} else if (!strnicmp(argv[0], MESG_STR("fail_if_no_path"))) {
->>>>>>> 1a98c23... [WIP] rebase to 3.0.31
 			r = queue_if_no_path(m, 0, 0);
 			goto out;
 		}

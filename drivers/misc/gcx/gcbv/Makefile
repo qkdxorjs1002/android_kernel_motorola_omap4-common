@@ -9,3 +9,4 @@ gcbv2d-y := \
 	gcfill.o \
 	gcblit.o \
 	gcfilter.o
+	gcbv-iface.o
