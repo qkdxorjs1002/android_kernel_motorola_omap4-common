@@ -1325,7 +1325,9 @@ void ubi_scan_destroy_si(struct ubi_scan_info *si)
 		}
 	}
 
-	kmem_cache_destroy(si->scan_leb_slab);
+	if (si->scan_leb_slab)
+		kmem_cache_destroy(si->scan_leb_slab);
+
 	kfree(si);
 }
 

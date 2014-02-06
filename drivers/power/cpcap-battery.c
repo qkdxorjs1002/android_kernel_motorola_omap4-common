@@ -395,7 +395,6 @@ static long cpcap_batt_ioctl(struct file *file,
 
 static void cpcap_batt_ind_chrg_ctrl(struct cpcap_batt_ps *sply)
 {
-
 	unsigned long long temp;
 	unsigned short cpcap_reg;
 	struct cpcap_platform_data *pdata = sply->cpcap->spi->dev.platform_data;
@@ -414,35 +413,32 @@ static void cpcap_batt_ind_chrg_ctrl(struct cpcap_batt_ps *sply)
 
 	if ((((sply->ac_state.model == CPCAP_BATT_AC_CABLE) ||
 		(sply->ac_state.model == CPCAP_BATT_AC_SMARTDOCK)) &&
-			(sply->ac_state.online)) || (sply->usb_state.online)) 
-									{
+			(sply->ac_state.online)) || (sply->usb_state.online)) {
 		if (pdata->ind_chrg->force_charge_complete != NULL)
 			pdata->ind_chrg->force_charge_complete(1);
 		sply->ind_chrg_dsbl_time = 0;
 		pr_cpcap_batt(TRANSITION, "cable insert, chrgcmpl set");
-
 	} else if ((sply->batt_state.batt_temp >= INDCHRG_HOT_TEMP)
 		   || (sply->batt_state.batt_temp <= INDCHRG_COLD_TEMP)) {
 		if (pdata->ind_chrg->force_charge_terminate != NULL)
 			pdata->ind_chrg->force_charge_terminate(1);
 		pr_cpcap_batt(TRANSITION, "overtemperature chrgterm set");
 		sply->ind_chrg_dsbl_time = (unsigned long)temp;
-
 	} else if ((sply->ac_state.model == CPCAP_BATT_AC_IND) &&
 		   (cpcap_reg & CPCAP_BIT_VBUSOV_S)) {
 		if (pdata->ind_chrg->force_charge_terminate != NULL)
 			pdata->ind_chrg->force_charge_terminate(1);
 		pr_cpcap_batt(TRANSITION, "overvoltage interrupt chrgterm set");
 		sply->ind_chrg_dsbl_time = (unsigned long)temp;
-
 	} else if ((sply->batt_state.batt_capacity_one >= 100) &&
 		   (sply->ac_state.model == CPCAP_BATT_AC_IND)) {
 		if (pdata->ind_chrg->force_charge_complete != NULL)
 			pdata->ind_chrg->force_charge_complete(1);
-		pr_cpcap_batt(TRANSITION, "batt capacity full, chrgcmpl set");
+		pr_cpcap_batt(TRANSITION, "batt capacity 100, chrgcmpl set");
 		sply->ind_chrg_dsbl_time = (unsigned long)temp;
 #ifdef CONFIG_BLX
-	} else if (get_charginglimit() != MAX_CHARGINGLIMIT && sply->batt_state.batt_capacity_one >= get_charginglimit()) {
+	} else if (get_charginglimit() != MAX_CHARGINGLIMIT && sply->batt_state.batt_capacity_one >= get_charginglimit() &&
+		   (sply->ac_state.model == CPCAP_BATT_AC_IND))) {
 			pdata->ind_chrg->force_charge_complete(1);
 		pr_cpcap_batt(TRANSITION, "BLX: capacity reached, chrgcmpl set");
 		pr_info("BLX: capacity reached %d, chrgcmpl set\n", get_charginglimit());
@@ -806,6 +802,7 @@ static int cpcap_batt_resume(struct platform_device *pdev)
 
 	return 0;
 }
+
 void cpcap_batt_set_ac_prop(struct cpcap_device *cpcap,
 	struct cpcap_batt_ac_data *ac)
 {
@@ -834,7 +831,6 @@ void cpcap_batt_set_usb_prop_online(struct cpcap_device *cpcap, int online,
 	struct cpcap_platform_data *data = spi->dev.platform_data;
 
 	if (sply != NULL) {
-
 		sply->usb_state.online = online;
 		sply->usb_state.model = model;
 		power_supply_changed(&sply->usb);
@@ -854,7 +850,6 @@ void cpcap_batt_set_usb_prop_curr(struct cpcap_device *cpcap, unsigned int curr)
 	struct cpcap_platform_data *data = spi->dev.platform_data;
 
 	if (sply != NULL) {
-
 		sply->usb_state.current_now = curr;
 		power_supply_changed(&sply->usb);
 

@@ -105,10 +105,35 @@ static void usb_phy_resume_workaround(struct ehci_hcd *ehci)
 	/* in practice, we measure this register write to take effect
 	 * within 1-10 usec
 	 */
-	udelay(30);
+	udelay(20);
 }
 
-static int omap4_ehci_phy_hub_control (
+static void wait_for_local_clock(u64 nsec)
+{
+	u64 start, prev, now;
+
+	start = local_clock();
+	prev = start;
+
+	do {
+		now = local_clock();
+
+		/* Handle local_clock() overflow, the best we can do if the
+		* exact overflow value is unknown is to assume that no time
+		* passed between prev and the overflow value. Then we can
+		* correct nsec and start to account for the time before
+		* the overflow (prev - start).
+		*/
+		if (now < start) {
+			nsec -= prev - start;
+			start = now;
+		}
+		prev = now;
+
+	} while ((now - start) < nsec);
+}
+
+static int omap4_ehci_phy_hub_control(
 	struct usb_hcd	*hcd,
 	u16		typeReq,
 	u16		wValue,
@@ -116,8 +141,8 @@ static int omap4_ehci_phy_hub_control (
 	char		*buf,
 	u16		wLength
 ) {
-	struct ehci_hcd	*ehci = hcd_to_ehci (hcd);
-	int		ports = HCS_N_PORTS (ehci->hcs_params);
+	struct ehci_hcd	*ehci = hcd_to_ehci(hcd);
+	int		ports = HCS_N_PORTS(ehci->hcs_params);
 	u32 __iomem	*status_reg = &ehci->regs->port_status[
 				(wIndex & 0xff) - 1];
 	u32 __iomem	*hostpc_reg = NULL;
@@ -136,7 +161,7 @@ static int omap4_ehci_phy_hub_control (
 	if (ehci->has_hostpc)
 		hostpc_reg = (u32 __iomem *)((u8 *)ehci->regs
 				+ HOSTPC0 + 4 * ((wIndex & 0xff) - 1));
-	spin_lock_irqsave (&ehci->lock, flags);
+	spin_lock_irqsave(&ehci->lock, flags);
 	switch (typeReq) {
 	case ClearHubFeature:
 		switch (wValue) {
@@ -247,13 +272,13 @@ static int omap4_ehci_phy_hub_control (
 		status = 0;
 		temp = ehci_readl(ehci, status_reg);
 
-		// wPortChange bits
+		/* wPortChange bits */
 		if (temp & PORT_CSC)
 			status |= USB_PORT_STAT_C_CONNECTION << 16;
 		if (temp & PORT_PEC)
 			status |= USB_PORT_STAT_C_ENABLE << 16;
 
-		if ((temp & PORT_OCC) && !ignore_oc){
+		if ((temp & PORT_OCC) && !ignore_oc) {
 			status |= USB_PORT_STAT_C_OVERCURRENT << 16;
 
 			/*
@@ -314,7 +339,7 @@ static int omap4_ehci_phy_hub_control (
 				&& time_after_eq(jiffies,
 					ehci->reset_done[wIndex])) {
 			status |= USB_PORT_STAT_C_RESET << 16;
-			ehci->reset_done [wIndex] = 0;
+			ehci->reset_done[wIndex] = 0;
 
 			/* force reset to complete */
 			ehci_writel(ehci, temp & ~(PORT_RWC_BITS | PORT_RESET),
@@ -325,13 +350,13 @@ static int omap4_ehci_phy_hub_control (
 			retval = handshake(ehci, status_reg,
 					PORT_RESET, 0, 1000);
 			if (retval != 0) {
-				ehci_err (ehci, "port %d reset error %d\n",
+				ehci_err(ehci, "port %d reset error %d\n",
 					wIndex + 1, retval);
 				goto error;
 			}
 
 			/* see what we found out */
-			temp = check_reset_complete (ehci, wIndex, status_reg,
+			temp = check_reset_complete(ehci, wIndex, status_reg,
 					ehci_readl(ehci, status_reg));
 		}
 
@@ -356,7 +381,7 @@ static int omap4_ehci_phy_hub_control (
 
 		if (temp & PORT_CONNECT) {
 			status |= USB_PORT_STAT_CONNECTION;
-			// status may be from integrated TT
+			/* status may be from integrated TT */
 			if (ehci->has_hostpc) {
 				temp1 = ehci_readl(ehci, hostpc_reg);
 				status |= ehci_port_speed(ehci, temp1);
@@ -388,7 +413,7 @@ static int omap4_ehci_phy_hub_control (
 #ifndef	VERBOSE_DEBUG
 	if (status & ~0xffff)	/* only if wPortChange is interesting */
 #endif
-		dbg_port (ehci, "GetStatus", wIndex + 1, temp);
+		dbg_port(ehci, "GetStatus", wIndex + 1, temp);
 		put_unaligned_le32(status, buf);
 		break;
 	case SetHubFeature:
@@ -439,20 +464,20 @@ static int omap4_ehci_phy_hub_control (
 			/*
 			 * Special workaround sequence:
 			 * - Set suspend bit
-			 * - Wait 16ms for suspend to take effect
+			 * - Wait 4ms for suspend to take effect
 			 *   - alternatively read the line state
 			 *     in PORTSC
 			 * - switch to internal 60 MHz clock
-			 * - wait 4ms
+			 * - wait 1ms
 			 * - switch back to external clock
 			 */
-			mdelay(16);
+			wait_for_local_clock(4 * 1000 * 1000);
 			temp_reg = omap_readl(L3INIT_HSUSBHOST_CLKCTRL);
 			temp_reg |= 1 << 9;
 			temp_reg &= ~(1 << 25);
 			omap_writel(temp_reg, L3INIT_HSUSBHOST_CLKCTRL);
 
-			mdelay(4);
+			wait_for_local_clock(1 * 1000 * 1000);
 
 			temp_reg &= ~(1 << 9);
 			temp_reg |= 1 << 25;
@@ -472,68 +497,21 @@ static int omap4_ehci_phy_hub_control (
 			}
 			set_bit(wIndex, &ehci->suspended_ports);
 			break;
-		case USB_PORT_FEAT_POWER:
-			if (HCS_PPC (ehci->hcs_params))
-				ehci_writel(ehci, temp | PORT_POWER,
-						status_reg);
-			break;
-		case USB_PORT_FEAT_RESET:
-			if (temp & PORT_RESUME)
-				goto error;
-			/* line status bits may report this as low speed,
-			 * which can be fine if this root hub has a
-			 * transaction translator built in.
-			 */
-			if ((temp & (PORT_PE|PORT_CONNECT)) == PORT_CONNECT
-					&& !ehci_is_TDI(ehci)
-					&& PORT_USB11 (temp)) {
-				ehci_dbg (ehci,
-					"port %d low speed --> companion\n",
-					wIndex + 1);
-				temp |= PORT_OWNER;
-			} else {
-				ehci_vdbg (ehci, "port %d reset\n", wIndex + 1);
-				temp |= PORT_RESET;
-				temp &= ~PORT_PE;
-
-				/*
-				 * caller must wait, then call GetPortStatus
-				 * usb 2.0 spec says 50 ms resets on root
-				 */
-				ehci->reset_done [wIndex] = jiffies
-						+ msecs_to_jiffies (50);
-			}
-			ehci_writel(ehci, temp, status_reg);
-			break;
-
-		/* For downstream facing ports (these):  one hub port is put
-		 * into test mode according to USB2 11.24.2.13, then the hub
-		 * must be reset (which for root hub now means rmmod+modprobe,
-		 * or else system reboot).  See EHCI 2.3.9 and 4.14 for info
-		 * about the EHCI-specific stuff.
-		 */
-		case USB_PORT_FEAT_TEST:
-			if (!selector || selector > 5)
-				goto error;
-			ehci_quiesce(ehci);
-			ehci_halt(ehci);
-			temp |= selector << 16;
-			ehci_writel(ehci, temp, status_reg);
-			break;
-
 		default:
 			goto error;
 		}
-		ehci_readl(ehci, &ehci->regs->command);	/* unblock posted writes */
+		/* unblock posted writes */
+		ehci_readl(ehci, &ehci->regs->command);
 		break;
 
 	default:
 error:
+		pr_err("\nWe should not get here %s\n", __func__);
 		/* "stall" on error */
 		retval = -EPIPE;
 	}
 error_exit:
-	spin_unlock_irqrestore (&ehci->lock, flags);
+	spin_unlock_irqrestore(&ehci->lock, flags);
 	return retval;
 }
 
@@ -1120,7 +1098,6 @@ static int ehci_hcd_omap_probe(struct platform_device *pdev)
 	}
 
 	pm_runtime_get_sync(dev->parent);
-	*pdata->usbhs_update_sar = 1;
 
 	/*
 	 * An undocumented "feature" in the OMAP3 EHCI controller,

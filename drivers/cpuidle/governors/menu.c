@@ -181,7 +181,7 @@ static inline int performance_multiplier(void)
 	/* mult += 2 * get_loadavg(); */
 
 	/* for IO wait tasks (per cpu!) we add 5x each */
-	mult += 2 * nr_iowait_cpu(smp_processor_id());
+	mult += 10 * nr_iowait_cpu(smp_processor_id());
 
 	return mult;
 }
@@ -294,6 +294,8 @@ static int menu_select(struct cpuidle_device *dev)
 	for (i = CPUIDLE_DRIVER_STATE_START; i < dev->state_count; i++) {
 		struct cpuidle_state *s = &dev->states[i];
 
+		if (s->flags & CPUIDLE_FLAG_IGNORE)
+			continue;
 		if (s->target_residency > data->predicted_us)
 			continue;
 		if (s->exit_latency > latency_req)

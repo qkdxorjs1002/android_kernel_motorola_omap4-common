@@ -1052,7 +1052,6 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
 		if (irq_settings_can_autoenable(desc))
 			irq_startup(desc, true);
 		else
-
 			/* Undo nested disables: */
 			desc->depth = 1;
 

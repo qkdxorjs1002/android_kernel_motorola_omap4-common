@@ -193,6 +193,7 @@ struct omap_abe_dma {
 	/* number of iterations for the DMA data moves. */
 	u32 iter;
 };
+
 /**
  * omap_abe_dbg_reset
  * @dbg: Pointer on abe debug handle
