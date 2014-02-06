@@ -446,15 +446,6 @@ void dsi_bus_unlock(struct omap_dss_device *dssdev)
 }
 EXPORT_SYMBOL(dsi_bus_unlock);
 
-bool dsi_bus_was_unlocked(struct omap_dss_device *dssdev)
-{
-	struct platform_device *dsidev = dsi_get_dsidev_from_dssdev(dssdev);
-	struct dsi_data *dsi = dsi_get_dsidrv_data(dsidev);
-
-	return dsi->bus_lock.count == 1;
-}
-EXPORT_SYMBOL(dsi_bus_was_unlocked);
-
 static bool dsi_bus_is_locked(struct platform_device *dsidev)
 {
 	struct dsi_data *dsi = dsi_get_dsidrv_data(dsidev);
@@ -5128,12 +5119,6 @@ int omapdss_dsi_display_enable(struct omap_dss_device *dssdev)
 
 	/* SIDLEMODE smart-idle */
 	REG_FLD_MOD(dsidev, DSI_SYSCONFIG, 2, 4, 3);
-
-	REG_FLD_MOD(dsidev, DSI_SYSCONFIG, 1, 1, 1);
-	_dsi_wait_reset(dsidev);
-
-	/* ENWAKEUP */
-	REG_FLD_MOD(dsidev, DSI_SYSCONFIG, 1, 2, 2);
 
 	_dsi_initialize_irq(dsidev);
 
