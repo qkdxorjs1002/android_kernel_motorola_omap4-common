@@ -1,10 +1,10 @@
 #!/bin/bash
 set -m
 
-# Exporting changelog to file
+# Sync ?
 cd /home/dtrail/android/4.4
 while true; do
-    read -p "Do you wish to sync repo?" yn
+    read -p "Do you wish to sync repo? " yn
     case $yn in
         [Yy]* ) echo "Syncing repo..."; echo " "; repo sync; break;;
         [Nn]* ) break;;
@@ -12,11 +12,20 @@ while true; do
     esac
 done
 
-# Build script for JBX-Kernel RELEASE
-echo "Cleaning out kernel source directory..."
 echo " "
-make mrproper
-make ARCH=arm distclean
+
+# Exporting changelog to file
+cd /home/dtrail/android/4.4
+while true; do
+    read -p "Do you wto clean build dirs? " yn
+    case $yn in
+        [Yy]* ) echo "Cleaning out kernel source directory..."; make mrproper; make ARCH=arm distclean; break;;
+        [Nn]* ) break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
+echo " "
 
 # We build the kernel and its modules first
 # Launch execute script in background
@@ -43,16 +52,19 @@ export CROSS_COMPILE=arm-unknown-linux-gnueabi-
 # export TARGET_KERNEL_CUSTOM_TOOLCHAIN=arm-unknown-linux-gnueabi-standard_4.7.2
 export LOCALVERSION="-JBX-3.0-Hybrid-4.4"
 make -j4 TARGET_KERNEL_SOURCE=/home/dtrail/android/android_kernel_motorola_omap4-common/ TARGET_KERNEL_CONFIG=mapphone_OCE_defconfig $OUT/boot.img
+echo " "
 
 # Build libhealthd.omap4
 while true; do
-    read -p "Do you wish to include 10% battery meter?" yn
+    read -p "Do you wish to include 10% battery meter? " yn
     case $yn in
-        [Yy]* ) echo "Moving Ramdisk into built path..."; echo " "; cp /home/dtrail/android/4.4/out/target/product/spyder/ramdisk.img /home/dtrail/android/built/4.4/3.0/rls/system/etc/kexec/; break;;
+        [Yy]* ) echo "Moving Ramdisk into built path..."; echo " "; cp /home/dtrail/android/4.4/out/target/product/spyder/ramdisk.img /home/dtrail/android/built/4.4/3.0/rls/jbx/Applications/; break;;
         [Nn]* ) break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
+
+echo " "
 
 # We don't use the kernel but the modules
 echo "Copying modules to package folder"
@@ -78,7 +90,7 @@ mv "JBX-Kernel-3.0-Hybrid-4.4_$(date +"%Y-%m-%d").zip" /home/dtrail/android/out
 # Exporting changelog to file
 cd /home/dtrail/android/android_kernel_motorola_omap4-common
 while true; do
-    read -p "Do you wish to push the latest changelog?" yn
+    read -p "Do you wish to push the latest changelog? " yn
     case $yn in
         [Yy]* ) echo "Exporting changelog to file: '/built/Changelog-[date]'"; echo " "; git log --oneline --since="4 day ago" > /home/dtrail/android/android_kernel_motorola_omap4-common/changelog/Changelog_$(date +"%Y-%m-%d"); git log --oneline  > /home/dtrail/android/android_kernel_motorola_omap4-common/changelog/Full_History_Changelog; git add changelog/ .; git commit -m "Added todays changelog and updated full history"; git push origin JBX_30X; echo " "; echo "done"; break;;
         [Nn]* ) exit;;
