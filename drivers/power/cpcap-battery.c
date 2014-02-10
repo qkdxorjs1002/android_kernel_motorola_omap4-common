@@ -48,10 +48,10 @@
 
 
 // static unsigned long long sched_clock2 (void);
-/*static int cpcap_regacc_write2(struct cpcap_device *cpcap, enum cpcap_reg reg,
+static int cpcap_regacc_write2(struct cpcap_device *cpcap, enum cpcap_reg reg,
 		       unsigned short value, unsigned short mask);
 static int cpcap_regacc_read2(struct cpcap_device *cpcap, enum cpcap_reg reg,
-		      unsigned short *value_ptr);*/
+		      unsigned short *value_ptr);
 
 #define CPCAP_BATT_IRQ_BATTDET 0x01
 #define CPCAP_BATT_IRQ_OV      0x02
@@ -658,10 +658,10 @@ static int cpcap_batt_monitor(void* arg) {
 	struct cpcap_adc_request req;
 	struct cpcap_adc_us_request req_us;
         struct cpcap_adc_phase phase;
-/*	cpcap_regacc_write(sply->cpcap, CPCAP_REG_CRM, CPCAP_BIT_CHRG_LED_EN, CPCAP_BIT_CHRG_LED_EN); //Enable charge led
-	cpcap_regacc_write(sply->cpcap, CPCAP_REG_USBC2, CPCAP_BIT_USBXCVREN, CPCAP_BIT_USBXCVREN);
-	cpcap_regacc_write(sply->cpcap, CPCAP_REG_CRM, CPCAP_BIT_RVRSMODE, CPCAP_BIT_RVRSMODE);
-	cpcap_regacc_write(sply->cpcap, CPCAP_REG_CRM, CPCAP_BIT_VCHRG0, CPCAP_BIT_VCHRG0);
+/*	cpcap_regacc_write2(sply->cpcap, CPCAP_REG_CRM, CPCAP_BIT_CHRG_LED_EN, CPCAP_BIT_CHRG_LED_EN); //Enable charge led
+	cpcap_regacc_write2(sply->cpcap, CPCAP_REG_USBC2, CPCAP_BIT_USBXCVREN, CPCAP_BIT_USBXCVREN);
+	cpcap_regacc_write2(sply->cpcap, CPCAP_REG_CRM, CPCAP_BIT_RVRSMODE, CPCAP_BIT_RVRSMODE);
+	cpcap_regacc_write2(sply->cpcap, CPCAP_REG_CRM, CPCAP_BIT_VCHRG0, CPCAP_BIT_VCHRG0);
 */
    while (1) {  //TODO: Need split this big function
 
@@ -701,29 +701,29 @@ CPCAP_MACRO_7 0, 8 0, 9 1, 10 0, 11 0, 12 1
            cpcap_uc_start(sply->cpcap, CPCAP_MACRO_7);
            cpcap_uc_start(sply->cpcap, CPCAP_MACRO_9);
            cpcap_uc_start(sply->cpcap, CPCAP_MACRO_12);
-	   cpcap_regacc_write(sply->cpcap, CPCAP_REG_CRM, 0x351, 0x351);
-	   cpcap_regacc_write(sply->cpcap, CPCAP_REG_CCM, 0x3EE, 0x3EE);
-           cpcap_regacc_write(sply->cpcap, CPCAP_REG_CRM, CPCAP_BIT_CHRG_LED_EN, CPCAP_BIT_CHRG_LED_EN); //Enable charge led
+	   cpcap_regacc_write2(sply->cpcap, CPCAP_REG_CRM, 0x351, 0x351);
+	   cpcap_regacc_write2(sply->cpcap, CPCAP_REG_CCM, 0x3EE, 0x3EE);
+           cpcap_regacc_write2(sply->cpcap, CPCAP_REG_CRM, CPCAP_BIT_CHRG_LED_EN, CPCAP_BIT_CHRG_LED_EN); //Enable charge led
 
-           cpcap_regacc_read(sply->cpcap, CPCAP_REG_CCC1, &value);
+           cpcap_regacc_read2(sply->cpcap, CPCAP_REG_CCC1, &value);
 	   printk("CPCAP_REG_CCC1 %d \n",value);
-           cpcap_regacc_read(sply->cpcap, CPCAP_REG_CRM, &value);
+           cpcap_regacc_read2(sply->cpcap, CPCAP_REG_CRM, &value);
 	   printk("CPCAP_REG_CRM %d \n",value);
-           cpcap_regacc_read(sply->cpcap, CPCAP_REG_CCCC2, &value);
+           cpcap_regacc_read2(sply->cpcap, CPCAP_REG_CCCC2, &value);
 	   printk("CPCAP_REG_CCCC2 %d \n",value);
-           cpcap_regacc_read(sply->cpcap, CPCAP_REG_CCM, &value);
+           cpcap_regacc_read2(sply->cpcap, CPCAP_REG_CCM, &value);
 	   printk("CPCAP_REG_CCM %d \n",value);
-           cpcap_regacc_read(sply->cpcap, CPCAP_REG_CCA1, &value);
+           cpcap_regacc_read2(sply->cpcap, CPCAP_REG_CCA1, &value);
 	   printk("CPCAP_REG_CCA1 %d \n",value);
-           cpcap_regacc_read(sply->cpcap, CPCAP_REG_CCA2, &value);
+           cpcap_regacc_read2(sply->cpcap, CPCAP_REG_CCA2, &value);
 	   printk("CPCAP_REG_CCA2 %d \n",value);
-           cpcap_regacc_read(sply->cpcap, CPCAP_REG_CCO, &value);
+           cpcap_regacc_read2(sply->cpcap, CPCAP_REG_CCO, &value);
 	   printk("CPCAP_REG_CC0 %d \n",value);
-           cpcap_regacc_read(sply->cpcap, CPCAP_REG_CCI, &value);
+           cpcap_regacc_read2(sply->cpcap, CPCAP_REG_CCI, &value);
 	   printk("CPCAP_REG_CCI %d \n",value);
-           cpcap_regacc_read(sply->cpcap, CPCAP_REG_USBC1, &value);
+           cpcap_regacc_read2(sply->cpcap, CPCAP_REG_USBC1, &value);
 	   printk("CPCAP_REG_USBC1 %d \n",value);
-           cpcap_regacc_read(sply->cpcap, CPCAP_REG_USBC2, &value);
+           cpcap_regacc_read2(sply->cpcap, CPCAP_REG_USBC2, &value);
 	   printk("CPCAP_REG_USBC2 %d \n",value);
 
 
