@@ -30,12 +30,7 @@ echo " "
 # We build the kernel and its modules first
 # Launch execute script in background
 # First get tags in shell
-echo "Cleaning out Android source directory..."
-echo " "
-cd /home/dtrail/android/4.4
 export USE_CCACHE=1
-make mrproper
-make ARCH=arm distclean
 source build/envsetup.sh
 export PATH=${PATH/\/path\/to\/jdk\/dir:/}
 lunch cm_spyder-userdebug
