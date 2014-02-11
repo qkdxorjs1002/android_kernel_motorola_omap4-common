@@ -19,7 +19,7 @@ cd /home/dtrail/android/4.4
 while true; do
     read -p "Do you wto clean build dirs? " yn
     case $yn in
-        [Yy]* ) echo "Cleaning out kernel source directory..."; make mrproper; make ARCH=arm distclean; break;;
+        [Yy]* ) echo "Cleaning out kernel source directory..."; make mrproper; make ARCH=arm distclean; cd ~/android/android_kernel_motorola_omap4-common; make mrproper; break;;
         [Nn]* ) break;;
         * ) echo "Please answer yes or no.";;
     esac
@@ -30,6 +30,7 @@ echo " "
 # We build the kernel and its modules first
 # Launch execute script in background
 # First get tags in shell
+cd /home/dtrail/android/4.4
 export USE_CCACHE=1
 source build/envsetup.sh
 export PATH=${PATH/\/path\/to\/jdk\/dir:/}
@@ -42,7 +43,7 @@ echo " "
 # export PATH=/home/dtrail/android/4.4/prebuilt/linux-x86/toolchain/arm-unknown-linux-gnueabi-standard_4.7.2/bin:$PATH
 export ARCH=arm
 export SUBARCH=arm
-export CROSS_COMPILE=arm-unknown-linux-gnueabi-
+export CROSS_COMPILE=arm-eabi-
 
 # export TARGET_KERNEL_CUSTOM_TOOLCHAIN=arm-unknown-linux-gnueabi-standard_4.7.2
 export LOCALVERSION="-JBX-3.0-Hybrid-4.4"
