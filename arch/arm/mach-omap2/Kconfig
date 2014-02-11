@@ -391,6 +391,14 @@ config MACH_MAPPHONE_SOLANA
 	bool "Droid 3 Support (XT862/XT860/XT883)"
 	depends on MACH_MAPPHONE
 
+config MAPPHONE_TARGA
+	bool "Bionic Support"
+	depends on MACH_MAPPHONE
+
+config MAPPHONE_EDISON
+	bool "Atrix 2 Support"
+	depends on MACH_MAPPHONE
+
 config EMU_UART_DEBUG
 	bool "Setting MiniUSB port as UART3 to debug kernel"
 	default n
