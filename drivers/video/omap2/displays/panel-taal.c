@@ -224,11 +224,14 @@ struct taal_data {
 
 	bool use_dsi_bl;
 	bool cabc_broken;
+#if !defined(CONFIG_MAPPHONE_TARGA) || !defined(CONFIG_MAPPHONE_EDISON)
 	bool intro_printed;
 	bool framedone_timeout;
-
+#endif
 	unsigned cabc_mode;
-
+#if defined(CONFIG_MAPPHONE_TARGA) || defined(CONFIG_MAPPHONE_EDISON)
+	bool intro_printed;
+#endif
 	struct workqueue_struct *workqueue;
 
 	struct delayed_work esd_work;
@@ -1413,8 +1416,11 @@ err:
 static void taal_framedone_cb(int err, void *data)
 {
 	struct omap_dss_device *dssdev = data;
+#if !defined(CONFIG_MAPPHONE_TARGA) || !defined(CONFIG_MAPPHONE_EDISON)
 	struct taal_data *td = dev_get_drvdata(&dssdev->dev);
+#endif
 	dev_dbg(&dssdev->dev, "framedone, err %d\n", err);
+#if !defined(CONFIG_MAPPHONE_TARGA) || !defined(CONFIG_MAPPHONE_EDISON)
 	/*
 	 * assert framadone timeout flag before
 	 * unlocking the bus
@@ -1432,8 +1438,11 @@ static void taal_framedone_cb(int err, void *data)
 		if (dsi_bus_was_unlocked(dssdev))
 			return;
 	}
+#endif
 	dsi_bus_unlock(dssdev);
+#if !defined(CONFIG_MAPPHONE_TARGA) || !defined(CONFIG_MAPPHONE_EDISON)
 	return;
+#endif
 }
 
 static irqreturn_t taal_te_isr(int irq, void *data)

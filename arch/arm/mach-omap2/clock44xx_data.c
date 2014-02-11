@@ -1647,7 +1647,11 @@ static struct clk dmic_fck = {
 
 static struct clk dsp_fck = {
 	.name		= "dsp_fck",
+#if !defined(CONFIG_MAPPHONE_TARGA) || !defined(CONFIG_MAPPHONE_EDISON)
 	.ops		= &clkops_omap2_dflt,
+#else
+	.ops		= &clkops_omap4_dflt_wait,
+#endif
 	.enable_reg	= OMAP4430_CM_TESLA_TESLA_CLKCTRL,
 	.enable_bit	= OMAP4430_MODULEMODE_HWCTRL,
 	.clkdm_name	= "tesla_clkdm",
@@ -2031,7 +2035,11 @@ static struct clk i2c4_fck = {
 
 static struct clk ipu_fck = {
 	.name		= "ipu_fck",
+#if !defined(CONFIG_MAPPHONE_TARGA) || !defined(CONFIG_MAPPHONE_EDISON)
 	.ops		= &clkops_omap2_dflt,
+#else
+	.ops		= &clkops_omap4_dflt_wait,
+#endif
 	.enable_reg	= OMAP4430_CM_DUCATI_DUCATI_CLKCTRL,
 	.enable_bit	= OMAP4430_MODULEMODE_HWCTRL,
 	.clkdm_name	= "ducati_clkdm",
@@ -2086,7 +2094,11 @@ static struct clk iss_fck_4470 = {
 
 static struct clk iva_fck = {
 	.name		= "iva_fck",
+#if !defined(CONFIG_MAPPHONE_TARGA) || !defined(CONFIG_MAPPHONE_EDISON)
 	.ops		= &clkops_omap2_dflt,
+#else
+	.ops		= &clkops_omap4_dflt_wait,
+#endif
 	.enable_reg	= OMAP4430_CM_IVAHD_IVAHD_CLKCTRL,
 	.enable_bit	= OMAP4430_MODULEMODE_HWCTRL,
 	.clkdm_name	= "ivahd_clkdm",
@@ -3658,11 +3670,19 @@ static struct omap_clk omap44xx_clks[] = {
 	CLK("omap_i2c.2",	"fck",				&i2c2_fck,	CK_44XX),
 	CLK("omap_i2c.3",	"fck",				&i2c3_fck,	CK_44XX),
 	CLK("omap_i2c.4",	"fck",				&i2c4_fck,	CK_44XX),
+#if !defined(CONFIG_MAPPHONE_TARGA) || !defined(CONFIG_MAPPHONE_EDISON)
 	CLK(NULL,	"ipu_fck",			&ipu_fck,	CK_443X|CK_446X),
 	CLK(NULL,	"ipu_fck",			&ipu_fck_4470,	CK_447X),
+#else
+	CLK(NULL,	"ipu_fck",			&ipu_fck,	CK_44XX),
+#endif
 	CLK(NULL,	"iss_ctrlclk",			&iss_ctrlclk,	CK_44XX),
+#if !defined(CONFIG_MAPPHONE_TARGA) || !defined(CONFIG_MAPPHONE_EDISON)
 	CLK(NULL,	"iss_fck",			&iss_fck,	CK_443X|CK_446X),
 	CLK(NULL,	"iss_fck",			&iss_fck_4470,	CK_447X),
+#else
+	CLK(NULL,	"iss_fck",			&iss_fck,	CK_44XX),
+#endif
 	CLK(NULL,	"iva_fck",			&iva_fck,	CK_44XX),
 	CLK(NULL,	"kbd_fck",			&kbd_fck,	CK_44XX),
 	CLK(NULL,	"l3_instr_ick",			&l3_instr_ick,	CK_44XX),
