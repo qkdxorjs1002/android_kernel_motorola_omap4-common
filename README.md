@@ -19,57 +19,57 @@ The latest Kernel is patched up to stable 3.0.31 release!
 Some features of JBX-Kernel:
 
 
-[*] Suspend Governor Control - (CURRENTLY DISABLED)
-[*] Battery Friend toggle (a battery friendly mode)
-[*] DPLL CASCADING
-[*] Dynamic Hotplug: Second core will be turned off ONLY while screen is off - independent from selected governor.
-[*] Optimized OPP Table for smooth CPU scaling
-[*] Frequencies: 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1350
-[*] Modifed Smartreflex driver (Custom Sensor for detecting n-Value).
-[*] Smartreflex Tuning Interface: Set min calibrated voltage
-[*] Smartreflex Tuning Interface: Set max calibrated voltage
-[*] Overriden trim quirks (experimental port from OMAP4460, no DCC) to override factoy defaults and reach stable overclocking up to ~1,5ghz (depends on device, each silicon is different!)
-[*] Overclocking using Live OC (mine runs stable at a maximum frequency of 1,498ghz!)
-[*] hwmod, uart - cleanups from pre-kexec config to safe power
-[*] hwmod, uart, IRQ - Configuration for power saving
-[*] CPU: lower voltages for CORE and IVA. Give CORE the abbility to scale up to higher voltage if needed
-[*] Added IVA_NITROSB
-[*] fsync Control: Less IO Speed but safes you from loosing data if phone crashes
-[*] Dynamic fsync control: FSYNC interval is dynamic depending on screen state (SCREEN OFF: synchronous, SCREEN ON: asynchronous)
-[*] Dynamic page-writeback: Page writeback interval is dynamic depending on screen state.
-[*] Frandom v2
-[*] JRCU / Tiny RCU (currently JRCU in use)
-[*] Raised voltage limits for mpu a bit
-[*] Raised the temperature limits from 64c* to 74c* (degrees)
-[*] optimized CRC32 algorithm (better code generation)
-[*] Optimized LZO compression
-[*] RW Readahead dynamically depending on storage device (automatic detection of the best value)
-[*] zRAM support
-[*] GPU has 4 scaling steps and OC to 384mhz (Base freq: 102 mhz --> 154 mhz, 307 mhz, 384 mhz)
-[*] GPU: Added C4 states for Power Down mode
-[*] GPU Governor switch [on3demand, activeidle, onoff, userspace)
-[*] Multicore Power Saving Mode Control
-[*] ARCH Dependant Power feature
-[*] Temp Control (Modify temperature limit for CPU/MPU) - (CURRENTLY DISABLED)
-[*] Gamma Control
-[*] Front Buffer Delay Control (draw in x msecs on early suspend)
-[*] Screen/Display: Modified OMAPDSS for sharpness and lightning colors
-[*] OMAPDSS: Added variable clock rate and OPP - allows the screen to scale down power and voltage
-[*] lowmemkiller: Heavy modified for R/W Speed and efficient performance
-[*] ZCACHE, ZSMALLOC, XVMALLOC backported from 3.4, 3.7 and 3.10
-[*] Custom Voltage Support
-[*] IO-Schedulers: SIOPlus, Fifo, Row, VR, Noop, Deadline, CFQ
-[*] CPU: More Governors
-[*] Deep Idle
-[*] ARM Topology
-[*] Many improvements in overall OMAP PM
-[*] SELinux permissive
-[*] GREAT performance!
-[*] battery life!
-[*] Support for Ezekeel's "eXperience" App (Adds features: Music Control with Vol-Buttons, etc..)
-[*] Support for Trickster Mod Kernel Control App (Download from Gplay)
+- Suspend Governor Control - (CURRENTLY DISABLED)
+- Battery Friend toggle (a battery friendly mode)
+- DPLL CASCADING
+- Dynamic Hotplug: Second core will be turned off ONLY while screen is off - independent from selected governor.
+- Optimized OPP Table for smooth CPU scaling
+- Frequencies: 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1350
+- Modifed Smartreflex driver (Custom Sensor for detecting n-Value).
+- Smartreflex Tuning Interface: Set min calibrated voltage
+- Smartreflex Tuning Interface: Set max calibrated voltage
+- Overriden trim quirks (experimental port from OMAP4460, no DCC) to override factoy defaults and reach stable overclocking up to ~1,5ghz (depends on device, each silicon is different!)
+- Overclocking using Live OC (mine runs stable at a maximum frequency of 1,498ghz!)
+- hwmod, uart - cleanups from pre-kexec config to safe power
+- hwmod, uart, IRQ - Configuration for power saving
+- CPU: lower voltages for CORE and IVA. Give CORE the abbility to scale up to higher voltage if needed
+- Added IVA_NITROSB
+- fsync Control: Less IO Speed but safes you from loosing data if phone crashes
+- Dynamic fsync control: FSYNC interval is dynamic depending on screen state (SCREEN OFF: synchronous, SCREEN ON: asynchronous)
+- Dynamic page-writeback: Page writeback interval is dynamic depending on screen state.
+- Frandom v2
+- JRCU / Tiny RCU (currently JRCU in use)
+- Raised voltage limits for mpu a bit
+- Raised the temperature limits from 64c* to 74c* (degrees)
+- optimized CRC32 algorithm (better code generation)
+- Optimized LZO compression
+- RW Readahead dynamically depending on storage device (automatic detection of the best value)
+- zRAM support
+- GPU has 4 scaling steps and OC to 384mhz (Base freq: 102 mhz --> 154 mhz, 307 mhz, 384 mhz)
+- GPU: Added C4 states for Power Down mode
+- GPU Governor switch [on3demand, activeidle, onoff, userspace)
+- Multicore Power Saving Mode Control
+- ARCH Dependant Power feature
+- Temp Control (Modify temperature limit for CPU/MPU) - (CURRENTLY DISABLED)
+- Gamma Control
+- Front Buffer Delay Control (draw in x msecs on early suspend)
+- Screen/Display: Modified OMAPDSS for sharpness and lightning colors
+- OMAPDSS: Added variable clock rate and OPP - allows the screen to scale down power and voltage
+- lowmemkiller: Heavy modified for R/W Speed and efficient performance
+- ZCACHE, ZSMALLOC, XVMALLOC backported from 3.4, 3.7 and 3.10
+- Custom Voltage Support
+- IO-Schedulers: SIOPlus, Fifo, Row, VR, Noop, Deadline, CFQ
+- CPU: More Governors
+- Deep Idle
+- ARM Topology
+- Many improvements in overall OMAP PM
+- SELinux permissive
+- GREAT performance!
+- battery life!
+- Support for Ezekeel's "eXperience" App (Adds features: Music Control with Vol-Buttons, etc..)
+- Support for Trickster Mod Kernel Control App (Download from Gplay)
 
-[*]...more to come
+-...more to come
 
 
 WIP:
