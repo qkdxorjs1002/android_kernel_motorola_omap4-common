@@ -59,17 +59,11 @@ static struct pm_qos_request_list pm_qos_handle;
 #define EDID_TIMING_DESCRIPTOR_SIZE		0x12
 #define EDID_DESCRIPTOR_BLOCK0_ADDRESS		0x36
 #define EDID_DESCRIPTOR_BLOCK1_ADDRESS		0x80
-#if defined(CONFIG_MAPPHONE_TARGA) || defined(CONFIG_MAPPHONE_EDISON)
-#define EDID_HDMI_VENDOR_SPECIFIC_DATA_BLOCK	128
-#endif
 #define EDID_SIZE_BLOCK0_TIMING_DESCRIPTOR	4
 #define EDID_SIZE_BLOCK1_TIMING_DESCRIPTOR	4
 
 #define OMAP_HDMI_TIMINGS_NB			34
-#if defined(CONFIG_MAPPHONE_TARGA) || defined(CONFIG_MAPPHONE_EDISON)
-#define HDMI_DEFAULT_REGN 15
-#define HDMI_DEFAULT_REGM2 1
-#endif
+
 static struct {
 	struct mutex lock;
 	struct omap_display_platform_data *pdata;
@@ -98,17 +92,10 @@ static struct {
 
 	u8 s3d_mode;
 	bool s3d_enable;
-#if defined(CONFIG_MAPPHONE_TARGA) || defined(CONFIG_MAPPHONE_EDISON)
-	int source_physical_address;
-#endif
+
 	void (*hdmi_start_frame_cb)(void);
 	void (*hdmi_irq_cb)(int);
 	bool (*hdmi_power_on_cb)(void);
-#if defined(CONFIG_MAPPHONE_TARGA) || defined(CONFIG_MAPPHONE_EDISON)
-	void (*hdmi_cec_enable_cb)(int status);
-	void (*hdmi_cec_irq_cb)(void);
-	void (*hdmi_cec_hpd)(int phy_addr, int status);
-#endif
 } hdmi;
 
 static const u8 edid_header[8] = {0x0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x0};
@@ -275,40 +262,6 @@ void hdmi_get_monspecs(struct fb_monspecs *specs)
 		specs->modedb[j++] = specs->modedb[i];
 	}
 	specs->modedb_len = j;
-#if defined(CONFIG_MAPPHONE_TARGA) || defined(CONFIG_MAPPHONE_EDISON)
-	/* Find out the Source Physical address for the CEC
-	CEC physical address will be part of VSD block from
-	TV Physical address is 2 bytes after 24 bit IEEE
-	registration identifier (0x000C03)
-	*/
-	i = EDID_HDMI_VENDOR_SPECIFIC_DATA_BLOCK;
-	while (i < (HDMI_EDID_MAX_LENGTH - 5)) {
-		if ((edid[i] == 0x03) && (edid[i+1] == 0x0c) &&
-			(edid[i+2] == 0x00)) {
-			hdmi.source_physical_address = (edid[i+3] << 8) |
-				edid[i+4];
-			break;
-		}
-		i++;
-
-	}
-}
-
-void hdmi_inform_hpd_to_cec(int status)
-{
-	if (!status)
-		hdmi.source_physical_address = 0;
-
-	if (hdmi.hdmi_cec_hpd)
-		(*hdmi.hdmi_cec_hpd)(hdmi.source_physical_address,
-			status);
-}
-
-void hdmi_inform_power_on_to_cec(int status)
-{
-	if (hdmi.hdmi_cec_enable_cb)
-		(*hdmi.hdmi_cec_enable_cb)(status);
-#endif
 }
 
 u8 *hdmi_read_edid(struct omap_video_timings *dp)
@@ -356,11 +309,6 @@ static void hdmi_compute_pll(struct omap_dss_device *dssdev, int phy,
 	 * Input clock is predivided by N + 1
 	 * out put of which is reference clk
 	 */
-#if defined(CONFIG_MAPPHONE_TARGA) || defined(CONFIG_MAPPHONE_EDISON)
-	if (dssdev->clocks.hdmi.regn == 0)
-		pi->regn = HDMI_DEFAULT_REGN;
-	else
-#endif
 	pi->regn = dssdev->clocks.hdmi.regn;
 	refclk = clkin / (pi->regn + 1);
 
@@ -369,11 +317,6 @@ static void hdmi_compute_pll(struct omap_dss_device *dssdev, int phy,
 	 * Multiplying by 100 to avoid fractional part removal
 	 */
 	pi->regm = (phy * 100 / (refclk)) / 100;
-#if defined(CONFIG_MAPPHONE_TARGA) || defined(CONFIG_MAPPHONE_EDISON)
-	if (dssdev->clocks.hdmi.regm2 == 0)
-		pi->regm2 = HDMI_DEFAULT_REGM2;
-	else
-#endif
 	pi->regm2 = dssdev->clocks.hdmi.regm2;
 
 	/*
@@ -559,24 +502,13 @@ err:
 
 static void hdmi_power_off(struct omap_dss_device *dssdev)
 {
-#if defined(CONFIG_MAPPHONE_TARGA) || defined(CONFIG_MAPPHONE_EDISON)
-	enum hdmi_pwrchg_reasons reason = HDMI_PWRCHG_DEFAULT;
-#endif
 	if (hdmi.hdmi_irq_cb)
 		hdmi.hdmi_irq_cb(HDMI_HPD_LOW);
 
 	hdmi_ti_4xxx_wp_video_start(&hdmi.hdmi_data, 0);
 
 	dispc_enable_channel(OMAP_DSS_CHANNEL_DIGIT, dssdev->type, 0);
-#if defined(CONFIG_MAPPHONE_TARGA) || defined(CONFIG_MAPPHONE_EDISON)
-	if (hdmi.set_mode)
-		reason = reason | HDMI_PWRCHG_MODE_CHANGE;
-	if (dssdev->sync_lost_error)
-		reason = reason | HDMI_PWRCHG_RESYNC;
-	hdmi_ti_4xxx_phy_off(&hdmi.hdmi_data, reason);
-#else
 	hdmi_ti_4xxx_phy_off(&hdmi.hdmi_data, hdmi.set_mode);
-##endif
 	hdmi_ti_4xxx_set_pll_pwr(&hdmi.hdmi_data, HDMI_PLLPWRCMD_ALLOFF);
 	hdmi_set_l3_cstr(dssdev, false);
 	hdmi_runtime_put();
@@ -605,27 +537,6 @@ int omapdss_hdmi_register_hdcp_callbacks(void (*hdmi_start_frame_cb)(void),
 }
 EXPORT_SYMBOL(omapdss_hdmi_register_hdcp_callbacks);
 
-#if defined(CONFIG_MAPPHONE_TARGA) || defined(CONFIG_MAPPHONE_EDISON)
-int omapdss_hdmi_register_cec_callbacks(void (*hdmi_cec_enable_cb)(int status),
-					void (*hdmi_cec_irq_cb)(void),
-					void (*hdmi_cec_hpd)(int phy_addr,
-						int status))
-{
-	hdmi.hdmi_cec_enable_cb = hdmi_cec_enable_cb;
-	hdmi.hdmi_cec_irq_cb = hdmi_cec_irq_cb;
-	hdmi.hdmi_cec_hpd = hdmi_cec_hpd;
-	return 0;
-}
-EXPORT_SYMBOL(omapdss_hdmi_register_cec_callbacks);
-
-int omapdss_hdmi_unregister_cec_callbacks(void)
-{
-	hdmi.hdmi_cec_enable_cb = NULL;
-	hdmi.hdmi_cec_irq_cb = NULL;
-	hdmi.hdmi_cec_hpd = NULL;
-	return 0;
-}
-#endif
 void omapdss_hdmi_set_deepcolor(int val)
 {
 	hdmi.deep_color = val;
@@ -687,10 +598,7 @@ static irqreturn_t hdmi_irq_handler(int irq, void *arg)
 	r = hdmi_ti_4xxx_irq_handler(&hdmi.hdmi_data);
 
 	DSSDBG("Received HDMI IRQ = %08x\n", r);
-#if defined(CONFIG_MAPPHONE_TARGA) || defined(CONFIG_MAPPHONE_EDISON)
-	if (hdmi.hdmi_cec_irq_cb && (r & HDMI_CEC_INT))
-		hdmi.hdmi_cec_irq_cb();
-#endif
+
 	if (hdmi.hdmi_irq_cb)
 		hdmi.hdmi_irq_cb(r);
 
