@@ -7,73 +7,69 @@ This Kernel is based on the Motorola 3.0.8 Kernel for Kexec which was initiated 
 See this link for the original source: https://github.com/STS-Dev-Team/kernel_mapphone_kexec
 See credits below
 
+The latest Kernel is patched up to stable 3.0.31 release!
+
 
 
 
 [JBX-Kernel-Hybrid]
 -------------------
-
+3.0.8 / 3.0.31
 
 Some features of JBX-Kernel:
 
 
-[*]Optimized OPP Table for smooth CPU scaling
-[*]Frequencies: 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1350
-[*]Modifed Smartreflex driver (Custom Sensor for detecting the N-Value. Allows better OC handling, etc)
-[*]SR Custom Sensor
-[*]Smartreflex Tuning Interface: Set min calibrated voltage
-[*]Smartreflex Tuning Interface: Set max calibrated voltage
-[*]Overriden trim quirks (experimental port from OMAP4460, no DCC) to override factoy defaults and reach stable overclocking up to ~1,5ghz (depends on device, each silicon is different!)
-[*]Overclocking using Live OC (mine runs stable at a maximum frequency of 1,498ghz!)
-[*]Dvfs, Emif: Reconfigured
-[*]Raised voltage limits for mpu a bit
-[*]Raised the temperature limits from 64c* to 74c* (degrees)
-[*]Net: Increased IPsec/TCP Up/Down Speed
-[*]Using optimized CRC32 algorithm (better code generation)
-[*]mm: dirty writeback interval only active during screen off state and interval reduced to 1500csec to safe power
-[*]block: strict rq_affinity
-[*]Optimized LZO compression
-[*]fs: asynchronus I/O latency to solid-state disk 
-[*]Net: Wireless: Wifi included - not a module
-[*]Net: Wireless: Removed a return rule to get rid of the rx_wake/wl_wake wakelocks
-[*]CPU: policy->min set to 100mhz without an "if-rule" to avoid user to be stuck at 100mhz min. Sideeffect is that you have to set the frequency lock in trickster to force the CPU to stay on your preferred min frequency, otherwise it will always jump back to 300mhz.
-[*]Wifi: Power Saving Mode by kernel dafault
-[*]RW Readahead 128
-[*]Watchdogs disabled
-[*]ARM: Allow arm_memblock_steal() to remove memory from any RAM region
-[*]Touchscreen: Added scalable frequencies, variable clock rates and power down state for display to save power
-[*]Devices: Deeper idle states
-[*]Increased ducati heap size
-[*]zRAM support
-[*]GPU has 3 scaling steps and OC to 416mhz
-[*]GPU: Added C4 states for Power Down mode
-[*]GPU_OC: max 416 mhz
-[*]Multicore Power Saving Mode Control
-[*]ARCH Dependant Power feature
-[*]Temp Control (Modify temperature limit for CPU/MPU)
-[*]Gamma Control
-[*]Screen/Display: Modified OMAPDSS for sharpness and lightning colors
-[*]OMAPDSS: Aded clocks and 2 OPPs - allows the screen to scale down power and voltage
-[*]Fsync Control: LEss IO Speed but safes you from loosing data if phone crashes
-[*]Filesystem, Android Staging, lowmemkiller: Heavy modified for R/W Speed and efficient performance
-[*]Kernel code generation improved by LZO and compression enhanced
-[*]Custom Voltage Support (BSE undervolted by default)
-[*]Live Overclock Support (Overclocking on running device)
-[*]IO: SIOPlus, Fifo, Row, VR, Noop, Deadline, CFQ
-[*]CPU: More Governors
-[*]Deep Idle
-[*]ARM Topology
-[*]Many improvement in overall OMAP PM
-[*]GREAT performance!
-[*]GREAT battery life!
-[*]Support for Ezekeel's "eXperience" App (Adds features: Music Control with Vol-Buttons, etc..)
-[*]Support for Trickster Mod Kernel Control App (Download from Gplay)
+[*] Suspend Governor Control - (CURRENTLY DISABLED)
+[*] Battery Friend toggle (a battery friendly mode)
+[*] DPLL CASCADING
+[*] Dynamic Hotplug: Second core will be turned off ONLY while screen is off - independent from selected governor.
+[*] Optimized OPP Table for smooth CPU scaling
+[*] Frequencies: 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1350
+[*] Modifed Smartreflex driver (Custom Sensor for detecting n-Value).
+[*] Smartreflex Tuning Interface: Set min calibrated voltage
+[*] Smartreflex Tuning Interface: Set max calibrated voltage
+[*] Overriden trim quirks (experimental port from OMAP4460, no DCC) to override factoy defaults and reach stable overclocking up to ~1,5ghz (depends on device, each silicon is different!)
+[*] Overclocking using Live OC (mine runs stable at a maximum frequency of 1,498ghz!)
+[*] hwmod, uart - cleanups from pre-kexec config to safe power
+[*] hwmod, uart, IRQ - Configuration for power saving
+[*] CPU: lower voltages for CORE and IVA. Give CORE the abbility to scale up to higher voltage if needed
+[*] Added IVA_NITROSB
+[*] fsync Control: Less IO Speed but safes you from loosing data if phone crashes
+[*] Dynamic fsync control: FSYNC interval is dynamic depending on screen state (SCREEN OFF: synchronous, SCREEN ON: asynchronous)
+[*] Dynamic page-writeback: Page writeback interval is dynamic depending on screen state.
+[*] Frandom v2
+[*] JRCU / Tiny RCU (currently JRCU in use)
+[*] Raised voltage limits for mpu a bit
+[*] Raised the temperature limits from 64c* to 74c* (degrees)
+[*] optimized CRC32 algorithm (better code generation)
+[*] Optimized LZO compression
+[*] RW Readahead dynamically depending on storage device (automatic detection of the best value)
+[*] zRAM support
+[*] GPU has 4 scaling steps and OC to 384mhz (Base freq: 102 mhz --> 154 mhz, 307 mhz, 384 mhz)
+[*] GPU: Added C4 states for Power Down mode
+[*] GPU Governor switch [on3demand, activeidle, onoff, userspace)
+[*] Multicore Power Saving Mode Control
+[*] ARCH Dependant Power feature
+[*] Temp Control (Modify temperature limit for CPU/MPU) - (CURRENTLY DISABLED)
+[*] Gamma Control
+[*] Front Buffer Delay Control (draw in x msecs on early suspend)
+[*] Screen/Display: Modified OMAPDSS for sharpness and lightning colors
+[*] OMAPDSS: Added variable clock rate and OPP - allows the screen to scale down power and voltage
+[*] lowmemkiller: Heavy modified for R/W Speed and efficient performance
+[*] ZCACHE, ZSMALLOC, XVMALLOC backported from 3.4, 3.7 and 3.10
+[*] Custom Voltage Support
+[*] IO-Schedulers: SIOPlus, Fifo, Row, VR, Noop, Deadline, CFQ
+[*] CPU: More Governors
+[*] Deep Idle
+[*] ARM Topology
+[*] Many improvements in overall OMAP PM
+[*] SELinux permissive
+[*] GREAT performance!
+[*] battery life!
+[*] Support for Ezekeel's "eXperience" App (Adds features: Music Control with Vol-Buttons, etc..)
+[*] Support for Trickster Mod Kernel Control App (Download from Gplay)
 
--    Overclocking Kernel Modules based on Milestone Overclock (Ported by Whirleyes) [NOT INCLUDED IN BUILD BECAUSE WE HAVE LIVE OC]
-	---> /drivers/extra/ [include this folder in Makefile to build. Needs precompiled kernel!!)
-
-
-...more to come
+[*]...more to come
 
 
 WIP:
@@ -81,6 +77,37 @@ WIP:
 - Fix Touch Wake
 - Fix BLX
 - Fix battery (also in Roms, battd)
+
+
+
+[HOW CAN I BUILD JBX-KERNEL?]
+-----------------------------
+
+This tutorial explains how to build JBX-Kernel 3.0 Series (3.0.31)! You will need Linux!
+
+1. Create work dir with FULL CM11 sources on your local hard drive
+2. git clone this repo
+3. Be sure you're in JBX_30X branch
+4. Edit build scripts for your local paths (i.e. for Droid RAZR use 'build_quad.sh', for ATRIX 2 use 'build_edison_quad.sh', etc..)
+5. Keep in mind that the build scripts assume you to have my 'built_rls' repo cloned on your local harddrive! 
+   If you don't want to use it, exclude the section and install the kernel manually! Otherwise see 'OPTIONAL'!
+
+5. Run the build script!
+
+
+[OPTIONAL]
+----------
+If you want to use my AROMA Installer Setup continue here:
+
+1. clone my repo 'built_rls'
+2. Edit the paths in build scripts accordingly to where you stored 'built_rls' repo.
+
+3. Now, finally, run the build script!
+
+You will find a ready package of JBX-Kernel in your 'out' dir (or wherever you defined it to be saved).
+Just flash this zip file and enjoy!
+
+
 
 
 
