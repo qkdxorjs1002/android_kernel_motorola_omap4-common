@@ -2056,6 +2056,7 @@ static struct dm_table *__bind(struct mapped_device *md, struct dm_table *t,
 	sector_t size;
 	unsigned long flags;
 	int merge_is_optional;
+	merge_is_optional = dm_table_merge_is_optional(t);
 
 	size = dm_table_get_size(t);
 
