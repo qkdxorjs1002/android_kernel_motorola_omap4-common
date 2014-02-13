@@ -55,7 +55,7 @@ echo " "
 while true; do
     read -p "Do you wish to include 10% battery meter? " yn
     case $yn in
-        [Yy]* ) echo "Moving Ramdisk into built path..."; echo " "; cp /home/dtrail/android/4.4/out/target/product/spyder/ramdisk.img /home/dtrail/android/built/4.4/3.0/edison/rls/jbx/Applications/; break;;
+        [Yy]* ) echo "Moving Ramdisk into built path..."; echo " "; cp /home/dtrail/android/4.4/out/target/product/spyder/ramdisk.img /home/dtrail/android/built/4.4/3.0/edison/rls/jbx/Applications/ramdisk/; break;;
         [Nn]* ) break;;
         * ) echo "Please answer yes or no.";;
     esac
