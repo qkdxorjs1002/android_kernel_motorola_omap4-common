@@ -2,7 +2,7 @@
 set -m
 
 # Sync ?
-cd /home/dtrail/android/4.4
+cd /data/4.4
 while true; do
     read -p "Do you wish to sync repo? " yn
     case $yn in
@@ -15,7 +15,7 @@ done
 echo " "
 
 # Exporting changelog to file
-cd /home/dtrail/android/4.4
+cd /data/4.4
 while true; do
     read -p "Do you wto clean build dirs? " yn
     case $yn in
@@ -30,32 +30,30 @@ echo " "
 # We build the kernel and its modules first
 # Launch execute script in background
 # First get tags in shell
-cd /home/dtrail/android/4.4
+cd /data/4.4
 export USE_CCACHE=1
 source build/envsetup.sh
 export PATH=${PATH/\/path\/to\/jdk\/dir:/}
-lunch cm_spyder-userdebug
+lunch cm_targa-userdebug
 
 # built kernel & modules
 echo "Building kernel and modules..."
 echo " "
 
-# export PATH=/home/dtrail/android/4.4/prebuilt/linux-x86/toolchain/arm-unknown-linux-gnueabi-standard_4.7.2/bin:$PATH
+# export PATH=/data/4.4/prebuilt/linux-x86/toolchain/arm-unknown-linux-gnueabi-standard_4.7.2/bin:$PATH
 export ARCH=arm
 export SUBARCH=arm
 export CROSS_COMPILE=arm-eabi-
 
 # export TARGET_KERNEL_CUSTOM_TOOLCHAIN=arm-unknown-linux-gnueabi-standard_4.7.2
-export LOCALVERSION="-JBX-3.0-Hybrid-Edison-4.4"
-export BOARD_HAS_SDCARD_INTERNAL=false
-make -j8 TARGET_KERNEL_SOURCE=/home/dtrail/android/android_kernel_motorola_omap4-common/ TARGET_KERNEL_CONFIG=mapphone_OCEdison_defconfig $OUT/boot.img
-echo " "
+export LOCALVERSION="-JBX-3.0-Hybrid-Targa-4.4"
+make -j4 TARGET_KERNEL_SOURCE=/home/dtrail/android/android_kernel_motorola_omap4-common/ TARGET_KERNEL_CONFIG=mapphone_OCTarga_defconfig $OUT/boot.img
 
 # Build libhealthd.omap4
 while true; do
     read -p "Do you wish to include 10% battery meter? " yn
     case $yn in
-        [Yy]* ) echo "Moving Ramdisk into built path..."; echo " "; cp /home/dtrail/android/4.4/out/target/product/spyder/ramdisk.img /home/dtrail/android/built/4.4/3.0/edison/rls/jbx/Applications/ramdisk/; break;;
+        [Yy]* ) echo "Moving Ramdisk into built path..."; echo " "; cp /data/4.4/out/target/product/spyder/ramdisk.img /home/dtrail/android/built/4.4/3.0/targa/rls/jbx/Applications/ramdisk/; break;;
         [Nn]* ) break;;
         * ) echo "Please answer yes or no.";;
     esac
@@ -66,8 +64,8 @@ echo " "
 # We don't use the kernel but the modules
 echo "Copying modules to package folder"
 echo " "
-cp -r /home/dtrail/android/4.4/out/target/product/spyder/system/lib/modules/* /home/dtrail/android/built/4.4/3.0/edison/rls/system/lib/modules/
-cp /home/dtrail/android/4.4/out/target/product/spyder/kernel /home/dtrail/android/built/4.4/3.0/edison/rls/system/etc/kexec/
+cp -r /data/4.4/out/target/product/targa/system/lib/modules/* /home/dtrail/android/built/4.4/3.0/targa/rls/system/lib/modules/
+cp /data/4.4/out/target/product/targa/kernel /home/dtrail/android/built/4.4/3.0/targa/rls/system/etc/kexec/
 
 echo "------------- "
 echo "Done building"
@@ -80,9 +78,9 @@ echo " "
 echo "Packaging flashable Zip file..."
 echo " "
 
-cd /home/dtrail/android/built/4.4/3.0/edison/rls
-zip -r "JBX-Kernel-3.0-Hybrid-Edison-4.4_$(date +"%Y-%m-%d").zip" *
-mv "JBX-Kernel-3.0-Hybrid-Edison-4.4_$(date +"%Y-%m-%d").zip" /home/dtrail/android/out
+cd /home/dtrail/android/built/4.4/3.0/targa/rls
+zip -r "JBX-Kernel-3.0-Hybrid-Targa-4.4_$(date +"%Y-%m-%d").zip" *
+mv "JBX-Kernel-3.0-Hybrid-Targa-4.4_$(date +"%Y-%m-%d").zip" /home/dtrail/android/out
 
 # Exporting changelog to file
 cd /home/dtrail/android/android_kernel_motorola_omap4-common
