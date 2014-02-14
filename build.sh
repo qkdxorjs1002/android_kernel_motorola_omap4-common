@@ -2,7 +2,7 @@
 set -m
 
 # Sync ?
-cd /home/dtrail/android/4.4
+cd /data/4.4
 while true; do
     read -p "Do you wish to sync repo? " yn
     case $yn in
@@ -15,7 +15,7 @@ done
 echo " "
 
 # Exporting changelog to file
-cd /home/dtrail/android/4.4
+cd /data/4.4
 while true; do
     read -p "Do you wto clean build dirs? " yn
     case $yn in
@@ -30,7 +30,7 @@ echo " "
 # We build the kernel and its modules first
 # Launch execute script in background
 # First get tags in shell
-cd /home/dtrail/android/4.4
+cd /data/4.4
 export USE_CCACHE=1
 source build/envsetup.sh
 export PATH=${PATH/\/path\/to\/jdk\/dir:/}
