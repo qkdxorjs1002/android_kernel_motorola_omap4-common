@@ -843,7 +843,7 @@ static ssize_t store_screen_off_freq(struct cpufreq_policy *policy,
 #ifdef CONFIG_BATTERY_FRIEND
 	screen_off_max_freq = fr_sc_max = freq_table[index].frequency;
 #else
-	screen_off_max_freq = freq_table[index].frequency;
+	screen_off_max_freq = 800000;
 #endif
 
 #ifdef CONFIG_BATTERY_FRIEND
@@ -907,7 +907,7 @@ int index;
 	if (ret)
 		goto out;
 
-	screen_on_min_freq = freq_table[index].frequency;
+	screen_on_min_freq = 300000;
 /* Disabled: screen_on_min_freq is not necessary for suspend mode
 #ifdef CONFIG_BATTERY_FRIEND
 // Limit active mpu freq to selected userspace value
