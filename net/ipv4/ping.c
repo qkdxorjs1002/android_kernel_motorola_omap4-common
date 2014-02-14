@@ -692,7 +692,6 @@ static int ping_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 #endif
 	} else {
 		BUG();
->>>>>>> 3bbeb0b... ping: prevent NULL pointer dereference on write to msg_name
 	}
 	if (isk->cmsg_flags)
 		ip_cmsg_recv(msg, skb);
