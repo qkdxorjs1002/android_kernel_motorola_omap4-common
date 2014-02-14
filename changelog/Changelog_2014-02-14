@@ -1,0 +1,52 @@
+4c4953b omap: cpufreq: Set frequencies to avoid it being set to 100mhz which will cause lockups on some devices
+3f562d1 Revert "Revert "Revert "Backport all workarounds for usb resume on omap from 3.4"""
+b957f7e Revert "ipv4: ping: empty commit"
+d3a8326 Revert "ipv4: ping: Fix trash from merge"
+ee7b38e ipv4: ping: Fix trash from merge
+393f153 build script: fix mistake
+2a8ab25 build scripts: updates
+8bbccde fix false disconnect due to a signal sent to the reading process
+d3cecbc SELinux: Fix kernel BUG on empty security contexts.
+226746c SELinux: Fix possible NULL pointer dereference in selinux_inode_permission()
+41d3350 nf: xt_qtaguid: fix handling for cases where tunnels are used.
+a66ca87 ipv4: ping: empty commit
+04bf3fc Added todays changelog and updated full history
+fcb9540 Added todays changelog and updated full history
+9dbc7cd Revert "Revert "Backport all workarounds for usb resume on omap from 3.4""
+5b0fdd8 build script update
+b1dfaa6 build script update
+95edcde Revert "Backport all workarounds for usb resume on omap from 3.4"
+801c9b2 dss: Makefile: Fix
+e6f4c80 Several fixes from prior commits
+149f8da EDISON/TARGA: disable smartreflex
+a01460b Backport all workarounds for usb resume on omap from 3.4
+d58c7df PM: GPU: Disable GPU OC
+88f3caf PM: dpll44xx: Keep DCC disabled for < 1 Ghz
+65c9622 README.md: Add building tutorial
+24a6055 Added todays changelog and updated full history
+e0312ce Revert "moto lis3dh: use i2c block API"
+0dd3d12 omap4-common: prevent lis3dh overwriting arbitrary kernel memory
+0f4c73b GPIO: OMAP: Fix the sequence to clear the IRQ status
+a2e6fc7 usb: otg: OMAP4: Fix the omap4430_phy_set_clk function
+59bc9cf build scripts: fixes and additions
+84ecc83 PM: dpll44xx: Fix typo
+b982af9 defconfig updates
+7fb6e52 PM: dpll44xx: Fix wrong definition of OC freq
+fed5bb1 Revert TEMPORARY:  "EXPERIMENTAL"
+d6a980b EXPERIMENTAL
+76624f4 mach-omap2: kconfig: Add TARGA and EDISON device options (needed for DSI-FIX)
+020d259 Re-Add CONFIG_PANEL_MAPPHONE_SKIP_FIRSTBOOT option
+b1375fc video: omap: panel/dss: targa/edison: temporary workaround for kexec rejects on TARGA and EDISON.
+f16a1d5 Added todays changelog and updated full history
+419eeb2 build script: Fix obsolete area
+97725d4 build script update
+c0546e5 Revert PORT for cpcap_battery: Needs rework as we're using a newer veryion of cpcap_battery driver
+e55d802 Revert "crivers: cpcap_battery: fix definition of funtions left over from module used with symsearch"
+d332838 Revert "drivers:cpcap_battery: Use seperate functions for added code"
+f2131fd drivers:cpcap_battery: Use seperate functions for added code
+5e24c3e omap4-common: Update Workaround for OMAP errata i640
+21386ee build script: add option to include modified ramdisk the modified ramdisk includes the odefault battery 10% calculation
+1f3a526 crivers: cpcap_battery: fix definition of funtions left over from module used with symsearch
+91910c9 PORT: Disable using battd in roms and calculate percentage by kernel battery driver
+c4eea50 CHROMIUM: zram: fix 32-bit overflow
+1058062 add extra free kbytes tunable
