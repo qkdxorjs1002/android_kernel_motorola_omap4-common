@@ -34,7 +34,7 @@ cd /data/4.4/
 export USE_CCACHE=1
 source build/envsetup.sh
 export PATH=${PATH/\/path\/to\/jdk\/dir:/}
-lunch cm_spyder-userdebug
+lunch cm_umts_spyder-userdebug
 
 # built kernel & modules
 echo "Building kernel and modules..."
