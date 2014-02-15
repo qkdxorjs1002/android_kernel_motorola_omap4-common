@@ -86,13 +86,22 @@ WIP:
 This tutorial explains how to build JBX-Kernel 3.0 Series (3.0.31)! You will need Linux!
 
 1. Create work dir with FULL CM11 sources on your local hard drive
-2. git clone this repo
-3. Be sure you're in JBX_30X branch
-4. Edit build scripts for your local paths (i.e. for Droid RAZR use 'build_quad.sh', for ATRIX 2 use 'build_edison_quad.sh', etc..)
-5. Keep in mind that the build scripts assume you to have my 'built_rls' repo cloned on your local harddrive! 
-   If you don't want to use it, exclude the section and install the kernel manually! Otherwise see 'OPTIONAL'!
+2. After syncing depencies, prebuilts, etc, head into your CM11 source, go to YOUR_CM_SOURCE_DIR/.repo/local_manifests/
+3. Edit the "roomservice.xml" and replace the following line:
 
-5. Run the build script!
+  <project name="Cyanogenmod/android_device_motorola_omap4-common" path="device/motorola/omap4-common" remote="github" />
+
+with:
+
+  <project name="RAZR-K-Devs/android_device_motorola_omap4-common" path="device/motorola/omap4-common" remote="github" />
+
+4. git clone this repo (JBX-Kernel) into a seperate folder
+5. Be sure you're in JBX_30X branch
+6. Edit build scripts for your local paths (i.e. for Droid RAZR use 'build_quad.sh', for ATRIX 2 use 'build_edison_quad.sh', etc..)
+7. Keep in mind that the build scripts assume you to have my 'built_rls' repo cloned on your local harddrive! 
+   If you don't want to use it, exclude the section and install the kernel manually! Otherwise proceed NOW at 'OPTIONAL'!
+
+8. Run the build script!
 
 
 [OPTIONAL]
