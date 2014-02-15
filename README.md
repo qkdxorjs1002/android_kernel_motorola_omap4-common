@@ -89,11 +89,11 @@ This tutorial explains how to build JBX-Kernel 3.0 Series (3.0.31)! You will nee
 2. After syncing depencies, prebuilts, etc, head into your CM11 source, go to YOUR_CM_SOURCE_DIR/.repo/local_manifests/
 3. Edit the "roomservice.xml" and replace the following line:
 
-  <project name="Cyanogenmod/android_device_motorola_omap4-common" path="device/motorola/omap4-common" remote="github" />
+#  <project name="Cyanogenmod/android_device_motorola_omap4-common" path="device/motorola/omap4-common" remote="github" />
 
 with:
 
-  <project name="RAZR-K-Devs/android_device_motorola_omap4-common" path="device/motorola/omap4-common" remote="github" />
+#  <project name="RAZR-K-Devs/android_device_motorola_omap4-common" path="device/motorola/omap4-common" remote="github" />
 
 4. git clone this repo (JBX-Kernel) into a seperate folder
 5. Be sure you're in JBX_30X branch
