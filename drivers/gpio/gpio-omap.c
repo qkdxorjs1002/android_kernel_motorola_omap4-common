@@ -787,14 +787,16 @@ static void gpio_unmask_irq(struct irq_data *d)
 	if (trigger)
 		_set_gpio_triggering(bank, GPIO_INDEX(bank, gpio), trigger);
 
-	/* For level-triggered GPIOs, the clearing must be done after
-	 * the HW source is cleared, thus after the handler has run */
-	if (bank->level_mask & irq_mask) {
-		_set_gpio_irqenable(bank, gpio, 0);
-		_clear_gpio_irqstatus(bank, gpio);
-	}
-
 	_set_gpio_irqenable(bank, gpio, 1);
+	/*
+	 * For level-triggered GPIOs, the clearing must be done after
+	 * the HW source is cleared, thus after the handler has run.
+	 * Also, make sure to clear the status _after_ enabling the irq
+	 * so that pending event will be cleared.
+	 */
+	if (bank->level_mask & irq_mask)
+		_clear_gpio_irqstatus(bank, gpio);
+
 	spin_unlock_irqrestore(&bank->lock, flags);
 }
 
@@ -1325,7 +1327,7 @@ static int omap_gpio_resume(struct device *dev)
 static void omap_gpio_save_context(struct gpio_bank *bank);
 static void omap_gpio_restore_context(struct gpio_bank *bank);
 
-static void omap2_gpio_set_wakeupenables(struct gpio_bank *bank)
+static void omap2_gpio_set_wakeupenables(struct gpio_bank *bank, bool suspend)
 {
 	unsigned long pad_wakeup;
 	int i;
@@ -1337,8 +1339,10 @@ static void omap2_gpio_set_wakeupenables(struct gpio_bank *bank)
 				"failed\n", __func__, bank->id);
 		return;
 	}
-
-	pad_wakeup = __raw_readl(bank->base + bank->regs->irqenable);
+	if (suspend)
+		pad_wakeup = bank->suspend_wakeup;
+	else
+		pad_wakeup = __raw_readl(bank->base + bank->regs->irqenable);
 
 	/*
 	 * HACK: Ignore gpios that have multiple sources.
@@ -1619,7 +1623,7 @@ int omap2_gpio_prepare_for_idle(int off_mode, bool suspend)
 		if (!bank->mod_usage)
 			continue;
 
-		omap2_gpio_set_wakeupenables(bank);
+		omap2_gpio_set_wakeupenables(bank, suspend);
 
 		if (omap2_gpio_set_edge_wakeup(bank, suspend))
 			ret = -EBUSY;
