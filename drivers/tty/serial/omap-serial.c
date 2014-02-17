@@ -1766,8 +1766,8 @@ do_free:
 	kfree(up);
 do_release_region:
 	release_mem_region(mem->start, (mem->end - mem->start) + 1);
-	dev_err(&pdev->dev, "[UART%d]: failure [%s]: %d\n",
-				pdev->id, __func__, ret);
+	  dev_err(&pdev->dev, "[UART%d]: failure [%s]: %d\n",
+	        pdev->id, __func__, ret);
 	return ret;
 }
 
@@ -2139,3 +2139,4 @@ module_exit(serial_omap_exit);
 MODULE_DESCRIPTION("OMAP High Speed UART driver");
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Texas Instruments Inc");
+
