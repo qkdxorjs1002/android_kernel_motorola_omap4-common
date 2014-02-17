@@ -1,3 +1,6 @@
+077e7e8 Add device names to version line
+8a4cbb3 Revert "SPlit config for UMTS and CDMA devices"
+607e5d3 Added todays changelog and updated full history
 9480153 Backport all workarounds for usb resume on omap from 3.4
 49cbe7f SPlit config for UMTS and CDMA devices
 f2a15b4 Revert "Revert "[WIP] merge to 3.0.31""
