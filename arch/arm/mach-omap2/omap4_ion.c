@@ -120,8 +120,8 @@ void __init omap_ion_init(void)
 		omap4_smc_addr = omap4_ducati_heap_addr - omap4_smc_size;
 		omap4_ion_heap_secure_input_addr = omap4_smc_addr - omap4_ion_heap_secure_input_size;
 		omap4_ion_heap_tiler_mem_addr = omap4_ion_heap_secure_input_addr - omap4_ion_heap_tiler_mem_size;
-		omap4_ion_heap_nonsec_tiler_mem_addr = omap4_ion_heap_tiler_mem_addr -
-					omap4_ion_heap_nonsec_tiler_mem_size;
+ 		omap4_ion_heap_nonsec_tiler_mem_addr = omap4_ion_heap_tiler_mem_addr -
+ 					omap4_ion_heap_nonsec_tiler_mem_size;
 	} else {
 		omap4_smc_addr = PLAT_PHYS_OFFSET + omap_total_ram_size() -
 					omap4_smc_size;
@@ -130,8 +130,9 @@ void __init omap_ion_init(void)
 		omap4_ducati_heap_addr = omap4_ion_heap_secure_input_addr -
 					omap4_ducati_heap_size;
 		omap4_ion_heap_tiler_mem_addr = omap4_ducati_heap_addr -
-		omap4_ion_heap_nonsec_tiler_mem_addr = omap4_ion_heap_tiler_mem_addr -
-					omap4_ion_heap_nonsec_tiler_mem_size;
+					omap4_ion_heap_tiler_mem_size;
+ 		omap4_ion_heap_nonsec_tiler_mem_addr = omap4_ion_heap_tiler_mem_addr -
+ 					omap4_ion_heap_nonsec_tiler_mem_size;
 	}
 
 	pr_info("omap4_total_ram_size = 0x%x\n" \
@@ -143,7 +144,6 @@ void __init omap_ion_init(void)
 				omap_total_ram_size(),
 				omap4_smc_size,
 				omap4_ion_heap_secure_input_size,
-				omap4_ion_heap_secure_output_wfdhdcp_size,
 				omap4_ducati_heap_size,
 				omap4_ion_heap_tiler_mem_size,
 				omap4_ion_heap_nonsec_tiler_mem_size);
