@@ -500,13 +500,9 @@ static int mapphone_panel_update(struct omap_dss_device *dssdev,
 
 	if (dssdev->phy.dsi.type == OMAP_DSS_DSI_TYPE_CMD_MODE) {
 		/* Only command mode can do partial update */
-#if defined(CONFIG_MAPPHONE_EDISON) || defined(CONFIG_MAPPHONE_TARGA)
-#if 0
 		r = mapphone_set_update_window(mp_data, x, y, w, h);
 		if (r)
 			goto err;
-#endif
-#endif
 	}
 
 	if (mp_data->te_enabled && panel_data->use_ext_te &&
@@ -3850,8 +3846,6 @@ static int mapphone_panel_power_on(struct omap_dss_device *dssdev)
 	}
 
 	mapphone_hw_reset(dssdev);
-
-	msleep(100);
 
 	omapdss_dsi_vc_enable_hs(dssdev, dsi_vc_cmd, false);
 
