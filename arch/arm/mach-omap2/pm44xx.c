@@ -79,6 +79,7 @@ static struct clockdomain *tesla_clkdm;
 static struct powerdomain *tesla_pwrdm;
 
 static struct clockdomain *emif_clkdm, *mpuss_clkdm;
+
 static struct clockdomain *abe_clkdm;
 
 /* Yet un-named erratum which requires AUTORET to be disabled for IVA PD
@@ -929,7 +930,10 @@ static int omap4_pm_suspend(void)
 	if (ret)
 		pr_err("Could not enter target state in pm_suspend\n");
 	else
-		pr_err("Successfully put all powerdomains to target state\n");
+		pr_info("Successfully put all powerdomains to target state\n");
+
+	if (off_mode_enabled)
+		omap_voltage_reconfigure_switchers();
 
 	return 0;
 }

@@ -20,7 +20,6 @@
 
 #include <mach/omap4-common.h>
 #include <mach/ctrl_module_wkup_44xx.h>
-#include <plat/usb.h>
 
 #include "clockdomain.h"
 #include "omap4-sar-layout.h"
@@ -44,7 +43,6 @@ static void __iomem *omap4_sar_modules[MAX_SAR_MODULES];
 static struct powerdomain *l3init_pwrdm;
 	static struct clockdomain *l3init_clkdm;
 static struct clk *usb_host_ck, *usb_tll_ck;
-int sar_needs_ehci_saving = 1;
 
 /*
  * OMAP4430
@@ -1137,37 +1135,10 @@ static const u32 omap447x_sar_ram3_layout[][4] = {
  * @sar_bank_offset - where to backup
  * @sar_layout - constant table containing the backup info
  */
-
-#define USB_SAR_AREA_START 0x314
-#define USB_SAR_AREA_END   0x91C
-
-struct sar_map {
-void __iomem *reg_addr;
-u32 val;
-};
-
-struct sar_map usb_sar_data[(USB_SAR_AREA_END-USB_SAR_AREA_START)/4];
-
 static void sar_save(u32 nb_regs, u32 sar_bank, const u32 sar_layout_table[][4])
 {
 	u32 reg_val, size, i, j;
 	void __iomem *reg_read_addr, *sar_wr_addr;
-	void *usb_sar_start;
-	void *usb_sar_end;
-	int usb_sar_table = 0;
-
-	usb_sar_start = sar_ram_base + sar_bank + USB_SAR_AREA_START;
-	usb_sar_end   = sar_ram_base + sar_bank + USB_SAR_AREA_END;
-
-	/* 4460 USB SAR Registers are offset by 4 bytes */
-	if (cpu_is_omap446x()) {
-		usb_sar_start += 0x04;
-		usb_sar_end += 0x04;
-	}
-
-	if ((sar_layout_table == omap443x_sar_ram1_layout) ||
-		(sar_layout_table == omap446x_sar_ram1_layout))
-		usb_sar_table = 1;
 
 	for (i = 0; i < nb_regs; i++) {
 		if (omap4_sar_modules[(sar_layout_table[i][MODULE_ADDR_IDX])]) {
@@ -1180,34 +1151,12 @@ static void sar_save(u32 nb_regs, u32 sar_bank, const u32 sar_layout_table[][4])
 			    sar_layout_table[i][SAR_RAM_OFFSET_IDX];
 			for (j = 0; j < size; j++) {
 				reg_val = __raw_readl(reg_read_addr + j * 4);
-				if (usb_sar_table &&
-				    sar_wr_addr+j*4 >= usb_sar_start &&
-				    sar_wr_addr+j*4 <  usb_sar_end) {
-					if (!sar_needs_ehci_saving) {
-						/* Use the stored version */
-						reg_val =
-						usb_sar_data
-						[(sar_wr_addr-usb_sar_start)/4
-
-						    + j].val;
-
-					} else {
-						/* Save the USB SAR register */
-						usb_sar_data
-						[(sar_wr_addr-usb_sar_start)/4
-						    + j].val = reg_val;
-						usb_sar_data
-						[(sar_wr_addr-usb_sar_start)/4
-						    + j].reg_addr = reg_read_addr;
-					}
-				}
 				__raw_writel(reg_val, sar_wr_addr + j * 4);
 			}
 		}
 	}
-	if (usb_sar_table)
-		sar_needs_ehci_saving = 0;
 }
+
 
 static void save_sar_bank3(void)
 {
