@@ -53,7 +53,7 @@ make -j8 TARGET_KERNEL_SOURCE=/home/dtrail/android/android_kernel_motorola_omap4
 while true; do
     read -p "Do you wish to include 10% battery meter? " yn
     case $yn in
-        [Yy]* ) echo "Moving Ramdisk into built path..."; echo " "; cp /data/4.4/out/target/product/spyder/ramdisk.img /home/dtrail/android/built/4.4/3.0/targa/rls/jbx/Applications/ramdisk/; break;;
+        [Yy]* ) echo "Moving Ramdisk into built path..."; echo " "; cp /data/4.4/out/target/product/targa/ramdisk.img /home/dtrail/android/built/4.4/3.0/targa/rls/jbx/Applications/ramdisk/; break;;
         [Nn]* ) break;;
         * ) echo "Please answer yes or no.";;
     esac
