@@ -223,3 +223,4 @@ static inline int dbgp_external_startup(void)
 #endif
 
 #endif /* __LINUX_USB_EHCI_DEF_H */
+
