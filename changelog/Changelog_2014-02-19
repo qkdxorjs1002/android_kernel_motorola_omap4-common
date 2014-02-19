@@ -1,0 +1,67 @@
+1df85bc build script: DAMN typo
+dd0ea2b build script: Fix CRITICAL mistakes and typos
+89a2640 omap: pm: remove old workaround for CK differential IO PADn, PADp
+a5c3ce0 omap: pm: Corrections
+a7f3886 omap: serial, usb: adapt to 3.0.31 stable
+b5c785f omap: serial: ehci: fix header
+4f47156 omap: serial: fix again
+8268902 omap: usb: several adaptions
+0ff6b39 omap: ohci: fix
+2bba46a omap: ehci: fix
+9190f1e omap: ehci: Adapt to 3.0.31 ioncluding workarounds
+f17644e omap: ehci: fixes to originial Moto
+9e7798f Revert "omap: serial: fix"
+58e0d3e defconfig: disable schedstats
+cf48de4 omap: dss: core: fix typo
+291742e omap: serial: fix
+fc8eeb0 defconfig: disable DEBUG_MUTEXES
+e656b07 defconfig: Adapt latest changes
+759d5ca Revert "revert some serial settings"
+cff3065 revert some serial settings
+0446977 Merge lucize and stargo stuff
+9aacd38 Added todays changelog and updated full history
+3e4d107 build script: edison: fix wrong device tree selection for modules building
+3c2051a omap: dss: dsi: panel: allow vsync and handle the common way due to new kexec reject workaround
+9e43d9d Simplify kexec reject (first_boot) fix
+e5f99bf defconfig: edison: fix firstboot option missing
+cfc39b0 omap4: ion: Fix missing stuff
+cd54c5f defconfig: hdmi: enable needed stuff
+16d7808 omap4: ion: revert carveout memory for hdcpr
+0638e61 omap: hdmi: disable all
+30eddf7 defconfig: critical updates!
+dbfec50 Revert "EDISON/TARGA: disable smartreflex"
+62a2878 Added todays changelog and updated full history
+203b920 Revert "Revert "omap: cpufreq: battery_friend: Fix the frequency handling""
+fb1260d Fix disable first_boot logic in maphhone_panel
+6483ad3 Revert "omap: cpufreq: battery_friend: Fix the frequency handling"
+a956c59 add wakelocks to isl29030 ambient light and proximity sensor
+cf85d06 Merge local changes
+e9b373f omap: cpufreq: battery_friend: Fix the frequency handling
+7baaa6a build script updates
+1e8e7cb omap: serial: remove test file
+de917e4 [3.0.31]: omap: serial: disable serial port irq during suspend
+d6dea35 omap4-common: Revert USB-code back to Motorola implementation
+07a9d8f Revert changes to ehci-omap
+4433b6f Revert "Revert "nf: xt_qtaguid: fix handling for cases where tunnels are used.""
+0231103 Added todays changelog and updated full history
+077e7e8 Add device names to version line
+8a4cbb3 Revert "SPlit config for UMTS and CDMA devices"
+607e5d3 Added todays changelog and updated full history
+9480153 Backport all workarounds for usb resume on omap from 3.4
+49cbe7f SPlit config for UMTS and CDMA devices
+f2a15b4 Revert "Revert "[WIP] merge to 3.0.31""
+3bb9b9e Revert "Revert "omap4-common: Update Workaround for OMAP errata i640""
+ff463ca Keep the modem confiog for both, umts and cdma, the same like before. Modem converter should do do the job as usual. We only use different device tree settings for moduzles builing.
+8e1cdb7 Revert "omap4-common: Update Workaround for OMAP errata i640"
+daf5c3a Revert "[WIP] merge to 3.0.31"
+f28a34f Revert "Revert "Revert "omap: usb: host: merge and adapt settings from 3.4 backpüoprt to 3.0.31"""
+796a13f defconfig: split config for whether buuilding UMTS or CDMA kernel support
+342f4c1 build script: fix typo
+2918a0c README.md: Fix mistake
+479cbb3 README.md: Fix mistake
+5027bc6 build script: Set device build tree to umts_spyder to make sure to init the correct mopdem driver on init
+d929f8e build script: add seperate one for UMTS_SPYDER
+59997ee Update README.md
+7ad5188 [WIP] merge to 3.0.31
+2881aa3 Revert "Revert "omap: usb: host: merge and adapt settings from 3.4 backpüoprt to 3.0.31""
+f7b9de2 Revert "MErge EHCI workaround"
