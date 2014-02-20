@@ -53,7 +53,7 @@ static struct omap_sr_class_data class3_data = {
 /* Smartreflex Class3 init API to be called from board file */
 static int __init sr_class3_init(void)
 {
-#if defined(CONFIG_MAPPHONE_EDISON) && defined(CONFIG_MAPPHONE_TARGA)
+#if defined(CONFIG_MAPPHONE_EDISON) || defined(CONFIG_MAPPHONE_TARGA)
 	// Enable this class only for OMAP343x
 	if (!cpu_is_omap343x())
 		return -EINVAL; 
