@@ -157,7 +157,7 @@ static int sr_dev_init(struct omap_hwmod *oh, void *user)
 
 	sr_set_nvalues(volt_data, sr_data);
 #if defined(CONFIG_MAPPHONE_EDISON) || defined(CONFIG_MAPPHONE_TARGA)
-	sr_data->enable_on_init = false
+	sr_data->enable_on_init = false;
 #else
 	sr_data->enable_on_init = sr_enable_on_init;
 #endif
