@@ -667,12 +667,12 @@ if (omap_cpufreq_suspended)
     		}
 	else if (unlikely(battery_friend_active))
 		{
-			policy->min = 200000;
+			policy->min = policy->cpuinfo.min_freq;
 			policy->max = stock_freq_max = policy->cpuinfo.max_freq;
 			policy->cur = omap_getspeed(policy->cpu);
 		}
 #else
-		policy->min = 200000;
+		policy->min = policy->cpuinfo.min_freq;
 		policy->max = stock_freq_max = policy->cpuinfo.max_freq;
 		policy->cur = omap_getspeed(policy->cpu);
 #endif
@@ -682,7 +682,6 @@ else if (!omap_cpufreq_suspended)
 #ifdef CONFIG_BATTERY_FRIEND
 	if(likely(battery_friend_active))
 		{
-		    if (policy->min != fr_min)
 			policy->min = fr_min;
 			pr_info("Battery_Friend: Min: Restored stock frequency\n");
 			policy->max = stock_freq_max = policy->cpuinfo.max_freq;	
@@ -690,12 +689,12 @@ else if (!omap_cpufreq_suspended)
 		}
 	else if (unlikely(battery_friend_active))
 		{
-			policy->min = 200000;
+			policy->min = policy->cpuinfo.min_freq;
 			policy->max = stock_freq_max = policy->cpuinfo.max_freq;
 			policy->cur = omap_getspeed(policy->cpu);
 	        }
 #else
-		policy->min = 200000;
+		policy->min = policy->cpuinfo.min_freq;
 		policy->max = stock_freq_max = policy->cpuinfo.max_freq;
 		policy->cur = omap_getspeed(policy->cpu);
 #endif
@@ -842,9 +841,9 @@ static ssize_t store_screen_off_freq(struct cpufreq_policy *policy,
 	if (ret)
 		goto out;
 #ifdef CONFIG_BATTERY_FRIEND
-	screen_off_max_freq = 800000;
-#else
 	screen_off_max_freq = fr_sc_max = freq_table[index].frequency;
+#else
+	screen_off_max_freq = 800000;
 #endif
 
 #ifdef CONFIG_BATTERY_FRIEND
