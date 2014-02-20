@@ -937,8 +937,6 @@ static inline void *cpcap_get_keydata(struct cpcap_device *cpcap)
 	return cpcap->keydata;
 }
 
-static unsigned long long sched_clock2(void);
-
 int cpcap_regacc_write(struct cpcap_device *cpcap, enum cpcap_reg reg,
 		       unsigned short value, unsigned short mask);
 
@@ -947,12 +945,6 @@ int cpcap_regacc_read(struct cpcap_device *cpcap, enum cpcap_reg reg,
 
 int cpcap_regacc_write_secondary(struct cpcap_device *cpcap, enum cpcap_reg reg,
 				 unsigned short value, unsigned short mask);
-
-static int cpcap_regacc_write2(struct cpcap_device *cpcap, enum cpcap_reg reg,
-		       unsigned short value, unsigned short mask);
-
-static int cpcap_regacc_read2(struct cpcap_device *cpcap, enum cpcap_reg reg,
-		      unsigned short *value_ptr);
 
 int cpcap_regacc_read_secondary(struct cpcap_device *cpcap, enum cpcap_reg reg,
 				unsigned short *value_ptr);
