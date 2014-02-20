@@ -94,8 +94,8 @@ static unsigned int current_target_freq;
 static unsigned int current_cooling_level;
 static bool omap_cpufreq_ready;
 static bool omap_cpufreq_suspended;
-unsigned int screen_off_max_freq;
-unsigned int screen_on_min_freq;
+unsigned int screen_off_max_freq = 800000;
+unsigned int screen_on_min_freq = 300000;
 static unsigned int stock_freq_max; 
 
 #ifdef CONFIG_BATTERY_FRIEND
@@ -682,6 +682,7 @@ else if (!omap_cpufreq_suspended)
 #ifdef CONFIG_BATTERY_FRIEND
 	if(likely(battery_friend_active))
 		{
+		   if (policy->min != fr_min)
 			policy->min = fr_min;
 			pr_info("Battery_Friend: Min: Restored stock frequency\n");
 			policy->max = stock_freq_max = policy->cpuinfo.max_freq;	
