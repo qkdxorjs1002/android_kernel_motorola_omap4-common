@@ -177,7 +177,11 @@ exit:
  */
 void __init omap_enable_smartreflex_on_init(void)
 {
+#if defined(CONFIG_MAPPHONE_EDISON) && defined(CONFIG_MAPPHONE_TARGA)
+	sr_enable_on_init = false;
+#else
 	sr_enable_on_init = true;
+#endif
 }
 
 int __init omap_devinit_smartreflex(void)
