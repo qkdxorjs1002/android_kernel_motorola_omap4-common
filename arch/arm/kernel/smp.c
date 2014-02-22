@@ -305,7 +305,6 @@ asmlinkage void __cpuinit secondary_start_kernel(void)
 	/*
 	 * Give the platform a chance to do its own initialisation.
 	 */
-	preempt_enable_no_resched();
 	platform_secondary_init(cpu);
 
 	notify_cpu_starting(cpu);
