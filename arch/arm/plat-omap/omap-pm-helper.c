@@ -302,6 +302,9 @@ else
 		pr_err("Failed: change interconnect bandwidth to %ld\n",
 		     target_level);
 #endif
+		pr_err("Failed: change interconnect bandwidth to %ld\n",
+		     target_level);
+
 	return ret;
 }
 

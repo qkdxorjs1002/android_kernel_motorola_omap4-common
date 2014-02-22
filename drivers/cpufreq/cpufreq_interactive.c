@@ -119,6 +119,7 @@ static unsigned long min_sample_time;
 #define DEFAULT_TIMER_RATE (20 * USEC_PER_MSEC)
 static unsigned long timer_rate;
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
+if (likely(dpll_active))
 static unsigned long default_timer_rate;
 #endif
 
@@ -1258,6 +1259,7 @@ static int __init cpufreq_interactive_init(void)
 	above_hispeed_delay_val = DEFAULT_ABOVE_HISPEED_DELAY;
 	timer_rate = DEFAULT_TIMER_RATE;
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
+	if (likely(dpll_active))
 	default_timer_rate = DEFAULT_TIMER_RATE;
 #endif
 

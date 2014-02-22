@@ -429,7 +429,7 @@ out:
 
 	return res;
 }
-
+if (likely(dpll_active)) {
 static int __init omap4_dpll_low_power_cascade_init_clocks(void)
 {
 	sys_clkin_ck = clk_get(NULL, "sys_clkin_ck");
@@ -481,7 +481,7 @@ static int __init omap4_dpll_low_power_cascade_init_clocks(void)
 	return 0;
 }
 late_initcall(omap4_dpll_low_power_cascade_init_clocks);
-
+}
 /**
  * omap4_dpll_low_power_cascade - configure system for low power DPLL cascade
  *
@@ -496,6 +496,7 @@ late_initcall(omap4_dpll_low_power_cascade_init_clocks);
  * Reparent DPLL_CORE so that is fed by DPLL_ABE
  * Reparent DPLL_MPU & DPLL_IVA so that they are fed by DPLL_CORE
  */
+if (likely(dpll_active)) {
 static int omap4_dpll_low_power_cascade_enter(void)
 {
 	int ret = 0;
@@ -729,8 +730,9 @@ sr_enable:
 	omap_sr_enable(vdd_iva, omap_voltage_get_curr_vdata(vdd_iva));
 	omap_sr_enable(vdd_core, omap_voltage_get_curr_vdata(vdd_core));
 	return ret;
+	}
 }
-
+if (likely(dpll_active)) {
 static int omap4_dpll_low_power_cascade_exit(void)
 {
 	int ret = 0;
@@ -874,9 +876,9 @@ static int omap4_dpll_low_power_cascade_exit(void)
 	omap_sr_enable(vdd_iva, omap_voltage_get_curr_vdata(vdd_iva));
 	omap_sr_enable(vdd_core, omap_voltage_get_curr_vdata(vdd_core));
 	return ret;
+		}
 	}
 }
-
 #endif
 
 /**
@@ -1580,7 +1582,8 @@ bool omap4_is_in_dpll_cascading(void)
 {
 	return atomic_read(&in_dpll_cascading);
 }
-
+}
+else
 #else
 int omap4_dpll_cascading_blocker_hold(struct device *dev)
 {

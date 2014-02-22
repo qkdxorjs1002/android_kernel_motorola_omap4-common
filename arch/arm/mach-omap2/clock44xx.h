@@ -22,6 +22,7 @@ int omap4xxx_clk_init(void);
 int omap4_core_dpll_m2_set_rate(struct clk *clk, unsigned long rate);
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
+if (likely(dpll_active)) 
 int omap4_core_dpll_set_rate(struct clk *clk, unsigned long rate);
 #endif
 
