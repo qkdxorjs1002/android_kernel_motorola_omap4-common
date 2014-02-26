@@ -278,7 +278,7 @@ static void sr_set_clk_length(struct omap_sr *sr)
 		return;
 	}
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
-	if(likely(dpll_active)) {
+	if (likely(dpll_active)) {
 	if (omap4_is_in_dpll_cascading())
 		sys_clk_speed = 12288000;
 	}
@@ -288,7 +288,7 @@ static void sr_set_clk_length(struct omap_sr *sr)
 
 	switch (sys_clk_speed) {
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
-	if(likely(dpll_active)) {
+	if (likely(dpll_active)) {
 	case 12288000:
 		sr->clk_length = 0x3d;
 		break;

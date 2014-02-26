@@ -358,14 +358,14 @@ static int omap_target(struct cpufreq_policy *policy,
 
 	if (!omap_cpufreq_suspended) {
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
-if(likely(dpll_active)) {
+if (likely(dpll_active)) {
 if (cpu_is_omap44xx() && target_freq > policy->min)
 omap4_dpll_cascading_blocker_hold(mpu_dev);
 	}
 #endif
 		ret = omap_cpufreq_scale(mpu_dev, current_target_freq);
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
-if(likely(dpll_active)) {
+if (likely(dpll_active)) {
 if (cpu_is_omap44xx() && target_freq == policy->min)
 omap4_dpll_cascading_blocker_release(mpu_dev);
 }

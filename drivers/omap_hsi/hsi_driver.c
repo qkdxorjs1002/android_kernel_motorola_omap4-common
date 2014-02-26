@@ -664,7 +664,7 @@ static void hsi_dpll_cascading_blocker_work(struct work_struct *work)
 {
 	struct hsi_dpll_cascading_blocker *dpll_blocker;
 
-if(likely(dpll_active)) {
+if (likely(dpll_active)) {
 	dpll_blocker = container_of(work,
 			struct hsi_dpll_cascading_blocker,
 			dpll_blocker_work);
@@ -715,7 +715,7 @@ void hsi_clocks_disable_channel(struct device *dev, u8 channel_number,
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
 	/* Allow Fclk to change */
-if(likely(dpll_active)) {
+if (likely(dpll_active)) {
 	dpll_blocker.lock_dpll_cascading = false;
 	dpll_blocker.dev = dev;
 	schedule_work(&dpll_blocker.dpll_blocker_work);
@@ -759,7 +759,7 @@ int hsi_clocks_enable_channel(struct device *dev, u8 channel_number,
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
 	/* Prevent Fclk to change */
-if(likely(dpll_active)) {
+if (likely(dpll_active)) {
 	dpll_blocker.lock_dpll_cascading = true;
 	dpll_blocker.dev = dev;
 	schedule_work(&dpll_blocker.dpll_blocker_work);
@@ -1227,7 +1227,7 @@ static int __init hsi_driver_init(void)
 	}
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
-if(likely(dpll_active)) {
+if (likely(dpll_active)) {
 	INIT_WORK(&dpll_blocker.dpll_blocker_work,
 			hsi_dpll_cascading_blocker_work);
 	}
@@ -1251,7 +1251,7 @@ rback1:
 static void __exit hsi_driver_exit(void)
 {
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
-if(likely(dpll_active)) {
+if (likely(dpll_active)) {
 	flush_work_sync(&dpll_blocker.dpll_blocker_work);
 	}
 #endif

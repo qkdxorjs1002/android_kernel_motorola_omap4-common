@@ -286,7 +286,7 @@ void abe_dsp_shutdown(void)
 	 * ensure we're out of DPLL cascading to properly
 	 * enter into suspend state
 	 */
-if(likely(dpll_active)) {
+if (likely(dpll_active)) {
 	omap4_dpll_cascading_blocker_hold(the_abe->dev);
 	}
 #endif
@@ -1180,7 +1180,7 @@ static const struct snd_soc_dapm_widget abe_dapm_widgets[] = {
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
 	/* Frontend AIFs */
-if(likely(dpll_active)) {	
+if (likely(dpll_active)) {	
 	SND_SOC_DAPM_AIF_IN_E("TONES_DL", "Tones Playback", 0,
 			W_AIF_TONES_DL, ABE_OPP_25, 0,
 			abe_fe_event,
@@ -2164,7 +2164,7 @@ static int aess_set_runtime_opp_level(struct abe_data *abe)
 static int abe_fe_active_count(struct abe_data *abe)
 {
 	int i, count = 0;
-if(likely(dpll_active)) {
+if (likely(dpll_active)) {
 	for (i = 0; i < ABE_NUM_FE; i++)
 		count += abe->fe_active[i];
 
@@ -2176,7 +2176,7 @@ static int abe_fe_event(struct snd_soc_dapm_widget *w,
 		struct snd_kcontrol *kcontrol, int event)
 {
 	int index, active, ret = 0;
-if(likely(dpll_active)) {
+if (likely(dpll_active)) {
 	if ((w->reg < ABE_FE_START) || (w->reg >= ABE_FE_END))
 		return -EINVAL;
 
@@ -2198,7 +2198,7 @@ if(likely(dpll_active)) {
 
 bool omap4_abe_can_enter_dpll_cascading(void)
 {
-if(likely(dpll_active)) {
+if (likely(dpll_active)) {
 	return abe_can_enter_dpll_cascading;
 	}
 }
@@ -2537,7 +2537,7 @@ static int aess_stream_event(struct snd_soc_dapm_context *dapm)
 	 * - single stream is active and is LP (ping-pong)
 	 * - OPP is 50 or less (DL1 path only)
 	 */
-if(likely(dpll_active)) {
+if (likely(dpll_active)) {
 	if (abe->early_suspended &&
 		(abe_fe_active_count(abe) == 1) &&
 		(abe->opp <= 50))
@@ -2736,7 +2736,7 @@ out:
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
 	/* block DPLL cascading till conditions are met */
-if(likely(dpll_active)) {
+if (likely(dpll_active)) {
 	omap4_dpll_cascading_blocker_hold(abe->dev);
 	}
 #endif
@@ -2980,7 +2980,7 @@ static void abe_early_suspend(struct early_suspend *handler)
 	 * - single stream is active and is LP (ping-pong)
 	 * - OPP is 50 or less (DL1 path only)
 	 */
-if(likely(dpll_active)) {
+if (likely(dpll_active)) {
 	if ((active == 1) && (abe->opp <= 50))
 		omap4_dpll_cascading_blocker_release(abe->dev);
 
@@ -2994,7 +2994,7 @@ static void abe_late_resume(struct early_suspend *handler)
 							early_suspend);
 
 	/* exit dpll cascading since screen will be turned on */
-if(likely(dpll_active)) {
+if (likely(dpll_active)) {
 	omap4_dpll_cascading_blocker_hold(abe->dev);
 	abe->early_suspended = 0;
 	}
@@ -3046,7 +3046,7 @@ static int __devinit abe_engine_probe(struct platform_device *pdev)
 	mutex_init(&abe->opp_req_mutex);
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
-if(likely(dpll_active)) {
+if (likely(dpll_active)) {
 	omap4_dpll_cascading_blocker_hold(abe->dev);
 	abe_can_enter_dpll_cascading = true;
 	abe->early_suspend.level = EARLY_SUSPEND_LEVEL_DISABLE_FB + 1;
@@ -3072,7 +3072,7 @@ err:
 		iounmap(abe->io_base[i]);
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
-if(likely(dpll_active)) {	
+if (likely(dpll_active)) {	
 	unregister_early_suspend(&abe->early_suspend);
 	}
 #endif
@@ -3089,7 +3089,7 @@ static int __devexit abe_engine_remove(struct platform_device *pdev)
 	abe_cleanup_debugfs(abe);
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
-if(likely(dpll_active)) {
+if (likely(dpll_active)) {
 	unregister_early_suspend(&abe->early_suspend);
 	}
 #endif
