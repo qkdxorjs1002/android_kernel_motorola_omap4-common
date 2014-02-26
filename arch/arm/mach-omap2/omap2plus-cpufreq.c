@@ -46,6 +46,11 @@
 
 #include "smartreflex.h"
 
+#ifdef CONFIG_OMAP4_DPLL_CASCADING
+#include <linux/dpll.h>
+#include <mach/omap4-common.h>
+#endif
+
 // [antsvx] these shoudl match same in opp4xxx_data.c
 #define OMAP4430_VDD_CORE_OPP25_UV		 902000
 #define OMAP4430_VDD_CORE_OPP50_UV	         962000
@@ -351,10 +356,21 @@ static int omap_target(struct cpufreq_policy *policy,
 	   current_target_freq = stock_freq_max;
   }
 
-	if (!omap_cpufreq_suspended)
+	if (!omap_cpufreq_suspended) {
+#ifdef CONFIG_OMAP4_DPLL_CASCADING
+if(likely(dpll_active)) {
+if (cpu_is_omap44xx() && target_freq > policy->min)
+omap4_dpll_cascading_blocker_hold(mpu_dev);
+	}
+#endif
 		ret = omap_cpufreq_scale(mpu_dev, current_target_freq);
-
-
+#ifdef CONFIG_OMAP4_DPLL_CASCADING
+if(likely(dpll_active)) {
+if (cpu_is_omap44xx() && target_freq == policy->min)
+omap4_dpll_cascading_blocker_release(mpu_dev);
+}
+#endif
+	}
 	mutex_unlock(&omap_cpufreq_lock);
 
 	return ret;

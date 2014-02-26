@@ -14,6 +14,7 @@
 #define OMAP_ARCH_OMAP4_COMMON_H
 
 #include <asm/proc-fns.h>
+#include <linux/dpll.h>
 /*
  * Secure low power context save/restore API index
  */
@@ -88,7 +89,17 @@ if (likely(dpll_active)) {
 extern bool omap4_abe_can_enter_dpll_cascading(void);
 extern bool omap4_is_in_dpll_cascading(void);
 }
-else
+else {
+static inline bool omap4_abe_can_enter_dpll_cascading(void)
+{
+	return false;
+}
+
+static inline bool omap4_is_in_dpll_cascading(void)
+{
+	return false;
+}
+	}
 #else
 static inline bool omap4_abe_can_enter_dpll_cascading(void)
 {
