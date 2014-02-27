@@ -1,0 +1,9 @@
+b747e22 DPLL, BF: Fix header file
+db809f1 omap: dpll_cascading: module: fix
+4ebe815 omap4-common: [moto] update Qualcomm Gobi 2000-driver
+37dabc3 cpufreq: Fix sysfs deadlock with concurrent hotplug/frequency switch
+3d165c0 omap: dpll_cascading: add missing code and adapt to module
+0355bb0 Merge remote-tracking branch 'CyanogenMod/cm-11.0' into cm-11.0
+96e19ce Revert "Revert "omap: pm: remove old workaround for CK differential IO PADn, PADp""
+a87623e Revert "omap: pm: use workaround for CK PAD differential only on edison/targa"
+3a6cc77 omap4-common: Revert back to Motorola's workaround for i719
