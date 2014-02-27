@@ -26,7 +26,7 @@
 
 static DEFINE_MUTEX(battery_mutex);
 
-bool battery_friend_early_suspend_active __read_mostly = true;
+bool battery_friend_early_suspend_active __read_mostly;
 bool battery_friend_active __read_mostly = true;
 
 unsigned int /*scr_on_min = 300000,*/ scr_off_max = 700000, scr_min = 200000; /*scr_max = 1000000;*/

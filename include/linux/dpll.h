@@ -3,6 +3,6 @@
 #ifndef _DPLL_H
 #define _DPLL_H
 
-bool dpll_active __read_mostly;
+//bool dpll_active __read_mostly;
 
 #endif
