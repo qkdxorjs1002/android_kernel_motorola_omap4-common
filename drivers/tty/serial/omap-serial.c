@@ -1438,6 +1438,7 @@ static int serial_omap_suspend(struct device *dev)
 			return -EBUSY;
 		}
 
+		disable_irq(up->port.irq);
 		serial_out(up, UART_IER, up->ier);
 		serial_omap_port_disable(up);
 
