@@ -1398,7 +1398,6 @@ static int serial_omap_suspend(struct device *dev)
 	u8 lcr, efr;
 
 	if (up) {
-		disable_irq(up->port.irq);
 		if (up->rts_mux_driver_control) {
 			up->rts_pullup_in_suspend = 1;
 			omap_uart_enable_rtspullup(up);
