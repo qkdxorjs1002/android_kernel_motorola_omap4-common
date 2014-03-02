@@ -474,15 +474,28 @@ config OMAP3_EXPORT_DIE_ID
          in production systems. You will need also to explicitly flag it by
          appending the "omap3_die_id" parameter to your boot command line.
 
+config OMAP4_DPLL_CASCADING
+	bool  "Enable DPLL Cascading for OMAP4"
+	depends on ARCH_OMAP4
+	depends on PM
+	depends on HAS_EARLYSUSPEND
+	default y
+	help
+	  Select this option to enable DPLL Cascading during Low power mp3
+	 playback. It will enter DPLL cascade when :
+	       - Head set is inserted.
+	       - Display is Off.
+	       - No USB.
+
 config OMAP4_ONLY_OMAP4430_DPLL_CASCADING
-       bool  "Enable DPLL Cascading for OMAP4430 only"
-       depends on OMAP4_DPLL_CASCADING
-       default y
-       help
-         Enables DPLL Cascading only for OMAP4430.
-        Current DPLL cascading implementation is going to be used
-        only on OMAP4430, where it provides significant power savings.
-        Keeps DPLL cascading disabled for other OMAPs.
+	bool  "Enable DPLL Cascading for OMAP4430 only"
+	depends on OMAP4_DPLL_CASCADING
+	default y
+	help
+	  Enables DPLL Cascading only for OMAP4430.
+	  Current DPLL cascading implementation is going to be used
+	  only on OMAP4430, where it provides significant power savings.
+	  Keeps DPLL cascading disabled for other OMAPs.
 
 
 config OMAP_RAM_CONSOLE
