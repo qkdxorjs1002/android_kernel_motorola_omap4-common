@@ -1242,6 +1242,7 @@ static const struct snd_soc_dapm_widget abe_dapm_widgets[] = {
 	SND_SOC_DAPM_AIF_OUT("MODEM_UL", "MODEM Capture", 0,
 			W_AIF_MODEM_UL, ABE_OPP_50, 0),
 #endif
+
 	/* Backend DAIs  */
 	SND_SOC_DAPM_AIF_IN("PDM_UL1", "Analog Capture", 0,
 			W_AIF_PDM_UL1, ABE_OPP_50, 0),
