@@ -2355,7 +2355,7 @@ static void omap_hsmmc_debugfs(struct mmc_host *mmc)
 #endif
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
 static int omap_hsmmc_dpll_notifier(struct notifier_block *nb,
-						unsigned long val, void *data)
+					unsigned long val, void *data)
 {
 	struct omap_hsmmc_host *host =
 		container_of(nb, struct omap_hsmmc_host, nb);

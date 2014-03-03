@@ -34,6 +34,7 @@
 #include <linux/twl6040-vib.h>
 #include <linux/wl12xx.h>
 #include <linux/memblock.h>
+#include <linux/cdc_tcxo.h>
 #include <linux/mfd/twl6040-codec.h>
 
 #include <mach/hardware.h>
@@ -48,6 +49,7 @@
 #include <asm/mach/map.h>
 
 #include <plat/board.h>
+#include <plat/android-display.h>
 #include <plat/common.h>
 #include <plat/usb.h>
 #include <plat/mmc.h>
@@ -74,6 +76,7 @@
 #include <linux/skbuff.h>
 #include <linux/ti_wilink_st.h>
 #include <plat/omap-serial.h>
+#include <linux/omap4_duty_cycle_governor.h>
 #define WILINK_UART_DEV_NAME "/dev/ttyO1"
 
 #define ETH_KS8851_IRQ			34
@@ -81,7 +84,7 @@
 #define ETH_KS8851_QUART		138
 #define OMAP4_TOUCH_IRQ_1		35
 #define OMAP4_TOUCH_IRQ_2		36
-#define HDMI_GPIO_CT_CP_HPD		60
+#define HDMI_GPIO_CT_CP_HPD		60 /* HPD mode enable/disable */
 #define HDMI_GPIO_HPD			63  /* Hot plug pin for HDMI */
 #define HDMI_GPIO_LS_OE 41 /* Level shifter for HDMI */
 #define LCD_BL_GPIO		27	/* LCD Backlight GPIO */
@@ -97,6 +100,8 @@
 #define OMAP_HDMI_HPD_ADDR	0x4A100098
 #define OMAP_HDMI_PULLTYPE_MASK	0x00000010
 
+#define OMAP4_SFH7741_SENSOR_OUTPUT_GPIO	184
+#define OMAP4_SFH7741_ENABLE_GPIO		188
 
 static const int sdp4430_keymap[] = {
 	KEY(0, 0, KEY_E),
@@ -213,6 +218,87 @@ void keypad_pad_wkup(int enable)
 	set_wkup_fcn("gpmc_a19.kpd_row7");
 
 }
+
+#ifdef CONFIG_OMAP4_DUTY_CYCLE_GOVERNOR
+
+static struct pcb_section omap4_duty_governor_pcb_sections[] = {
+	{
+		.pcb_temp_level                 = 65,
+		.max_opp                        = 1200000,
+		.duty_cycle_enabled             = false,
+		.tduty_params = {
+			.nitro_rate             = 0,
+			.cooling_rate           = 0,
+			.nitro_interval         = 0,
+			.nitro_percentage       = 0,
+		},
+	},
+	{
+		.pcb_temp_level                 = 70,
+		.max_opp                        = 1200000,
+		.duty_cycle_enabled             = true,
+		.tduty_params = {
+			.nitro_rate             = 1200000,
+			.cooling_rate           = 1008000,
+			.nitro_interval         = 20000,
+			.nitro_percentage       = 37,
+		},
+	},
+	{
+		.pcb_temp_level                 = 75,
+		.max_opp                        = 1200000,
+		.duty_cycle_enabled             = true,
+		.tduty_params = {
+			.nitro_rate             = 1200000,
+			.cooling_rate           = 1008000,
+			.nitro_interval         = 20000,
+			.nitro_percentage       = 24,
+		},
+	},
+	{
+		.pcb_temp_level                 = 80,
+		.max_opp                        = 1200000,
+		.duty_cycle_enabled             = true,
+		.tduty_params = {
+			.nitro_rate             = 1200000,
+			.cooling_rate           = 1008000,
+			.nitro_interval         = 20000,
+			.nitro_percentage       = 19,
+		},
+	},
+	{
+		.pcb_temp_level                 = 90,
+		.max_opp                        = 1200000,
+		.duty_cycle_enabled             = true,
+		.tduty_params = {
+			.nitro_rate             = 1200000,
+			.cooling_rate           = 1008000,
+			.nitro_interval         = 20000,
+			.nitro_percentage       = 14,
+		},
+	},
+	{
+		.pcb_temp_level                 = 110,
+		.max_opp                        = 1008000,
+		.duty_cycle_enabled             = true,
+		.tduty_params = {
+			.nitro_rate             = 1008000,
+			.cooling_rate           = 800000,
+			.nitro_interval         = 20000,
+			.nitro_percentage       = 1,
+		},
+	},
+};
+
+void init_duty_governor(void)
+{
+	omap4_duty_pcb_section_reg(omap4_duty_governor_pcb_sections,
+		ARRAY_SIZE(omap4_duty_governor_pcb_sections));
+}
+#else
+void init_duty_governor(void){}
+#endif /*CONFIG_OMAP4_DUTY_CYCLE*/
+
 
 static struct omap4_keypad_platform_data sdp4430_keypad_data = {
 	.keymap_data		= &sdp4430_keymap_data,
@@ -721,13 +807,30 @@ static void omap4_audio_conf(void)
 {
 	/* twl6040 naudint */
 	omap_mux_init_signal("sys_nirq2.sys_nirq2", \
-		OMAP_PIN_INPUT_PULLUP);
+		OMAP_PIN_INPUT_PULLUP | OMAP_PIN_OFF_WAKEUPENABLE);
 }
 
 static int tps6130x_enable(int on)
 {
 	u8 val = 0;
-	int ret;
+	int ret, gpo, val = 0;
+
+	ret = twl_i2c_read_u8(TWL_MODULE_AUDIO_VOICE, &rev,
+				TWL6040_REG_ASICREV);
+	if (ret < 0) {
+		pr_err("%s: failed to read ASICREV %d\n", __func__, ret);
+		return ret;
+	}
+
+	/*
+	 * tps6130x NRESET driven by:
+	 * - GPO2 in TWL6040
+	 * - GPO in TWL6041 (only one GPO supported)
+	 */
+	if (rev >= TWL6041_REV_2_0)
+		gpo = TWL6040_GPO1;
+	else
+		gpo = TWL6040_GPO2;
 
 	ret = twl_i2c_read_u8(TWL_MODULE_AUDIO_VOICE, &val, TWL6040_REG_GPOCTL);
 	if (ret < 0) {
@@ -735,11 +838,13 @@ static int tps6130x_enable(int on)
 		return ret;
 	}
 
-	/* TWL6040 GPO2 connected to TPS6130X NRESET */
+//	/* TWL6040 GPO2 connected to TPS6130X NRESET */
 	if (on)
-		val |= TWL6040_GPO2;
+//		val |= TWL6040_GPO2;
+		val |= gpo;
 	else
-		val &= ~TWL6040_GPO2;
+//		val &= ~TWL6040_GPO2;
+		val &= ~gpo;
 
 	ret = twl_i2c_write_u8(TWL_MODULE_AUDIO_VOICE, val, TWL6040_REG_GPOCTL);
 	if (ret < 0)
@@ -871,6 +976,26 @@ static struct bq2415x_platform_data sdp4430_bqdata = {
 	.max_charger_currentmA = 1550,
 };
 
+/*
+ * The Clock Driver Chip (TCXO) on OMAP4 based SDP needs to
+ * be programmed to output CLK1 based on REQ1 from OMAP.
+ * By default CLK1 is driven based on an internal REQ1INT signal
+ * which is always set to 1.
+ * Doing this helps gate sysclk (from CLK1) to OMAP while OMAP
+ * is in sleep states.
+ */
+static struct cdc_tcxo_platform_data sdp4430_cdc_data = {
+	.buf = {
+		CDC_TCXO_REQ4INT | CDC_TCXO_REQ1INT |
+		CDC_TCXO_REQ4POL | CDC_TCXO_REQ3POL |
+		CDC_TCXO_REQ2POL | CDC_TCXO_REQ1POL,
+		CDC_TCXO_MREQ4 | CDC_TCXO_MREQ3 |
+		CDC_TCXO_MREQ2 | CDC_TCXO_MREQ1,
+		CDC_TCXO_LDOEN1,
+		0,
+	},
+};
+
 static struct i2c_board_info __initdata sdp4430_i2c_boardinfo[] = {
 	{
 		I2C_BOARD_INFO("bq24156", 0x6a),
@@ -879,6 +1004,10 @@ static struct i2c_board_info __initdata sdp4430_i2c_boardinfo[] = {
 	{
 		I2C_BOARD_INFO("tps6130x", 0x33),
 		.platform_data = &twl6040_vddhf,
+	},
+	{
+		I2C_BOARD_INFO("cdc_tcxo_driver", 0x6c),
+		.platform_data = &sdp4430_cdc_data,
 	},
 };
 
@@ -1415,6 +1544,7 @@ static void __init omap_4430sdp_init(void)
 	if (omap_rev() == OMAP4430_REV_ES1_0)
 		package = OMAP_PACKAGE_CBL;
 	omap4_mux_init(board_mux, NULL, package);
+
 	if (cpu_is_omap447x())
 		omap_emif_setup_device_details(&emif_devices_4470,
 					       &emif_devices_4470);
@@ -1468,6 +1598,7 @@ static void __init omap_4430sdp_init(void)
 	blaze_panel_init();
 	blaze_keypad_init();
 
+	init_duty_governor();
 	if (cpu_is_omap446x()) {
 		/* Vsel0 = gpio, vsel1 = gnd */
 		status = omap_tps6236x_board_setup(true, TPS62361_GPIO, -1,
