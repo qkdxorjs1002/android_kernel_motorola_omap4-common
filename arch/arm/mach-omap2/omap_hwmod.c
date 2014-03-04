@@ -1006,11 +1006,6 @@ static int _wait_target_ready(struct omap_hwmod *oh)
 						 oh->prcm.omap2.idlest_idle_bit);
 	} else if (cpu_is_omap44xx()) {
 		ret = omap4_cm_wait_module_ready(oh->prcm.omap4.clkctrl_reg);
-		if (ret)
-			pr_err("%s: _wait_target_ready()"
-				" timeout clkctrl = 0x%x\n",
-				oh->name,
-				__raw_readl(oh->prcm.omap4.clkctrl_reg));
 	} else {
 		BUG();
 	};
@@ -1279,9 +1274,6 @@ static int _enable(struct omap_hwmod *oh)
 		     "from initialized, idle, or disabled state\n", oh->name);
 		return -EINVAL;
 	}
-
-//	if (oh->flags & HWMOD_EXT_OPT_MAIN_CLK)
-//		return -EPERM;
 
 	pr_debug("omap_hwmod: %s: enabling\n", oh->name);
 
