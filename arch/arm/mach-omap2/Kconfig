@@ -490,10 +490,10 @@ config OMAP4_DPLL_CASCADING
 	default y
 	help
 	  Select this option to enable DPLL Cascading during Low power mp3
-	 playback. It will enter DPLL cascade when :
-	       - Head set is inserted.
-	       - Display is Off.
-	       - No USB.
+	  playback. It will enter DPLL cascade when :
+	  Head set is inserted
+	  Display is Off
+	  No USB.
 
 config OMAP4_ONLY_OMAP4430_DPLL_CASCADING
 	bool  "Enable DPLL Cascading for OMAP4430 only"
