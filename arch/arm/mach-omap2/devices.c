@@ -24,6 +24,11 @@
 #include <asm/mach/map.h>
 #include <asm/pmu.h>
 
+#ifdef CONFIG_OMAP4_DPLL_CASCADING
+#include <linux/dpll.h>
+#include <mach/omap4-common.h>
+#endif
+
 #include <plat/tc.h>
 #include <plat/board.h>
 #include <plat/mcbsp.h>
@@ -317,6 +322,27 @@ static void omap_init_mcpdm(void)
 	char *oh_name = "mcpdm";
 	char *dev_name = "omap-mcpdm";
 
+	/*
+	 * Init McPDM pins for OMAP4 to prevent the occurrence of
+	 * noise at the output of the Audio IC
+	 */
+	if (cpu_is_omap44xx()) {
+		omap_mux_init_signal("abe_pdm_ul_data.abe_pdm_ul_data",
+			OMAP_PIN_INPUT_PULLDOWN);
+
+		omap_mux_init_signal("abe_pdm_dl_data.abe_pdm_dl_data",
+			OMAP_PIN_INPUT_PULLDOWN);
+
+		omap_mux_init_signal("abe_pdm_frame.abe_pdm_frame",
+			OMAP_PIN_INPUT_PULLUP);
+
+		omap_mux_init_signal("abe_pdm_lb_clk.abe_pdm_lb_clk",
+			OMAP_PIN_INPUT_PULLDOWN);
+
+		omap_mux_init_signal("abe_clks.abe_clks",
+			OMAP_PIN_INPUT_PULLDOWN);
+	}
+
 	oh = omap_hwmod_lookup(oh_name);
 	if (!oh) {
 		pr_err("%s: could not look up %s\n", __func__, oh_name);
@@ -411,12 +437,18 @@ static struct platform_device omap_abe_dai = {
 	.id	= -1,
 };
 
+static struct platform_device omap_abe_vxrec = {
+	.name	= "omap-abe-vxrec-dai",
+	.id	= -1,
+};
+
 static inline void omap_init_abe(void)
 {
 	platform_device_register(&codec_dmic0);
 	platform_device_register(&codec_dmic1);
 	platform_device_register(&codec_dmic2);
 	platform_device_register(&omap_abe_dai);
+	platform_device_register(&omap_abe_vxrec);
 }
 #else
 static inline void omap_init_abe(void) {}
@@ -956,6 +988,29 @@ static struct omap_device_pm_latency omap_gpu_latency[] = {
 	},
 };
 
+#ifdef CONFIG_OMAP4_DPLL_CASCADING
+int omap_device_scale_gpu(struct device *req_dev, struct device *target_dev,
+			unsigned long rate)
+{
+	unsigned long freq = 0;
+	int ret;
+if (likely(dpll_active)) {
+	/* find lowest frequency */
+	opp_find_freq_ceil(target_dev, &freq);
+
+	if (rate > freq)
+		omap4_dpll_cascading_blocker_hold(target_dev);
+//	else
+	ret = omap_device_scale(req_dev, target_dev, rate);
+	if (!ret && rate <= freq)
+		omap4_dpll_cascading_blocker_release(target_dev);
+
+//	return omap_device_scale(req_dev, target_dev, rate);
+	return ret;
+	}
+}
+#endif
+
 static void omap_init_gpu(void)
 {
 	struct omap_hwmod *oh;
@@ -984,8 +1039,15 @@ static void omap_init_gpu(void)
 		pr_err("omap_init_gpu: Platform data memory allocation failed\n");
 		return;
 	}
-
+#ifdef CONFIG_OMAP4_DPLL_CASCADING
+if (likely(dpll_active)) {
+	pdata->device_scale = omap_device_scale_gpu;
+else
 	pdata->device_scale = omap_device_scale;
+	}
+#else
+	pdata->device_scale = omap_device_scale;
+#endif
 	pdata->device_enable = omap_device_enable;
 	pdata->device_idle = omap_device_idle;
 	pdata->device_shutdown = omap_device_shutdown;

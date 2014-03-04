@@ -301,10 +301,10 @@ int omap_pm_apply_min_bus_tput_helper_l(void)
 else
 		pr_err("Failed: change interconnect bandwidth to %ld\n",
 		     target_level);
-#endif
+#else
 		pr_err("Failed: change interconnect bandwidth to %ld\n",
 		     target_level);
-
+#endif
 	return ret;
 }
 

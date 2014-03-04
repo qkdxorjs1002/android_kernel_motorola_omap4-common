@@ -1224,7 +1224,7 @@ if (likely(dpll_active)) {
 			abe_fe_event,
 			SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_PRE_PMD),
 	}
-else if(unlikely(dpll_active) {	
+else if (unlikely(dpll_active) {	
 
 	/* Frontend AIFs */
 	SND_SOC_DAPM_AIF_IN("TONES_DL", "Tones Playback", 0,
@@ -3061,8 +3061,9 @@ if (likely(dpll_active)) {
 
 	ret = snd_soc_register_platform(abe->dev,
 			&omap_aess_platform);
-	if (ret < 0)
-		return ret;
+
+	if (ret)
+		goto err;
 
 	abe_init_debugfs(abe);
 	return ret;
