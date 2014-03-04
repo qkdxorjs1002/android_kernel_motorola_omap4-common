@@ -1,0 +1,10 @@
+c6fb75a omap: cpuidle: fix idle params
+31a3a4f omap: cpuidle: remove leftover code for qos requests
+07b0ea4 omap: kconfig: fix syntax
+974e2c6 omap: serial: dpll_cascading: add missing module string
+da1a774 defconfig: mmi: fix derp
+164b571 omap: dpll: module: merge changes from lucize
+46ae29d omap: dpll_cascading: overall fixes and additions
+026a4f1 OMAP4: DPLL Cascading: Introduce menuconfig options
+027e78c omap-serial fixes [stargo]
+375f659 Revert "omap: serial: disable serial port irq during suspend"
