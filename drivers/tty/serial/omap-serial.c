@@ -1987,6 +1987,7 @@ static void __exit serial_omap_exit(void)
 	platform_driver_unregister(&serial_omap_driver);
 	uart_unregister_driver(&serial_omap_reg);
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
+if (likely(dpll_active))
 	flush_work_sync(&dpll_blocker.dpll_blocker_work);
 #endif
 
