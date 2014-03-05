@@ -1,0 +1,19 @@
+d342e05 Revert "omap: plat: mailbox: 3.0.31"
+1e6fb1a dpll_cascading: this cannot work this way..
+ce82701 Revert "defconfig: enable dpll_cascading"
+ab18be8 defconfig: enable dpll_cascading
+b5eb3b6 onap: dpll: add missing string
+3f266ec omap: smartreflex: dpll_cascading: fix wrong code
+55154fb Merge changes from lucize
+e8a0d1b omap: plat: mailbox: 3.0.31
+c632175 Added todays changelog and updated full history
+c6fb75a omap: cpuidle: fix idle params
+31a3a4f omap: cpuidle: remove leftover code for qos requests
+07b0ea4 omap: kconfig: fix syntax
+974e2c6 omap: serial: dpll_cascading: add missing module string
+da1a774 defconfig: mmi: fix derp
+164b571 omap: dpll: module: merge changes from lucize
+46ae29d omap: dpll_cascading: overall fixes and additions
+026a4f1 OMAP4: DPLL Cascading: Introduce menuconfig options
+027e78c omap-serial fixes [stargo]
+375f659 Revert "omap: serial: disable serial port irq during suspend"
