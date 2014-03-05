@@ -85,21 +85,8 @@ extern bool gic_dist_disabled(void);
 extern void gic_timer_retrigger(void);
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
-if (likely(dpll_active)) {
 extern bool omap4_abe_can_enter_dpll_cascading(void);
 extern bool omap4_is_in_dpll_cascading(void);
-}
-else {
-static inline bool omap4_abe_can_enter_dpll_cascading(void)
-{
-	return false;
-}
-
-static inline bool omap4_is_in_dpll_cascading(void)
-{
-	return false;
-}
-	}
 #else
 static inline bool omap4_abe_can_enter_dpll_cascading(void)
 {
