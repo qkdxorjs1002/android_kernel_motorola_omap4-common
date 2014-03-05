@@ -1467,8 +1467,10 @@ int omap4_dpll_cascading_blocker_hold(struct device *dev)
 	int ret = 0;
 
 #ifdef CONFIG_OMAP4_ONLY_OMAP4430_DPLL_CASCADING
+if (likely(dpll_active)) {
 	if (!cpu_is_omap443x())
 		return ret;
+	}
 #endif
 	if (!dev)
 		return -EINVAL;
