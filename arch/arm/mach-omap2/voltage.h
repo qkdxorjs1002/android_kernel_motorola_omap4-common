@@ -185,10 +185,10 @@ struct omap_volt_data {
 #define OMAP3630_VP2_VLIMITTO_VDDMIN	900000
 #define OMAP3630_VP2_VLIMITTO_VDDMAX	1200000
 
-#define OMAP3_VP_CONFIG_ERROROFFSET    0x00
-#define OMAP3_VP_VSTEPMIN_VSTEPMIN     0x1
-#define OMAP3_VP_VSTEPMAX_VSTEPMAX     0x04
-#define OMAP3_VP_VLIMITTO_TIMEOUT_US   200
+#define OMAP3_VP_CONFIG_ERROROFFSET	0x00
+#define OMAP3_VP_VSTEPMIN_VSTEPMIN	0x1
+#define OMAP3_VP_VSTEPMAX_VSTEPMAX	0x04
+#define OMAP3_VP_VLIMITTO_TIMEOUT_US	200
 
 #define OMAP4_VP_MPU_VLIMITTO_VDDMIN	830000
 #define OMAP4_VP_MPU_VLIMITTO_VDDMAX	1420000
@@ -197,13 +197,13 @@ struct omap_volt_data {
 #define OMAP4_VP_CORE_VLIMITTO_VDDMIN	830000
 #define OMAP4_VP_CORE_VLIMITTO_VDDMAX	1250000 /* Increased voltage limit for SGX */
 
-#define OMAP4430_VP_MPU_VLIMITTO_VDDMAX                1360000
-#define OMAP4430_VP_IVA_VLIMITTO_VDDMAX                1240000
-#define OMAP4430_VP_CORE_VLIMITTO_VDDMAX       1170000
+#define OMAP4430_VP_MPU_VLIMITTO_VDDMAX			1360000
+#define OMAP4430_VP_IVA_VLIMITTO_VDDMAX			1240000
+#define OMAP4430_VP_CORE_VLIMITTO_VDDMAX	1170000
 
-#define OMAP4460_VP_MPU_VLIMITTO_VDDMAX                1380000
-#define OMAP4460_VP_IVA_VLIMITTO_VDDMAX                1375000
-#define OMAP4460_VP_CORE_VLIMITTO_VDDMAX       1250000
+#define OMAP4460_VP_MPU_VLIMITTO_VDDMAX			1380000
+#define OMAP4460_VP_IVA_VLIMITTO_VDDMAX			1375000
+#define OMAP4460_VP_CORE_VLIMITTO_VDDMAX	1250000
 
 
 #define OMAP4_VP_CONFIG_ERROROFFSET	0x00
@@ -385,6 +385,14 @@ static inline unsigned long omap_get_dyn_nominal(struct omap_volt_data *vdata)
 }
 
 static inline unsigned long omap_get_nom_voltage(struct omap_volt_data *vdata)
+{
+	if (IS_ERR_OR_NULL(vdata))
+		return 0;
+	return vdata->volt_nominal;
+}
+
+static inline unsigned long omap_get_nominal_voltage(
+				struct omap_volt_data *vdata)
 {
 	if (IS_ERR_OR_NULL(vdata))
 		return 0;
