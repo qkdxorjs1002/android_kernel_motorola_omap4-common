@@ -44,6 +44,7 @@
 #include <linux/pm_qos_params.h>
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
+extern bool dpll_active;
 #include <linux/notifier.h>
 #include <plat/clock.h>
 

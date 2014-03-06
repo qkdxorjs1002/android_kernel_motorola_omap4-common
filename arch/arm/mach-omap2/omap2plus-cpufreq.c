@@ -47,7 +47,7 @@
 #include "smartreflex.h"
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
-#include <linux/dpll.h>
+extern bool dpll_active;
 #include <mach/omap4-common.h>
 #endif
 

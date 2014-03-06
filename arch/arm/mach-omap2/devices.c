@@ -25,7 +25,7 @@
 #include <asm/pmu.h>
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
-#include <linux/dpll.h>
+extern bool dpll_active;
 #include <mach/omap4-common.h>
 #endif
 
@@ -994,7 +994,7 @@ int omap_device_scale_gpu(struct device *req_dev, struct device *target_dev,
 {
 	unsigned long freq = 0;
 	int ret;
-if (likely(dpll_active)) {
+if (dpll_active) {
 	/* find lowest frequency */
 	opp_find_freq_ceil(target_dev, &freq);
 
@@ -1040,11 +1040,11 @@ static void omap_init_gpu(void)
 		return;
 	}
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
-if (likely(dpll_active)) {
+if (dpll_active) {
 	pdata->device_scale = omap_device_scale_gpu;
+	}
 else
 	pdata->device_scale = omap_device_scale;
-	}
 #else
 	pdata->device_scale = omap_device_scale;
 #endif

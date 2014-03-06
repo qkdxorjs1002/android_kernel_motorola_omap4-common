@@ -23,7 +23,9 @@
 #include <linux/list.h>
 #include <linux/debugfs.h>
 #include <linux/seq_file.h>
-
+#ifdef CONFIG_OMAP4_DPLL_CASCADING
+extern bool dpll_active;
+#endif
 /* Interface documentation is in mach/omap-pm.h */
 #include <plat/omap-pm.h>
 #include <plat/omap_device.h>
