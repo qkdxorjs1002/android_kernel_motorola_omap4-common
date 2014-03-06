@@ -19,6 +19,7 @@
 #include <linux/cpu.h>
 #include <linux/delay.h>
 #include <linux/cpu_pm.h>
+#include <linux/pm_qos_params.h>
 
 #include <asm/cacheflush.h>
 #include <asm/proc-fns.h>
@@ -799,6 +800,27 @@ int __init omap4_idle_init(void)
 	struct omap4_processor_cx *cx;
 	struct cpuidle_state *state;
 	struct cpuidle_device *dev;
+
+const struct cpuidle_params *idle_params;
+
+	/* Restrict C-State to C0.
+	 * Below, we set the CPU_DMA_LATENCY to 10, which is
+	 * less than the C1 state exit latency. This will ensure
+	 * that the cpuidle governor does not transition to C1 or
+	 * higher states till the CPU_DMA_LATENCY is relaxed.
+	 * The CPU_DMA_LATENCY requirement is removed when the
+	 * boot timer (which is set to 120 secs right now) expires.
+
+	 * This is temporary work around for a Ducati/ipc_link power-up
+	 * issue.
+	*/
+	pm_qos_add_request(&pm_qos_handle, PM_QOS_CPU_DMA_LATENCY, 10);
+
+	INIT_DELAYED_WORK(&dwork, dwork_timer);
+	schedule_delayed_work_on(0, &dwork, boot_noidle_time * HZ);
+	pr_info("%s:qos_add_request for CPU_DMA_LATENCY for %dsecs\n",
+			__func__, boot_noidle_time);
+
 	
 	mpu_pd = pwrdm_lookup("mpu_pwrdm");
 	BUG_ON(!mpu_pd);
