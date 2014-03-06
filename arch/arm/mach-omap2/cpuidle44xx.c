@@ -116,7 +116,7 @@ static struct clockdomain *cpu1_cd;
  * C4		769		1323
  */
 
-static struct cpuidle_params cpuidle_params_table[] = {
+static __initdata struct cpuidle_params omap443x_cpuidle_params_table[] = {
 	/* C1 - CPUx WFI + MPU ON  + CORE ON */
   {
     .exit_latency = 4,
@@ -150,6 +150,73 @@ static struct cpuidle_params cpuidle_params_table[] = {
   },
 #endif
 };
+
+static __initdata struct cpuidle_params omap446x_cpuidle_params_table[] = {
+  /* C1 - CPUx WFI + MPU ON  + CORE ON */
+  {
+    .exit_latency = 4,
+    .target_residency = 4,
+    .valid = 1,
+  },
+  /* C2 - CPUx OFF + MPU INA  + CORE INA */
+  {
+    .exit_latency = 300,
+    .target_residency = 1800,
+    .valid = 1,
+  },
+  /* C3 - CPUx OFF + MPU CSWR + CORE OSWR */
+  {
+    .exit_latency = 4000,
+    .target_residency = 4000,
+    .valid = 1,
+  },
+  /* C4 - CPUx OFF + MPU CSWR + CORE OSWR */
+  {
+    .exit_latency = 4200,
+    .target_residency = 4200,
+    .valid = CPU_IDLE_ALLOW_OSWR,
+
+  },
+};
+
+static __initdata struct cpuidle_params omap447x_cpuidle_params_table[] = {
+  /* C1 - CPUx WFI + MPU ON  + CORE ON */
+  {
+    .exit_latency = 4,
+    .target_residency = 4,
+    .valid = 1,
+  },
+  /* C2 - CPUx OFF + MPU INA  + CORE INA */
+  {
+    .exit_latency = 500,
+    .target_residency = 1200,
+    .valid = 1,
+  },
+  /* C3 - CPUx OFF + MPU CSWR + CORE OSWR */
+  {
+    .exit_latency = 5300,
+    .target_residency = 5300,
+    .valid = 1,
+  },
+  /* C4 - CPUx OFF + MPU CSWR + CORE OSWR */
+  {
+    .exit_latency = 5500,
+    .target_residency = 15000,
+    .valid = CPU_IDLE_ALLOW_OSWR,
+  },
+};
+
+
+/* Gate long latency C states for 120 seconds to reduce boot time */
+static unsigned int __initdata boot_noidle_time = 120;
+
+/* Command line override to allow matching with application start time */
+static int __init boot_noidle_time_setup(char *str)
+{
+	get_option(&str, &boot_noidle_time);
+	return 1;
+}
+__setup("boot_noidle_time=", boot_noidle_time_setup);
 
 static void omap4_update_actual_state(struct cpuidle_device *dev,
 	struct omap4_processor_cx *cx)
@@ -630,7 +697,7 @@ DEFINE_PER_CPU(struct cpuidle_device, omap4_idle_dev);
  * Below is the desciption of each C state.
  * C1 : CPUx wfi + MPU inative + Core inactive
  */
-void omap4_init_power_states(void)
+static void omap4_init_power_states(const struct cpuidle_params *cpuidle_params_table)
 {
 	/*
 	 * C1 - CPUx WFI + MPU ON + CORE ON
@@ -720,7 +787,7 @@ int __init omap4_idle_init(void)
 	struct omap4_processor_cx *cx;
 	struct cpuidle_state *state;
 	struct cpuidle_device *dev;
-
+	
 	mpu_pd = pwrdm_lookup("mpu_pwrdm");
 	BUG_ON(!mpu_pd);
 	cpu1_pd = pwrdm_lookup("cpu1_pwrdm");
@@ -730,7 +797,16 @@ int __init omap4_idle_init(void)
 	core_pd = pwrdm_lookup("core_pwrdm");
 	BUG_ON(!core_pd);
 
-	omap4_init_power_states();
+	if (cpu_is_omap443x())
+
+    idle_params = omap443x_cpuidle_params_table;
+  else if (cpu_is_omap446x())
+    idle_params = omap446x_cpuidle_params_table;
+  else
+    idle_params = omap447x_cpuidle_params_table;
+
+  omap4_init_power_states(idle_params);
+
 	cpuidle_register_driver(&omap4_idle_driver);
 
 	for_each_possible_cpu(cpu_id) {
