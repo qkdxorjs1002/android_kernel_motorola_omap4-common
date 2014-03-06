@@ -598,12 +598,17 @@ int sr_configure_errgen(struct voltagedomain *voltdm)
 	}
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
-if (unlikely(dpll_active))
-	    if (!sr->clk_length)
+if (unlikely(dpll_active))  {
+	if (!sr->clk_length)
+			sr_set_clk_length(sr);
+				}
+else
+		sr_set_clk_length(sr);
 #else
 	if (!sr->clk_length)
+		sr_set_clk_length(sr);
 #endif
-	sr_set_clk_length(sr);
+
 	senp_en = sr->senp_mod;
 	senn_en = sr->senn_mod;
 
@@ -715,12 +720,16 @@ int sr_configure_minmax(struct voltagedomain *voltdm)
 	}
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
-if (unlikely(dpll_active))
+if (unlikely(dpll_active))  {
 	if (!sr->clk_length)
+			sr_set_clk_length(sr);
+				}
+else
+		sr_set_clk_length(sr);
 #else
 	if (!sr->clk_length)
-#endif
 		sr_set_clk_length(sr);
+#endif
 
 	senp_en = sr->senp_mod;
 	senn_en = sr->senn_mod;
