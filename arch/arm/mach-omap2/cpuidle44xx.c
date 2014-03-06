@@ -218,6 +218,18 @@ static int __init boot_noidle_time_setup(char *str)
 }
 __setup("boot_noidle_time=", boot_noidle_time_setup);
 
+struct pm_qos_request_list pm_qos_handle;
+static struct delayed_work dwork;
+
+static void dwork_timer(struct work_struct *work)
+{
+	pr_info("%s: pm_qos_remove_request for CPU_DMA_LATENCY\n", __func__);
+
+	pm_qos_remove_request(&pm_qos_handle);
+
+}
+
+
 static void omap4_update_actual_state(struct cpuidle_device *dev,
 	struct omap4_processor_cx *cx)
 {
