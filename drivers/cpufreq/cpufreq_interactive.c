@@ -119,7 +119,7 @@ static unsigned long min_sample_time;
 #define DEFAULT_TIMER_RATE (20 * USEC_PER_MSEC)
 static unsigned long timer_rate;
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
-if (likely(dpll_active))
+extern bool dpll_active;
 static unsigned long default_timer_rate;
 #endif
 
@@ -163,17 +163,18 @@ struct cpufreq_governor cpufreq_gov_interactive = {
 };
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
-	if (likely(dpll_active)) {
+
 void cpufreq_interactive_set_timer_rate(unsigned long val, unsigned int reset)
 {
+	if (likely(dpll_active)) {
 	if (!reset) {
 		default_timer_rate = timer_rate;
 		timer_rate = val;
 	} else {
 		if (timer_rate == val)
 			timer_rate = default_timer_rate;
+		}
 	}
-}
 }
 #endif
 
