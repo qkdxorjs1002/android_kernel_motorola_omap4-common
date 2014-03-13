@@ -1,0 +1,4 @@
+2c5dde5 omap: dpll: cpufreq-interactive: fix dpll module
+9f8e726 omap4-common: add missing checks for CONFIG_USB_OOBWAKE
+15e7cb0 omap4-common: only disable interrupt when port is suspending
+d723472 Revert "Revert "omap: serial: disable serial port irq during suspend""
