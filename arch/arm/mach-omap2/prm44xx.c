@@ -198,8 +198,8 @@ void omap4_prm_global_warm_sw_reset(void)
 //#ifdef CONFIG_OMAP4_DPLL_CASCADING
 //if (likely(dpll_active)) {
 //omap4_dpll_cascading_blocker_hold(&fake_reset_dev);
-	}
-#endif 
+//	}
+//#endif 
 
 
 	v = omap4_prm_read_inst_reg(OMAP4430_PRM_DEVICE_INST,
