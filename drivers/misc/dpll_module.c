@@ -25,7 +25,7 @@
 
 static DEFINE_MUTEX(dpll_mutex);
 
-bool dpll_active __read_mostly = false;
+bool dpll_active __read_mostly = true;
 
 /*bool dpll_active()
 {

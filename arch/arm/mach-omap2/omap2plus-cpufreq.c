@@ -29,6 +29,7 @@
 #include <linux/cpu.h>
 #include <linux/thermal_framework.h>
 #include <linux/platform_device.h>
+#include <linux/omap4_duty_cycle.h>
 #include <linux/earlysuspend.h>
 
 #include <asm/system.h>
@@ -173,7 +174,7 @@ static void omap_cpufreq_lpj_recalculate(unsigned int target_freq,
 #endif
 }
 
-int omap_cpufreq_scale(struct device *req_dev, unsigned int target_freq)
+int omap_cpufreq_scale(struct device *req_dev, unsigned int target_freq, unsigned int cur_freq)
 {
 	unsigned int i;
 	int ret;
@@ -192,7 +193,7 @@ int omap_cpufreq_scale(struct device *req_dev, unsigned int target_freq)
 	  if (min_capped && freqs.new < min_capped)
 	    freqs.new = min_capped;  
 
-	if (freqs.old == freqs.new)
+	if ((freqs.old == freqs.new) && (cur_freq = freqs.new))
 		return 0;
 
 	get_online_cpus();
@@ -517,9 +518,11 @@ static inline void freq_table_free(void)
 		opp_free_cpufreq_table(mpu_dev, &freq_table);
 }
 
-#ifdef CONFIG_THERMAL_FRAMEWORK
+#if defined(CONFIG_THERMAL_FRAMEWORK) || defined(CONFIG_OMAP4_DUTY_CYCLE)
 void omap_thermal_step_freq_down(void)
 {
+	unsigned int cur;
+
 	if (!omap_cpufreq_ready) {
 		pr_warn_once("%s: Thermal throttle prior to CPUFREQ ready\n",
 			     __func__);
@@ -543,6 +546,8 @@ void omap_thermal_step_freq_down(void)
 
 void omap_thermal_step_freq_up(void)
 {
+	unsigned int cur;
+
 	if (!omap_cpufreq_ready)
 		return;
 
@@ -589,6 +594,33 @@ static int cpufreq_apply_cooling(struct thermal_dev *dev,
 
 	return 0;
 }
+#endif
+
+#ifdef CONFIG_OMAP4_DUTY_CYCLE
+
+static struct duty_cycle_dev duty_dev = {
+	.cool_device = cpufreq_apply_cooling,
+};
+
+static int __init omap_duty_cooling_init(void)
+{
+	return duty_cooling_dev_register(&duty_dev);
+}
+
+static void __exit omap_duty_cooling_exit(void)
+{
+	duty_cooling_dev_unregister();
+}
+
+
+#else
+
+static int __init omap_duty_cooling_init(void) { return 0; }
+static void __exit omap_duty_cooling_exit(void) { }
+
+#endif
+
+#ifdef CONFIG_THERMAL_FRAMEWORK
 
 static struct thermal_dev_ops cpufreq_cooling_ops = {
 	.cool_device = cpufreq_apply_cooling,
@@ -1204,6 +1236,8 @@ static int omap_cpufreq_suspend_noirq(struct device *dev)
 
 static int omap_cpufreq_resume_noirq(struct device *dev)
 {
+	unsigned int cur;
+
 	mutex_lock(&omap_cpufreq_lock);
 
 	if (omap_getspeed(0) != current_target_freq)
@@ -1245,7 +1279,7 @@ static int __init omap_cpufreq_init(void)
 		mpu_clk_name = "dpll1_ck";
 	else if (cpu_is_omap443x())
 		mpu_clk_name = "dpll_mpu_ck";
-	else if (cpu_is_omap446x())
+	else if (cpu_is_omap446x() || cpu_is_omap447x())
 		mpu_clk_name = "virt_dpll_mpu_ck";
 
 	if (!mpu_clk_name) {
@@ -1265,6 +1299,9 @@ static int __init omap_cpufreq_init(void)
 	ret = cpufreq_register_driver(&omap_driver);
 	omap_cpufreq_ready = !ret;
 
+	max_thermal = max_freq;
+	current_cooling_level = 0;
+
 	if (!ret) {
 		int t;
 
@@ -1276,7 +1313,15 @@ static int __init omap_cpufreq_init(void)
 		if (t)
 			pr_warn("%s_init: platform_driver_register failed\n",
 				__func__);
-	ret = omap_cpufreq_cooling_init();
+		ret = omap_cpufreq_cooling_init();
+
+		if (ret)
+			return ret;
+
+		ret = omap_duty_cooling_init();
+		if (ret)
+			pr_warn("%s: omap_duty_cooling_init failed\n",
+				__func__);
 	}
 
 	return ret;
@@ -1285,6 +1330,7 @@ static int __init omap_cpufreq_init(void)
 static void __exit omap_cpufreq_exit(void)
 {
 	omap_cpufreq_cooling_exit();
+	omap_duty_cooling_exit();
 	cpufreq_unregister_driver(&omap_driver);
 
 	unregister_early_suspend(&omap_cpu_early_suspend_handler);
