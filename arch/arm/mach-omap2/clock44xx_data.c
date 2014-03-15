@@ -37,9 +37,7 @@
 #include "prm-regbits-44xx.h"
 #include "control.h"
 #include "scrm44xx.h"
-#ifdef CONFIG_OMAP4_DPLL_CASCADING
-extern bool dpll_active;
-#endif
+
 #ifdef CONFIG_LIVE_OC
 #include <linux/live_oc.h>
 #endif
@@ -472,8 +470,10 @@ static struct clk dpll_core_ck = {
 	.speculate	= &omap2_clksel_speculate,
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
+if (likely(dpll_active)) {
 	.round_rate     = &omap2_dpll_round_rate,
 	.set_rate       = &omap4_core_dpll_set_rate,
+	}
 #endif
 };
 

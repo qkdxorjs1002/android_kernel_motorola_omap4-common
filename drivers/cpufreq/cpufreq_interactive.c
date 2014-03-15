@@ -30,9 +30,7 @@
 #include <linux/slab.h>
 #include <linux/input.h>
 #include <asm/cputime.h>
-#ifdef CONFIG_OMAP4_DPLL_CASCADING
-extern bool dpll_active;
-#endif
+
 #define CREATE_TRACE_POINTS
 #include <trace/events/cpufreq_interactive.h>
 
@@ -120,7 +118,14 @@ static unsigned long min_sample_time;
  */
 #define DEFAULT_TIMER_RATE (20 * USEC_PER_MSEC)
 static unsigned long timer_rate;
+<<<<<<< HEAD
 
+=======
+#ifdef CONFIG_OMAP4_DPLL_CASCADING
+if (likely(dpll_active))
+static unsigned long default_timer_rate;
+#endif
+>>>>>>> parent of f5386a7... omap: dpll_cascading: module: fix
 
 /*
  * Wait this long before raising speed above hispeed, by default a single
@@ -161,6 +166,24 @@ struct cpufreq_governor cpufreq_gov_interactive = {
 	.owner = THIS_MODULE,
 };
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_OMAP4_DPLL_CASCADING
+	if (likely(dpll_active)) {
+void cpufreq_interactive_set_timer_rate(unsigned long val, unsigned int reset)
+{
+	if (!reset) {
+		default_timer_rate = timer_rate;
+		timer_rate = val;
+	} else {
+		if (timer_rate == val)
+			timer_rate = default_timer_rate;
+	}
+}
+}
+#endif
+
+>>>>>>> parent of f5386a7... omap: dpll_cascading: module: fix
 static void cpufreq_interactive_timer(unsigned long data)
 {
 	unsigned int delta_idle;

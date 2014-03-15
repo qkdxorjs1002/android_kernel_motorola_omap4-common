@@ -24,14 +24,11 @@
 #define DPLL_VERSION_MINOR 1
 
 static DEFINE_MUTEX(dpll_mutex);
-
-bool dpll_active __read_mostly = true;
-
-/*bool dpll_active()
-{
-    return dpll_enabled;
-}
-EXPORT_SYMBOL(dpll_active); */
+//#if defined(CONFIG_MAPPHONE_EDISON) || defined(CONFIG_MAPPHONE_TARGA)
+bool dpll_active __read_mostly = false;
+//#else
+//bool dpll_active __read_mostly = true;
+//#endif
 
 static ssize_t dpll_active_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)

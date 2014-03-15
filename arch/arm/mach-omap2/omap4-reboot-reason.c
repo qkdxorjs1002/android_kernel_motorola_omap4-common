@@ -22,7 +22,6 @@
 #include "omap4-sar-layout.h"
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
-extern bool dpll_active;
 static struct device fake_reset_dev;
 #endif
 

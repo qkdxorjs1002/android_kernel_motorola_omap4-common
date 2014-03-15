@@ -44,7 +44,7 @@
 #include <plat/omap-pm.h>
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
-extern bool dpll_active;
+#include <linux/dpll.h>
 #include <linux/notifier.h>
 #include <plat/clock.h>
 #endif

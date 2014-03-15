@@ -29,7 +29,7 @@
 
 #ifdef CONFIG_OMAP4_DPLL_CASCADING
 #include <mach/omap4-common.h>
-extern bool dpll_active;
+#include <linux/dpll.h>
 #endif
 
 #include "pm.h"
