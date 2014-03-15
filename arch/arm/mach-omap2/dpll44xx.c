@@ -508,14 +508,13 @@ if (likely(dpll_active)) {
 
 	if (!dpll_cascading_inited) {
 		pr_warn("%s: failed to get all necessary clocks\n", __func__);
-		ret = -ENODEV;
-		goto out;
+		return -ENODEV;
 	}
 
-	atomic_set(&in_dpll_cascading, true);
 	omap_sr_disable(vdd_mpu);
 	omap_sr_disable(vdd_iva);
 	omap_sr_disable(vdd_core);
+	atomic_set(&in_dpll_cascading, true);
 
 	/* prevent DPLL_ABE & DPLL_CORE from idling */
 	omap3_dpll_deny_idle(dpll_abe_ck);
@@ -734,7 +733,6 @@ sr_enable:
 	omap_sr_enable(vdd_mpu, omap_voltage_get_curr_vdata(vdd_mpu));
 	omap_sr_enable(vdd_iva, omap_voltage_get_curr_vdata(vdd_iva));
 	omap_sr_enable(vdd_core, omap_voltage_get_curr_vdata(vdd_core));
-out:
 	return ret;
 	}
 }
@@ -746,8 +744,8 @@ static int omap4_dpll_low_power_cascade_exit(void)
 
 	if (!dpll_cascading_inited) {
 		pr_warn("%s: failed to get all necessary clocks\n", __func__);
-		ret = -ENODEV;
-		goto out;
+		atomic_set(&in_dpll_cascading, false);
+		return -ENODEV;
 	}
 
 	omap_sr_disable(vdd_mpu);
@@ -877,14 +875,12 @@ static int omap4_dpll_low_power_cascade_exit(void)
 	__raw_writel(state.clkreqctrl, OMAP4430_PRM_CLKREQCTRL);
 
 	recalculate_root_clocks();
+	atomic_set(&in_dpll_cascading, false);
 	omap_sr_enable(vdd_mpu, omap_voltage_get_curr_vdata(vdd_mpu));
 	omap_sr_enable(vdd_iva, omap_voltage_get_curr_vdata(vdd_iva));
 	omap_sr_enable(vdd_core, omap_voltage_get_curr_vdata(vdd_core));
-out:
-	atomic_set(&in_dpll_cascading, false);
 	return ret;
 }
-
 #endif
 
 /**
@@ -1586,4 +1582,16 @@ bool omap4_is_in_dpll_cascading(void)
 if (likely(dpll_active))
 	return atomic_read(&in_dpll_cascading);
 }
+#else
+int omap4_dpll_cascading_blocker_hold(struct device *dev)
+{
+	return 0;
+}
+EXPORT_SYMBOL(omap4_dpll_cascading_blocker_hold);
+
+int omap4_dpll_cascading_blocker_release(struct device *dev)
+{
+	return 0;
+}
+EXPORT_SYMBOL(omap4_dpll_cascading_blocker_release);
 #endif
