@@ -1,0 +1,17 @@
+23b0a9e edison: use edison device tree
+a41bf4a omap: cpufreq_interactive: fix
+2c39bd1 omaop: opp: reinsert adaptions to 3.0.31
+c9dc362 Revert "Revert "Revert changes from lucize - it breaks any functionality for camera. Rpmsg/domx configuration is modified for use with 3.0.8 Moto hybrid / Kexec kernel, so any changes to this section will cause boot issues for IPU processor. Let this untouched to keep the camera functional.""
+c413dbf Revert dpll
+84b7155 Revert dpll
+b39722e Revert dpll
+14690b8 Revert "omap: prm44xx: dpll_cascading: remove"
+8788690 Revert "omap: prm44xx: dpll: disable cascading here - breaks camera"
+894f633 omap: prm44xx: dpll: disable cascading here - breaks camera
+fa8ca9c omap: prm44xx: dpll_cascading: remove
+79b21ac DPLL breaks camera atm - disabled
+a4afe97 Added todays changelog and updated full history
+2c5dde5 omap: dpll: cpufreq-interactive: fix dpll module
+9f8e726 omap4-common: add missing checks for CONFIG_USB_OOBWAKE
+15e7cb0 omap4-common: only disable interrupt when port is suspending
+d723472 Revert "Revert "omap: serial: disable serial port irq during suspend""
