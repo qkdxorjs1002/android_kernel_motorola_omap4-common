@@ -21,10 +21,10 @@
 #include <plat/cpu.h>
 #include <plat/prcm.h>
 
-//#ifdef CONFIG_OMAP4_DPLL_CASCADING
-//extern bool dpll_active;
-//#include <mach/omap4-common.h>
-//#endif
+#ifdef CONFIG_OMAP4_DPLL_CASCADING
+extern bool dpll_active;
+#include <mach/omap4-common.h>
+#endif
 
 #include "voltage.h"
 #include "vp.h"
@@ -186,18 +186,18 @@ int omap4_prm_deassert_hardreset(void __iomem *rstctrl_reg, u8 shift)
 
 	return (c == MAX_MODULE_HARDRESET_WAIT) ? -EBUSY : 0;
 }
-//#ifdef CONFIG_OMAP4_DPLL_CASCADING
-//static struct device fake_reset_dev;
-//#endif
+#ifdef CONFIG_OMAP4_DPLL_CASCADING
+static struct device fake_reset_dev;
+#endif
 
 void omap4_prm_global_warm_sw_reset(void)
 {
 	u32 v;
 
 
-//#ifdef CONFIG_OMAP4_DPLL_CASCADING
-//if (likely(dpll_active)) {
-//omap4_dpll_cascading_blocker_hold(&fake_reset_dev);
+#ifdef CONFIG_OMAP4_DPLL_CASCADING
+if (likely(dpll_active)) {
+omap4_dpll_cascading_blocker_hold(&fake_reset_dev);
 	}
 #endif 
 
