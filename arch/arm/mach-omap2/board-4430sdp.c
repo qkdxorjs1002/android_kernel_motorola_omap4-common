@@ -97,11 +97,14 @@
 
 #define GPIO_WIFI_PMENA		54
 #define GPIO_WIFI_IRQ		53
-#define OMAP_HDMI_HPD_ADDR	0x4A100098
-#define OMAP_HDMI_PULLTYPE_MASK	0x00000010
+//#define OMAP_HDMI_HPD_ADDR	0x4A100098
+//#define OMAP_HDMI_PULLTYPE_MASK	0x00000010
 
 #define OMAP4_SFH7741_SENSOR_OUTPUT_GPIO	184
 #define OMAP4_SFH7741_ENABLE_GPIO		188
+#define HDMI_GPIO_CT_CP_HPD 60 /* HPD mode enable/disable */
+#define HDMI_GPIO_LS_OE 41 /* Level shifter for HDMI */
+#define HDMI_GPIO_HPD  63 /* Hotplug detect */
 
 static const int sdp4430_keymap[] = {
 	KEY(0, 0, KEY_E),
@@ -223,69 +226,69 @@ void keypad_pad_wkup(int enable)
 
 static struct pcb_section omap4_duty_governor_pcb_sections[] = {
 	{
-		.pcb_temp_level                 = 65,
-		.max_opp                        = 1200000,
-		.duty_cycle_enabled             = false,
+		.pcb_temp_level			= 65,
+		.max_opp			= 1200000,
+		.duty_cycle_enabled		= false,
 		.tduty_params = {
-			.nitro_rate             = 0,
-			.cooling_rate           = 0,
-			.nitro_interval         = 0,
-			.nitro_percentage       = 0,
+			.nitro_rate		= 0,
+			.cooling_rate		= 0,
+			.nitro_interval		= 0,
+			.nitro_percentage	= 0,
 		},
 	},
 	{
-		.pcb_temp_level                 = 70,
-		.max_opp                        = 1200000,
-		.duty_cycle_enabled             = true,
+		.pcb_temp_level			= 70,
+		.max_opp			= 1200000,
+		.duty_cycle_enabled		= true,
 		.tduty_params = {
-			.nitro_rate             = 1200000,
-			.cooling_rate           = 1008000,
-			.nitro_interval         = 20000,
-			.nitro_percentage       = 37,
+			.nitro_rate		= 1200000,
+			.cooling_rate		= 1008000,
+			.nitro_interval		= 20000,
+			.nitro_percentage	= 37,
 		},
 	},
 	{
-		.pcb_temp_level                 = 75,
-		.max_opp                        = 1200000,
-		.duty_cycle_enabled             = true,
+		.pcb_temp_level			= 75,
+		.max_opp			= 1200000,
+		.duty_cycle_enabled		= true,
 		.tduty_params = {
-			.nitro_rate             = 1200000,
-			.cooling_rate           = 1008000,
-			.nitro_interval         = 20000,
-			.nitro_percentage       = 24,
+			.nitro_rate		= 1200000,
+			.cooling_rate		= 1008000,
+			.nitro_interval		= 20000,
+			.nitro_percentage	= 24,
 		},
 	},
 	{
-		.pcb_temp_level                 = 80,
-		.max_opp                        = 1200000,
-		.duty_cycle_enabled             = true,
+		.pcb_temp_level			= 80,
+		.max_opp			= 1200000,
+		.duty_cycle_enabled		= true,
 		.tduty_params = {
-			.nitro_rate             = 1200000,
-			.cooling_rate           = 1008000,
-			.nitro_interval         = 20000,
-			.nitro_percentage       = 19,
+			.nitro_rate		= 1200000,
+			.cooling_rate		= 1008000,
+			.nitro_interval		= 20000,
+			.nitro_percentage	= 19,
 		},
 	},
 	{
-		.pcb_temp_level                 = 90,
-		.max_opp                        = 1200000,
-		.duty_cycle_enabled             = true,
+		.pcb_temp_level			= 90,
+		.max_opp			= 1200000,
+		.duty_cycle_enabled		= true,
 		.tduty_params = {
-			.nitro_rate             = 1200000,
-			.cooling_rate           = 1008000,
-			.nitro_interval         = 20000,
-			.nitro_percentage       = 14,
+			.nitro_rate		= 1200000,
+			.cooling_rate		= 1008000,
+			.nitro_interval		= 20000,
+			.nitro_percentage	= 14,
 		},
 	},
 	{
-		.pcb_temp_level                 = 110,
-		.max_opp                        = 1008000,
-		.duty_cycle_enabled             = true,
+		.pcb_temp_level			= 110,
+		.max_opp			= 1008000,
+		.duty_cycle_enabled		= true,
 		.tduty_params = {
-			.nitro_rate             = 1008000,
-			.cooling_rate           = 800000,
-			.nitro_interval         = 20000,
-			.nitro_percentage       = 1,
+			.nitro_rate		= 1008000,
+			.cooling_rate		= 800000,
+			.nitro_interval		= 20000,
+			.nitro_percentage	= 1,
 		},
 	},
 };
@@ -1161,43 +1164,70 @@ static void sdp4430_lcd_init(void)
 }
 
 static struct gpio sdp4430_hdmi_gpios[] = {
-	{HDMI_GPIO_CT_CP_HPD,  GPIOF_OUT_INIT_HIGH,    "hdmi_gpio_hpd"   },
-	{HDMI_GPIO_LS_OE,      GPIOF_OUT_INIT_HIGH,    "hdmi_gpio_ls_oe" },
+//	{HDMI_GPIO_CT_CP_HPD,  GPIOF_OUT_INIT_HIGH,    "hdmi_gpio_hpd"   },
+//	{HDMI_GPIO_LS_OE,      GPIOF_OUT_INIT_HIGH,    "hdmi_gpio_ls_oe" },
+	{ HDMI_GPIO_CT_CP_HPD, GPIOF_OUT_INIT_HIGH, "hdmi_gpio_ct_cp_hpd" },
+	{ HDMI_GPIO_LS_OE,      GPIOF_OUT_INIT_HIGH,    "hdmi_gpio_ls_oe" },
+	{ HDMI_GPIO_HPD, GPIOF_DIR_IN, "hdmi_gpio_hpd" },
 };
-
 
 static void sdp4430_hdmi_mux_init(void)
 {
-	u32 r;
-	int status;
-	/* PAD0_HDMI_HPD_PAD1_HDMI_CEC */
-	omap_mux_init_signal("hdmi_hpd.hdmi_hpd",
-				OMAP_PIN_INPUT_PULLDOWN);
-	omap_mux_init_signal("gpmc_wait2.gpio_100",
-			OMAP_PIN_INPUT_PULLDOWN);
-	omap_mux_init_signal("hdmi_cec.hdmi_cec",
+	omap_mux_init_signal("hdmi_cec",
 			OMAP_PIN_INPUT_PULLUP);
-	/* PAD0_HDMI_DDC_SCL_PAD1_HDMI_DDC_SDA */
-	omap_mux_init_signal("hdmi_ddc_scl.hdmi_ddc_scl",
+	omap_mux_init_signal("hdmi_ddc_scl",
 			OMAP_PIN_INPUT_PULLUP);
-	omap_mux_init_signal("hdmi_ddc_sda.hdmi_ddc_sda",
+	omap_mux_init_signal("hdmi_ddc_sda",
 			OMAP_PIN_INPUT_PULLUP);
-
-	/* strong pullup on DDC lines using unpublished register */
-	r = ((1 << 24) | (1 << 28)) ;
-	omap4_ctrl_pad_writel(r, OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_I2C_1);
-
-	gpio_request(HDMI_GPIO_HPD, NULL);
-	omap_mux_init_gpio(HDMI_GPIO_HPD, OMAP_PIN_INPUT | OMAP_PULL_ENA);
-	gpio_direction_input(HDMI_GPIO_HPD);
-
-	status = gpio_request_array(sdp4430_hdmi_gpios,
-			ARRAY_SIZE(sdp4430_hdmi_gpios));
-	if (status)
-		pr_err("%s:Cannot request HDMI GPIOs %x \n", __func__, status);
 }
 
 
+//static void sdp4430_hdmi_mux_init(void)
+//{
+//	u32 r;
+//	int status;
+//	/* PAD0_HDMI_HPD_PAD1_HDMI_CEC */
+//	omap_mux_init_signal("hdmi_hpd.hdmi_hpd",
+//				OMAP_PIN_INPUT_PULLDOWN);
+//	omap_mux_init_signal("gpmc_wait2.gpio_100",
+//			OMAP_PIN_INPUT_PULLDOWN);
+//	omap_mux_init_signal("hdmi_cec.hdmi_cec",
+//			OMAP_PIN_INPUT_PULLUP);
+//	/* PAD0_HDMI_DDC_SCL_PAD1_HDMI_DDC_SDA */
+//	omap_mux_init_signal("hdmi_ddc_scl.hdmi_ddc_scl",
+//			OMAP_PIN_INPUT_PULLUP);
+//	omap_mux_init_signal("hdmi_ddc_sda.hdmi_ddc_sda",
+//			OMAP_PIN_INPUT_PULLUP);
+//
+//	/* strong pullup on DDC lines using unpublished register */
+//	r = ((1 << 24) | (1 << 28)) ;
+//	omap4_ctrl_pad_writel(r, OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_I2C_1);
+//
+//	gpio_request(HDMI_GPIO_HPD, NULL);
+//	omap_mux_init_gpio(HDMI_GPIO_HPD, OMAP_PIN_INPUT | OMAP_PULL_ENA);
+//	gpio_direction_input(HDMI_GPIO_HPD);
+//
+//	status = gpio_request_array(sdp4430_hdmi_gpios,
+//			ARRAY_SIZE(sdp4430_hdmi_gpios));
+//	if (status)
+//		pr_err("%s:Cannot request HDMI GPIOs %x \n", __func__, status);
+//}
+
+static int sdp4430_panel_enable_hdmi(struct omap_dss_device *dssdev)
+{
+	int status;
+	status = gpio_request_array(sdp4430_hdmi_gpios,
+				    ARRAY_SIZE(sdp4430_hdmi_gpios));
+	if (status)
+		pr_err("%s: Cannot request HDMI GPIOs\n", __func__);
+
+	return status;
+}
+
+static void sdp4430_panel_disable_hdmi(struct omap_dss_device *dssdev)
+{
+	gpio_free_array(sdp4430_hdmi_gpios, ARRAY_SIZE(sdp4430_hdmi_gpios));
+}
 
 static struct nokia_dsi_panel_data dsi1_panel = {
 		.name		= "taal",
@@ -1221,6 +1251,14 @@ static struct omap_dss_device sdp4430_lcd_device = {
 		.data2_lane	= 3,
 		.data2_pol	= 0,
 	},
+	.panel = {
+		.timings = {
+			.x_res = 864,
+			.y_res = 480,
+		},
+		.width_in_um = 84400,
+		.height_in_um = 47000,
+	},
 
 	.clocks = {
 		.dispc = {
@@ -1240,17 +1278,33 @@ static struct omap_dss_device sdp4430_lcd_device = {
 
 			.lp_clk_div	= 10,	/* LP Clock = 8.64 MHz */
 			.dsi_fclk_src	= OMAP_DSS_CLK_SRC_DSI_PLL_HSDIV_DSI,
+			.tlpx   = 12,
+			.tclk = {
+				.zero    = 57,
+				.prepare = 15,
+				.trail   = 15,
+			},
+			.ths = {
+				.zero    = 22,
+				.prepare = 18,
+				.exit    = 32,
+				.trail   = 18,
+			},
 		},
 	},
 	.channel = OMAP_DSS_CHANNEL_LCD,
 	.skip_init = false,
 };
 
+static struct omap_dss_hdmi_data sdp4430_hdmi_data = {
+	.hpd_gpio = HDMI_GPIO_HPD,
+};
+
 static struct omap_dss_device sdp4430_hdmi_device = {
 	.name = "hdmi",
 	.driver_name = "hdmi_panel",
 	.type = OMAP_DISPLAY_TYPE_HDMI,
-	.clocks	= {
+/*	.clocks	= {
 		.dispc	= {
 			.dispc_fclk_src	= OMAP_DSS_CLK_SRC_FCK,
 		},
@@ -1260,18 +1314,23 @@ static struct omap_dss_device sdp4430_hdmi_device = {
 		},
 	},
 	.hpd_gpio = HDMI_GPIO_HPD,
+*/
+	.platform_enable = sdp4430_panel_enable_hdmi,
+	.platform_disable = sdp4430_panel_disable_hdmi,
 	.channel = OMAP_DSS_CHANNEL_DIGIT,
+	.data = &sdp4430_hdmi_data,
 };
 
 static struct omap_dss_device *sdp4430_dss_devices[] = {
-	&sdp4430_lcd_device,
+//	&sdp4430_lcd_device,
 	&sdp4430_hdmi_device,
 };
 
 static struct omap_dss_board_info sdp4430_dss_data = {
 	.num_devices	= ARRAY_SIZE(sdp4430_dss_devices),
 	.devices	= sdp4430_dss_devices,
-	.default_device	= &sdp4430_lcd_device,
+//	.default_device	= &sdp4430_lcd_device,
+	.default_device = &sdp4430_hdmi_device,
 };
 
 #define BLAZE_FB_RAM_SIZE                SZ_16M /* 1920×1080*4 * 2 */
@@ -1290,7 +1349,7 @@ static void omap_4430sdp_display_init(void)
 {
 	sdp4430_lcd_init();
 	sdp4430_hdmi_mux_init();
-	omap_vram_set_sdram_vram(BLAZE_FB_RAM_SIZE, 0);
+//	omap_vram_set_sdram_vram(BLAZE_FB_RAM_SIZE, 0);
 	omapfb_set_platform_data(&blaze_fb_pdata);
 	omap_display_init(&sdp4430_dss_data);
 
@@ -1301,7 +1360,8 @@ static void omap_4430sdp_display_init(void)
 
 #ifdef CONFIG_OMAP_MUX
 static struct omap_board_mux board_mux[] __initdata = {
-	OMAP4_MUX(USBB2_ULPITLL_CLK, OMAP_MUX_MODE3 | OMAP_PIN_OUTPUT),
+//	OMAP4_MUX(USBB2_ULPITLL_CLK, OMAP_MUX_MODE3 | OMAP_PIN_OUTPUT),
+	OMAP4_MUX(USBB2_ULPITLL_CLK, OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT),
 	{ .reg_offset = OMAP_MUX_TERMINATOR },
 };
 
@@ -1311,8 +1371,8 @@ static struct omap_board_mux board_mux[] __initdata = {
 #endif
 
 /*
- * LPDDR2 Configeration Data:
- * The memory organisation is as below :
+ * LPDDR2 Configuration Data for 4430/4460 SOMs:
+ * The memory organization is as below :
  *	EMIF1 - CS0 -	2 Gb
  *		CS1 -	2 Gb
  *	EMIF2 - CS0 -	2 Gb
@@ -1330,10 +1390,10 @@ static __initdata struct emif_device_details emif_devices = {
 /*
  * LPDDR2 Configuration Data for 4470 SOMs:
  * The memory organization is as below :
- *     EMIF1 - CS0 -   4 Gb
- *     EMIF2 - CS0 -   4 Gb
- *     --------------------
- *     TOTAL -         8 Gb
+ *	EMIF1 - CS0 -	4 Gb
+ *	EMIF2 - CS0 -	4 Gb
+ *	--------------------
+ *	TOTAL -		8 Gb
  *
  * Same devices installed on EMIF1 and EMIF2
  */
@@ -1621,6 +1681,22 @@ static void __init omap_4430sdp_map_io(void)
 static void __init omap_4430sdp_reserve(void)
 {
 	omap_init_ram_size();
+
+#ifdef CONFIG_ION_OMAP
+	omap_android_display_setup(&sdp4430_dss_data,
+				    NULL,
+				    NULL,
+				    &blaze_fb_pdata,
+				    get_omap_ion_platform_data());
+	omap_ion_init();
+#else
+	omap_android_display_setup(&sdp4430_dss_data,
+				    NULL,
+				    NULL,
+				    &blaze_fb_pdata,
+				    NULL);
+#endif
+
 	omap_ram_console_init(OMAP_RAM_CONSOLE_START_DEFAULT,
 			OMAP_RAM_CONSOLE_SIZE_DEFAULT);
 
@@ -1638,9 +1714,9 @@ static void __init omap_4430sdp_reserve(void)
 					PHYS_ADDR_TESLA_SIZE);
 #endif
 
-#ifdef CONFIG_ION_OMAP
-	omap_ion_init();
-#endif
+//#ifdef CONFIG_ION_OMAP
+//	omap_ion_init();
+//#endif
 
 	omap_reserve();
 }
