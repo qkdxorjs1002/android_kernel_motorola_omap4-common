@@ -349,3 +349,4 @@ endif
 obj-$(CONFIG_OMAP_RAM_CONSOLE)		+= omap_ram_console.o
 obj-$(CONFIG_ARCH_OMAP4)		+= omap_gcxxx.o
 
+obj-$(CONFIG_INTELLI_PLUG) += intelli_plug.o
