@@ -164,33 +164,30 @@ struct kobj_attribute *attr, const char *buf, size_t count)
 }
 
 #define RQ_STATS_RO_ATTRIB(att) ({ \
-struct attribute *attrib = NULL; \
-struct kobj_attribute *ptr = NULL; \
-	ptr = kzalloc(sizeof(struct kobj_attribute), GFP_KERNEL); \
-if (ptr) {
-\
-	ptr->attr.name = #att; \
-	ptr->attr.mode = S_IRUGO; \
-	ptr->show = show_##att; \
-	ptr->store = NULL; \
-	attrib = &ptr->attr; \
-} \
-	attrib; })
-
+		struct attribute *attrib = NULL; \
+		struct kobj_attribute *ptr = NULL; \
+		ptr = kzalloc(sizeof(struct kobj_attribute), GFP_KERNEL); \
+		if (ptr) { \
+			ptr->attr.name = #att; \
+			ptr->attr.mode = S_IRUGO; \
+			ptr->show = show_##att; \
+			ptr->store = NULL; \
+			attrib = &ptr->attr; \
+		} \
+		attrib; })
+		
 #define RQ_STATS_RW_ATTRIB(att) ({ \
-struct attribute *attrib = NULL; \
-struct kobj_attribute *ptr = NULL; \
-	ptr = kzalloc(sizeof(struct kobj_attribute), GFP_KERNEL); \
-if (ptr) {
-	\
-	ptr->attr.name = #att; \
-	ptr->attr.mode = S_IWUSR | S_IRUSR; \
-	ptr->show = show_##att; \
-	ptr->store = store_##att; \
-	attrib = &ptr->attr; \
-} \
-	attrib;
-})
+		struct attribute *attrib = NULL; \
+		struct kobj_attribute *ptr = NULL; \
+		ptr = kzalloc(sizeof(struct kobj_attribute), GFP_KERNEL); \
+		if (ptr) { \
+			ptr->attr.name = #att; \
+			ptr->attr.mode = S_IWUSR | S_IRUSR; \
+			ptr->show = show_##att; \
+			ptr->store = store_##att; \
+			attrib = &ptr->attr; \
+		} \
+		attrib; })
 
 static int init_rq_attribs(void)
 {
