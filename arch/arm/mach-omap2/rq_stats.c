@@ -1,19 +1,19 @@
 /* Copyright (c) 2010-2011, Code Aurora Forum. All rights reserved.
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License version 2 and
-* only version 2 as published by the Free Software Foundation.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-*/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 and
+ * only version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ */
 /*
-* Qualcomm MSM Runqueue Stats Interface for Userspace
-* HTC modify for Tegra Runqueue Stats
-*/
+ * Qualcomm MSM Runqueue Stats Interface for Userspace
+ * HTC modify for Tegra Runqueue Stats
+ */
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/module.h>
@@ -87,14 +87,14 @@ static void def_work_fn(struct work_struct *work)
 
 	diff = ktime_to_ns(ktime_get()) - rq_info.def_start_time;
 	do_div(diff, 1000 * 1000);
-	rq_info.def_interval = (unsigned int)diff;
+	rq_info.def_interval = (unsigned int) diff;
 
 	/* Notify polling threads on change of value */
 	sysfs_notify(rq_info.kobj, NULL, "def_timer_ms");
 }
 
 static ssize_t show_run_queue_avg(struct kobject *kobj,
-struct kobj_attribute *attr, char *buf)
+		struct kobj_attribute *attr, char *buf)
 {
 	unsigned int val = 0;
 	unsigned long flags = 0;
@@ -105,26 +105,26 @@ struct kobj_attribute *attr, char *buf)
 	rq_info.rq_avg = 0;
 	spin_unlock_irqrestore(&rq_lock, flags);
 
-	return snprintf(buf, PAGE_SIZE, "%d.%d\n", val / 10, val % 10);
+	return snprintf(buf, PAGE_SIZE, "%d.%d\n", val/10, val%10);
 }
 
 static ssize_t show_run_queue_poll_ms(struct kobject *kobj,
-struct kobj_attribute *attr, char *buf)
+				      struct kobj_attribute *attr, char *buf)
 {
 	int ret = 0;
 	unsigned long flags = 0;
 
 	spin_lock_irqsave(&rq_lock, flags);
 	ret = snprintf(buf, MAX_LONG_SIZE, "%u\n",
-		jiffies_to_msecs(rq_info.rq_poll_jiffies));
+		       jiffies_to_msecs(rq_info.rq_poll_jiffies));
 	spin_unlock_irqrestore(&rq_lock, flags);
 
 	return ret;
 }
 
 static ssize_t store_run_queue_poll_ms(struct kobject *kobj,
-struct kobj_attribute *attr,
-	const char *buf, size_t count)
+				       struct kobj_attribute *attr,
+				       const char *buf, size_t count)
 {
 	unsigned int val = 0;
 	unsigned long flags = 0;
@@ -143,7 +143,7 @@ struct kobj_attribute *attr,
 }
 
 static ssize_t show_def_timer_ms(struct kobject *kobj,
-struct kobj_attribute *attr, char *buf)
+		struct kobj_attribute *attr, char *buf)
 {
 	int64_t diff_ms;
 	diff_ms = ktime_to_ns(ktime_get()) - rq_info.def_start_time;
@@ -152,7 +152,7 @@ struct kobj_attribute *attr, char *buf)
 }
 
 static ssize_t store_def_timer_ms(struct kobject *kobj,
-struct kobj_attribute *attr, const char *buf, size_t count)
+		struct kobj_attribute *attr, const char *buf, size_t count)
 {
 	unsigned int val = 0;
 
@@ -175,14 +175,14 @@ struct kobj_attribute *attr, const char *buf, size_t count)
 			attrib = &ptr->attr; \
 		} \
 		attrib; })
-		
+
 #define RQ_STATS_RW_ATTRIB(att) ({ \
 		struct attribute *attrib = NULL; \
 		struct kobj_attribute *ptr = NULL; \
 		ptr = kzalloc(sizeof(struct kobj_attribute), GFP_KERNEL); \
 		if (ptr) { \
 			ptr->attr.name = #att; \
-			ptr->attr.mode = S_IWUSR | S_IRUSR; \
+			ptr->attr.mode = S_IWUSR|S_IRUSR; \
 			ptr->show = show_##att; \
 			ptr->store = store_##att; \
 			attrib = &ptr->attr; \
@@ -210,7 +210,7 @@ static int init_rq_attribs(void)
 	attribs[2] = RQ_STATS_RW_ATTRIB(run_queue_poll_ms);
 	attribs[3] = NULL;
 
-	for (i = 0; i < attr_count - 1; i++) {
+	for (i = 0; i < attr_count - 1 ; i++) {
 		if (!attribs[i]) {
 			pr_err("%s: Allocate attribs[%d] failed!\n", __func__, i);
 			goto rel2;
@@ -218,7 +218,7 @@ static int init_rq_attribs(void)
 	}
 
 	rq_info.attr_group = kzalloc(sizeof(struct attribute_group),
-		GFP_KERNEL);
+						GFP_KERNEL);
 	if (!rq_info.attr_group) {
 		pr_err("%s: Allocate rq_info.attr_group failed!\n", __func__);
 		goto rel3;
@@ -227,7 +227,7 @@ static int init_rq_attribs(void)
 
 	/* Create /sys/devices/system/cpu/cpu0/rq-stats/... */
 	rq_info.kobj = kobject_create_and_add("rq-stats",
-		&get_cpu_sysdev(0)->kobj);
+			&get_cpu_sysdev(0)->kobj);
 	if (!rq_info.kobj) {
 		pr_err("%s: Create rq_info.kobj failed!\n", __func__);
 		goto rel3;
@@ -242,7 +242,7 @@ static int init_rq_attribs(void)
 	if (!err) {
 		rq_info.init = 1;
 		pr_info("%s: Initialize done. rq_info.init = %d\n",
-			__func__, rq_info.init);
+				__func__, rq_info.init);
 		return err;
 	}
 
