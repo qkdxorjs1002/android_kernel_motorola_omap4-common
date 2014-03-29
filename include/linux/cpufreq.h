@@ -344,11 +344,11 @@ static inline void cpufreq_interactive_set_timer_rate(unsigned long val,
  *                       CPUFREQ DEFAULT GOVERNOR                    *
  *********************************************************************/
 
-
 /*
   Performance governor is fallback governor if any other gov failed to
   auto load due latency restrictions
 */
+
 #ifdef CONFIG_CPU_FREQ_GOV_PERFORMANCE
 extern struct cpufreq_governor cpufreq_gov_performance;
 #endif
@@ -374,18 +374,17 @@ extern struct cpufreq_governor cpufreq_gov_hotplug;
 #define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_hotplug)
 #elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_PEGASUSQ)
 extern struct cpufreq_governor cpufreq_gov_pegasusq;
-#define CPUFREQ_DEFAULT_GOVERNOR  (&cpufreq_gov_pegasusq)
+#define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_pegasusq)
 #elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_ZENX)
 extern struct cpufreq_governor cpufreq_gov_zenx;
-#define CPUFREQ_DEFAULT_GOVERNOR  (&cpufreq_gov_zenx)
+#define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_zenx)
 #elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_SAKURACTIVE)
 extern struct cpufreq_governor cpufreq_gov_sakuractive;
-#define CPUFREQ_DEFAULT_GOVERNOR  (&cpufreq_gov_sakuractive)
+#define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_sakuractive)
 #elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_INTELLIACTIVE)
 extern struct cpufreq_governor cpufreq_gov_intelliactive;
-#define CPUFREQ_DEFAULT_GOVERNOR(&cpufreq_gov_intelliactive)
+#define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_intelliactive)
 #endif
-
 
 /*********************************************************************
  *                     FREQUENCY TABLE HELPERS                       *
@@ -433,6 +432,5 @@ extern int cpufreq_frequency_table_next_lowest(struct cpufreq_policy *policy,
 extern int cpufreq_frequency_table_next_highest(struct cpufreq_policy *policy,
 					struct cpufreq_frequency_table *table,
 					int *index);
-
 
 #endif /* _LINUX_CPUFREQ_H */
