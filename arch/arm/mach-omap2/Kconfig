@@ -541,7 +541,7 @@ config INTELLI_PLUG_DUAL
 	  Special dual-core mode for intelli-plug
 	  
 config RQ_STATS
-	boo; "Enable Run queue statistics"
+	bool "Enable Run queue statistics"
 	default n
 	help
 	  Select this to enable scheduler rune queue statistic
