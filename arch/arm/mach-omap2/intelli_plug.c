@@ -151,15 +151,15 @@ static unsigned int calculate_thread_stats(void)
 	unsigned int threshold_size;
 
 #ifdef CONFIG_INTELLI_PLUG_DUAL
-	threshold_size =  ARRAY_SIZE(nr_run_thresholds_eco);
-	nr_run_hysteresis = 4;
-	nr_fshift = 1;
+	threshold_size = ARRAY_SIZE(nr_run_thresholds_eco);
+	nr_run_hysteresis = 6;
+	nr_fshift = 2;
 #ifdef DEBUG_INTELLI_PLUG
 	pr_info("intelliplug: eco mode active!");
 #endif
 #else
 	if (!eco_mode_active) {
-		threshold_size =  ARRAY_SIZE(nr_run_thresholds_full);
+		threshold_size = ARRAY_SIZE(nr_run_thresholds_full);
 		nr_run_hysteresis = 8;
 		nr_fshift = 3;
 #ifdef DEBUG_INTELLI_PLUG
@@ -167,7 +167,7 @@ static unsigned int calculate_thread_stats(void)
 #endif
 	}
 	else {
-		threshold_size =  ARRAY_SIZE(nr_run_thresholds_eco);
+		threshold_size = ARRAY_SIZE(nr_run_thresholds_eco);
 		nr_run_hysteresis = 4;
 		nr_fshift = 1;
 #ifdef DEBUG_INTELLI_PLUG
